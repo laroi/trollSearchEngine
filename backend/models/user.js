@@ -7,8 +7,10 @@ var AccessTokenSchema = new Schema({
     ttl: {type: String, required: true}
 });
 var user = new Schema({
-    username: {type: String, required: true},
-    password: {type: String, required: true},
+    email: {type: String, required: true},
+    verification: {type: String},
+    username: {type: String},
+    password: {type: String},
     date: {type: Date, default: Date.now},
     access: { type: ObjectId, ref: 'AccessTokenSchema' }
     profile_img: String,

@@ -1,5 +1,7 @@
 var User = require('../models/user.js');
 var Post = require('../models/post.js');
+var accessToken = require('../models/accessToken.js');
+var bcrypt = require('bcrypt');
 var generateToken = function () {
     var text = "";
     var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -9,7 +11,31 @@ var generateToken = function () {
 
     return text;
 }
+var createAccessTocken = function (timeToLive, callback) {
+    var ttl = 60, tocken;
+    if (timeToLive) {
+        ttl = timeToLive
+    }
+    tocken = generateToken()
+    var access = new accessToken({token: tocken, ttl: ttl});
+    access.save(function(err, data) {
+        if (!err) {
+            callback(tocken);
+        }
+    })
+}
+var verifyTocken = function (tocken, callback) {
 
+    accessToken.findOne({tocken: tocken}, function(err, data) {
+        if (!err) {
+            console.log(data);
+            callback(undefined, data);
+        } else {
+            console.error(err);
+            callback(err, undefined);
+        }
+    });
+}
 var routes = function () {
     register = function (req, res) {
         if (req.body.email) {
@@ -26,9 +52,34 @@ var routes = function () {
         }
     };
     login = function (req, res) {
+    var username,
+        password;
+        if (req.body.username && req.body.password) {
+            username = req.body.username;
+            password = req.body.password;
+            User.findOne()
+        } else {
+            res.status(400).send({err:"Parameters required"})
+        }
     
     };
-    forgotPassword = function (req, res) {};
+    forgotPassword = function (req, res) {
+        if (req.body.password && req.body.username) {
+            bcrypt.genSalt(10, function(err, salt) {
+                bcrypt.hash(req.body.password, salt, function(err, hash) {
+                    User.update({username: username, password: hash}, function (err, data) {
+                        if (!err) {
+                            res.status(200).send(JSON.stringify(data));
+                        } else {
+                            res.status(500).send({err: err});
+                        }
+                    });
+                });
+            });
+        } else {
+            res.status(400).send({"err": "parameter required"});
+        }
+    };
     verifyUser = function (req, res) {
         var code = req.query.vcode,
             email = req.query.email;

@@ -11,25 +11,27 @@ var generateToken = function () {
 
     return text;
 }
-var createAccessTocken = function (timeToLive, callback) {
-    var ttl = 60, tocken;
+var createAccesstoken = function (timeToLive, callback) {
+    var ttl = 60, token;
     if (timeToLive) {
         ttl = timeToLive
     }
-    tocken = generateToken()
-    var access = new accessToken({token: tocken, ttl: ttl});
+    token = generateToken()
+    var access = new accessToken({token: token, ttl: ttl});
     access.save(function(err, data) {
         if (!err) {
-            callback(tocken);
+            callback({token: token, ttl: ttl, createdAt : Date.now()});
         }
     })
 }
-var verifyTocken = function (tocken, callback) {
+var verifytoken = function (token, callback) {
 
-    accessToken.findOne({tocken: tocken}, function(err, data) {
+    accessToken.findOne({token: token}, function(err, data) {
         if (!err) {
-            console.log(data);
-            callback(undefined, data);
+            var date = Date.now();
+            if ((date - data.createdAt)/1000 > (ttl * 60)) {
+                callback(undefined, data);
+            }
         } else {
             console.error(err);
             callback(err, undefined);
@@ -57,14 +59,21 @@ var routes = function () {
         if (req.body.username && req.body.password) {
             username = req.body.username;
             password = req.body.password;
-            User.findOne()
+            User.findOne({username:username}, function(userErr, userData) {
+                if (bcrypt.compareSync("my password", userData.password)) {
+                    createAccesstoken(undefined, function (token) {
+                        delete userData.password;
+                        res.status(200).send(JSON.stringify({token: token, user: userData));
+                    });
+                }
+            });
         } else {
             res.status(400).send({err:"Parameters required"})
         }
     
     };
     forgotPassword = function (req, res) {
-        if (req.body.password && req.body.username) {
+        if (req.body.password && req.body.username && req.query.token) {
             bcrypt.genSalt(10, function(err, salt) {
                 bcrypt.hash(req.body.password, salt, function(err, hash) {
                     User.update({username: username, password: hash}, function (err, data) {

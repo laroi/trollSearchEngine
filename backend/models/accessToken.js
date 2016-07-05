@@ -4,6 +4,7 @@ var mongoose = require('mongoose'),
 var AccessTokenSchema = new Schema({
     token: {type: String, required: true},
     ttl: {type: String, required: true},
+    user: {type: String, required: true},
     createdAt:{type: Date, required: true, default: Date.now}
 });
-module.exports = mongoose.model('user', AccessTokenSchema);
+module.exports = mongoose.model('AccessToken', AccessTokenSchema);

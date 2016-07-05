@@ -17,7 +17,7 @@ var post = new Schema({
     movie: {type: String},
     actor:[String],
     charactor:[String],
-    event: {type: String}
+    event: {type: String},
     date: {type: Date, default: Date.now},
     profile_img: String,
 });

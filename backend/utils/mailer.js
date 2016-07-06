@@ -21,7 +21,7 @@ var nodemailer = require('nodemailer'),
     });
 var sendMail = function(email, code, callback) {
     transporter.sendMail({
-            from: 'akbarali1klr@gmail.com',
+            from: 'akbar.ali@mobinius.com',
             to: email,
             subject: 'Verification code for Troll Search Engine',
             text: 'Here is your verification code for trollsearch engine app : ' + code

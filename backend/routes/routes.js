@@ -46,41 +46,49 @@ var routes = function () {
              bcrypt.genSalt(10, function(err, salt) {
                 bcrypt.hash(req.body.password, salt, function(err, hash) {
                     var user = new User({'email': req.body.email, password: hash, 'verification': verification});
-                    user.save(function(err, data) {
+                    console.log(JSON.stringify(user));
+                    user.save(function(err, userData) {
                         if(!err) {
-                            mailer.sendMail(req.body.email, verification, function(err) {
-                                if (!err) {
+                            mailer(req.body.email, verification, function(mailerr) {
+                                if (!mailerr) {
                                     console.log("Mail send successfully");
                                 } else {
                                     console.error("Mail sending error");
                                 }
                             });
-                            createAccesstoken(undefined, data.id, function (token) {
+                            createAccesstoken(undefined, userData.id, function (token) {
                                 delete userData.password;
                                 res.status(200).send(JSON.stringify({token: token, user: userData}));
                             });
                             
                         } else {
+                            console.error('Saving Failed' + JSON.stringify(err));
                             res.status(500).send({err: 'Could not save user'});
                         }
                     });
                 });
             });
            
+        } else {
+            res.status(400).send({err:"Parameters required"});
         }
     };
     login = function (req, res) {
-    var username,
+    var email,
         password;
-        if (req.body.username && req.body.password) {
-            username = req.body.username;
+        if (req.body.email && req.body.password) {
+            email = req.body.email;
             password = req.body.password;
-            User.findOne({username:username}, function(userErr, userData) {
-                if (bcrypt.compareSync(password, userData.password)) {
-                    createAccesstoken(undefined, userData.id, function (token) {
-                        delete userData.password;
-                        res.status(200).send(JSON.stringify({token: token, user: userData}));
-                    });
+            User.findOne({email:email}, function(userErr, userData) {
+                if (!userErr && userData) {
+                    if (bcrypt.compareSync(password, userData.password)) {
+                        createAccesstoken(undefined, userData.id, function (token) {
+                            delete userData.password;
+                            res.status(200).send(JSON.stringify({token: token, user: userData}));
+                        });
+                    }
+                } else {
+                    res.status(404).send({err:"User Not Found"})
                 }
             });
         } else {

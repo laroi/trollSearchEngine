@@ -4,6 +4,7 @@ var bodyParser = require('body-parser');
 var http = require('http');
 var methodOverride = require('method-override');
 var route = require('./routes/routes');
+var postRoute = require('./routes/postRout');
 var app = express();
 var access = require('./models/accessToken')
 var server = http.createServer(app);
@@ -36,5 +37,6 @@ app.post('/login', route.login);
 app.post('/token', route.verifyUser);
 app.post('/user', route.register);
 app.put('/user', isAuthenticated, route.updatePassword);
+app.get('/test', postRoute.test)
 app.listen(3000);
 console.log("Express server listening on port 3000");

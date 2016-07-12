@@ -8,9 +8,33 @@ var postRoute = require('./routes/postRout');
 var app = express();
 var access = require('./models/accessToken')
 var server = http.createServer(app);
-
+var multer  = require('multer');
+var uuid = require('uuid');
+const path = require('path');
+var uploadPath = __dirname + '/uploads/';
+var storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, uploadPath)
+    },
+    filename: function (req, file, cb) {
+        var fileName = uuid.v1();
+        fileName += path.extname(file.originalname)
+        file.renamed = fileName
+        cb(null, fileName);
+    }
+});
+var fileFilter = function (req, file, cb) {
+    var fileTypes = ['.jpg', '.jpeg', '.png', '.html'];
+    var ext = path.extname(file.originalname);
+    if (fileTypes.indexOf(ext) > -1) {
+        cb(null, true);
+    } else {
+        cb(null, false);
+    }
+}
+var upload = multer({ storage: storage, fileFilter: fileFilter })
 // connect to Mongo when the app initializes
-mongoose.connect('mongodb://localhost:27017/test');
+mongoose.connect('mongodb://localhost:27017/trolls');
 
   app.use(bodyParser());
   app.use(methodOverride());
@@ -38,5 +62,6 @@ app.post('/token', route.verifyUser);
 app.post('/user', route.register);
 app.put('/user', isAuthenticated, route.updatePassword);
 app.get('/test', postRoute.test)
+app.post('/post', upload.single('troll'), postRoute.post)
 app.listen(3000);
 console.log("Express server listening on port 3000");

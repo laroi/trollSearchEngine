@@ -1,5 +1,4 @@
 var User = require('../models/user.js');
-var Post = require('../models/post.js');
 var accessToken = require('../models/accessToken.js');
 var mailer = require('../utils/mailer');
 var bcrypt = require('bcrypt');

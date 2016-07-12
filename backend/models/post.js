@@ -9,17 +9,16 @@ var comment = new Schema({
 });
 var post = new Schema({
     userId: {type: String, required: true},
-    title: {type: String, required: true},
+    title: {type: String},
     type: {type: String, required: true},
     description: {type: String},
     imageUrl: {type: String, required: true},
     tags:[String],
     movie: {type: String},
-    actor:[String],
-    charactor:[String],
+    actors:[String],
+    characters:[String],
     event: {type: String},
-    date: {type: Date, default: Date.now},
-    profile_img: String,
+    date: {type: Date, default: Date.now}
 });
 
 module.exports = mongoose.model('post', post);

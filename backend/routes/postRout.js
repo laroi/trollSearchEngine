@@ -14,7 +14,7 @@ var routes = function () {
             imageUrl = req.file.path,
             tags = req.body.tags,
             movie = req.body.movie,
-            characters = req.body.characters
+            characters = req.body.characters,
             actors = req.body.actors,
             event = req.body.event,
             obj = {},
@@ -33,7 +33,13 @@ var routes = function () {
             postObj = new Post(obj);
             postObj.save(function(saveErr, saveData) {
                 if (!saveErr) {
-                    res.status(201).send(saveData);
+                    elastic.putDoc(obj, function(err, data) {
+                        if(!err) {
+                            res.status(201).send(saveData);
+                        } else {
+                            res.status(500).send({err: 'Could not save post'});
+                        }
+                    });                
                 } else {
                     res.status(500).send({err: 'Could not save post'});
                 }
@@ -42,9 +48,58 @@ var routes = function () {
             res.status(400).send({err: 'Bad Parameter'});
         }
     }
+    getPosts = function (req, res) {
+        var title = req.body.title,
+            type = req.body.type,
+            userId = req.body.userId,
+            tags = req.body.tags,
+            movie = req.body.movie,
+            characters = req.body.characters,
+            actors = req.body.actors,
+            search = req.body.search,
+            event = req.body.event,
+            opts = {};
+            if (search) {
+                opts.search = search;
+            } else {
+                opts.title = title;
+                opts.userId = userId;
+                opts.tags = tags;
+                opts.movie = movie;
+                opts.characters = characters;
+                opts.actors = actors;
+                opts.event = event;
+            }
+            opts.type = type;
+        elastic.getDocs(opts, function(err, data) {
+            if (!err) {
+                res.status(200).send(data)
+            } else {
+                console.error(JSON.stringify(err));
+                res.status(500).send({'errr': 'could not get data'})
+            }
+        })
+    }
+    getPost = function (req, res) {
+        var id = req.params.id
+        if (id) {
+            Post.find({_id: id}, function(err, data) {
+                if (!err) {
+                    res.status(200).send(JSON.stringify(data));
+                } else {
+                    console.error(JSON.stringify(err));
+                    res.status(500).send(err)
+                }
+            });
+        } else {
+            res.status(400).send({err: 'bad request'})
+        }        
+    }
     return { 
         test: test,
-        post: post
+        post: post,
+        getPost: getPost,
+        getPosts: getPosts
     }
 }
 

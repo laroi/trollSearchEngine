@@ -1,0 +1,19 @@
+1. POST a troll
+ 
+curl -X POST -F "troll=@/home/akbar/battery.png" \
+ -F "userId=5780a550356f487013fbbea5" \
+ -F "type=clean"\
+ -F "title=testtitle"\
+ -F "description=testing a description"\
+ -F "tags= tag test1, tag test2"\
+ -F "movie=test movei"\
+ -F "characters= char1 char2"\
+ -F "actors=act1 act2"\
+ -F "event=test event"\
+ http://127.0.0.1:3000/post?accessToken=xCpo0mBBo5QWf9Mf6Ri9zOjHD
+
+
+
+2. curl -X POST -d '{"search":"test"}' -H "Content-Type: application/json" http://127.0.0.1:3000/posts
+
+3. curl -X GET http://127.0.0.1:3000/post/578a148efb44f7313fc40287

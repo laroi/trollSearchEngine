@@ -48,13 +48,19 @@ function isAuthenticated(req, res, next) {
     if (req.query.accessToken) {
         access.findOne({token: req.query.accessToken}, function(err, data) {
             if (!err) {
+                console.log('authenticated');
                 next();
+                return;
             } else {
+                console.log('access token not found');
                 res.redirect('/');
+                return;
             }
         });
+    } else {
+        console.log('access token not provided');
+        res.redirect('/');
     }
-    res.redirect('/');
 }
 
 app.post('/login', route.login);
@@ -62,6 +68,9 @@ app.post('/token', route.verifyUser);
 app.post('/user', route.register);
 app.put('/user', isAuthenticated, route.updatePassword);
 app.get('/test', postRoute.test)
-app.post('/post', upload.single('troll'), postRoute.post)
+app.post('/posts', postRoute.getPosts);
+app.get('/post/:id', postRoute.getPost);
+//app.put('/post/:id', isAuthenticated, postRoute.updatePost)
+app.post('/post', isAuthenticated, upload.single('troll'), postRoute.post)
 app.listen(3000);
 console.log("Express server listening on port 3000");

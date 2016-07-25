@@ -27,6 +27,7 @@ var elastic = function () {
                     },
                     tags: {"type" : "string"},
                     movie: {"type" : "string"},
+                    language: {"type" : "string"},
                     actors: {"type" : "string"},
                     characters: {"type" : "string"},
                     event: {"type" : "string"},
@@ -73,6 +74,7 @@ var elastic = function () {
                 descriptions: doc.descriptions,
                 tags: doc.tags,
                 movie: doc.movie,
+                language: doc.language,
                 actors: doc.actors,
                 likes: doc.likes || 0,
                 downloads: doc.downloads || 0,
@@ -96,6 +98,7 @@ var elastic = function () {
                 descriptions: doc.descriptions,
                 tags: doc.tags,
                 movie: doc.movie,
+                language: doc.language,
                 actors: doc.actors,
                 characters: doc.characters,
                 comments: doc.comments,
@@ -128,6 +131,9 @@ var elastic = function () {
             if (options.advanced.movie) {
                 must_array.push({ "match": { "movie": options.advanced.movie }});
             }
+            if (options.advanced.language) {
+                must_array.push({ "match": { "movie": options.advanced.language }});
+            }
             if (options.advanced.actors) {
                 must_array.push({ "match": { "actors": options.advanced.actors }});
             }
@@ -153,7 +159,16 @@ var elastic = function () {
         body = {
             query: {
                 bool: {}
-              }
+              },
+               "from" : options.from || 0,
+               "size" : 10,
+              "sort": [
+                 {
+                    "createdAt": {
+                       "order": options.order || "desc"
+                    }
+                 }
+              ]
         };
         if (should_array.length > 0) {
             body.query.bool.should = should_array

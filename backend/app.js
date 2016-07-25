@@ -70,7 +70,7 @@ app.put('/user', isAuthenticated, route.updatePassword);
 app.get('/test', postRoute.test)
 app.post('/posts', postRoute.getPosts);
 app.get('/post/:id', postRoute.getPost);
-//app.put('/post/:id', isAuthenticated, postRoute.updatePost)
+app.put('/post/:id', isAuthenticated, postRoute.updatePost)
 app.post('/post', isAuthenticated, upload.single('troll'), postRoute.post)
 app.listen(3000);
 console.log("Express server listening on port 3000");

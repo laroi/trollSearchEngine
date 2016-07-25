@@ -18,6 +18,7 @@ var post = new Schema({
     imageUrl: {type: String, required: true},
     tags:[String],
     movie: {type: String},
+    language: {type: String},
     actors:[String],
     characters:[String],
     event: {type: String},

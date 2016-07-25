@@ -5,7 +5,28 @@ var routes = function () {
     var test = function (req, res) {
         elastic.init();
         res.status(200).send();
-    }
+    },
+    isOwner = function (model, id, token, callback) {
+        model.find({userId: id}, function(docErr, docData) {
+            access.findOne({token: req.query.accessToken}, function(err, data) {
+                if (!err) {
+                    if (data.user = docData.userId) {
+                        console.log('ownership verified');
+                        callback();
+                        return;
+                    } else {
+                        console.log('failed to verify ownership');
+                        callback({err: 'failed to verify ownership'});
+                        return;
+                    }
+                } else {
+                    console.log('token not found');
+                    callback(err)
+                    return;
+                }
+            });
+        })
+    },
     post = function(req, res) {
         var userId = req.body.userId,
             title = req.body.title,
@@ -14,6 +35,7 @@ var routes = function () {
             imageUrl = req.file.path,
             tags = req.body.tags,
             movie = req.body.movie,
+            language = req.body.language,
             characters = req.body.characters,
             actors = req.body.actors,
             event = req.body.event,
@@ -27,6 +49,7 @@ var routes = function () {
             obj.imageUrl = imageUrl;
             obj.tags = tags;
             obj.movie = movie;
+            obj.language = language;
             obj.actors = actors;
             obj.characters = characters;
             obj.event = event;
@@ -47,17 +70,20 @@ var routes = function () {
         } else {
             res.status(400).send({err: 'Bad Parameter'});
         }
-    }
+    },
     getPosts = function (req, res) {
         var title = req.body.title,
             type = req.body.type,
             userId = req.body.userId,
             tags = req.body.tags,
             movie = req.body.movie,
+            language = req.body.language,
             characters = req.body.characters,
             actors = req.body.actors,
             search = req.body.search,
             event = req.body.event,
+            from = req.body.from,
+            order = req.body.order,
             opts = {};
             if (search) {
                 opts.search = search;
@@ -69,7 +95,10 @@ var routes = function () {
                 opts.characters = characters;
                 opts.actors = actors;
                 opts.event = event;
+               
             }
+            opts.from = from;
+            opts.order = order;
             opts.type = type;
         elastic.getDocs(opts, function(err, data) {
             if (!err) {
@@ -79,13 +108,14 @@ var routes = function () {
                 res.status(500).send({'errr': 'could not get data'})
             }
         })
-    }
+    },
     getPost = function (req, res) {
         var id = req.params.id
         if (id) {
             Post.find({_id: id}, function(err, data) {
                 if (!err) {
                     res.status(200).send(JSON.stringify(data));
+                    Post.update({_id: id}, { $inc: {views:1}})
                 } else {
                     console.error(JSON.stringify(err));
                     res.status(500).send(err)
@@ -94,12 +124,58 @@ var routes = function () {
         } else {
             res.status(400).send({err: 'bad request'})
         }        
+    },
+    updatePost = function (req, res) {
+        isOwner(Post, req.body.userId, req.query.accessToken, function (err) {
+            var updateObj = {},
+                doc = req.body.doc,
+                id = req.body._id;
+            if (!err) {
+                if (doc.title) {
+                    updateObj.title = doc.title
+                }
+                if (doc.type) {
+                    updateObj.type = doc.type
+                }
+                if (doc.description) {
+                    updateObj.description = doc.description
+                }
+                if (doc.tags) {
+                    updateObj.tags = doc.tags
+                }
+                if (doc.movie) {
+                    updateObj.movie = doc.movie
+                }
+                if (doc.language) {
+                    updateObj.language = doc.language
+                }
+                if (doc.actors) {
+                    updateObj.actors = doc.actors
+                }
+                if (doc.characters) {
+                    updateObj.characters = doc.characters
+                }
+                if (doc.event) {
+                    updateObj.event = doc.event
+                }
+                Post.update({_id: id}, {$set: updateObj}, function(err, numAffected) {
+                    if (!err) {
+                        res.status(200).send();
+                    } else {
+                        console.error('Could not update post', err);
+                        res.status(500).send({'err':'Something went wrong'})
+                    }
+                })  
+            }
+        })
     }
+    
     return { 
         test: test,
         post: post,
         getPost: getPost,
-        getPosts: getPosts
+        getPosts: getPosts,
+        updatePost: updatePost
     }
 }
 

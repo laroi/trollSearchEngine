@@ -15,5 +15,5 @@ define(['controllers/requestController', 'controllers/storeController', 'models/
         };
         
     };
-    return post
+    return post()
 });

@@ -1,0 +1,99 @@
+<script id="create" type="text/x-handlebars-template">
+<div class="modal fade" id="create-new-form">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title">Create</h4>
+      </div>
+      <div class="modal-body">
+        <div class="top-cont col-xs-12 col-md-12 col-lg-12">
+            <div class="create-left col-xs-8 col-md-8 col-lg-8">
+                <div class="form-group row">
+                  <label for="example-text-input" class="col-xs-4 col-form-label">Title</label>
+                  <div class="col-xs-8">
+                    <input class="form-control" type="text" value="" id="title">
+                  </div>
+                </div>
+                <div class="row form-group">
+                    <label for="example-text-input" class="col-xs-4 col-form-label">Movie</label>
+                    <div class="col-xs-8">
+                        <input class="form-control" type="text" value="" id="movie">
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <label class="col-xs-4 col-form-label" for="language">Language</label>
+                    <div class="col-xs-8">
+                        <select id="language" class="form-control">
+                          <option>Malayalam</option>
+                          <option>Hindi</option>
+                          <option>Tamil</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                  <label for="example-text-input" class="col-xs-4 col-form-label">Event</label>
+                  <div class="col-xs-8">
+                    <input class="form-control" type="text" value="" id="event">
+                  </div>
+                </div>
+            </div>
+            <div class="create-right col-xs-4 col-md-4 col-lg-4">
+                <div class="img-preview-cont">
+                    <img class="img-preview" width="100%" height="100%">
+                </div>
+            </div>
+        </div>
+        <div class="row form-group">
+            <div class="row form-inline">
+                <div class="col-xs-6 col-md-6 col-lg-6 check-content">
+                    <div class="col-xs-6 col-md-6 col-lg-6">
+                        <div class="form-check ">
+                            <label class="form-check-label type">
+                            <input class="form-check-input type-check" type="checkbox" id="isClean" value="">Clean</label>
+                        </div>
+                    </div>
+                    <div class="col-xs-6 col-md-6 col-lg-6">
+                        <div class="form-check ">
+                            <label class="form-check-label type">
+                            <input class="form-check-input type-check" type="checkbox" id="isAdult" value="">Adult</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group col-xs-3 col-md-3 col-lg-3">
+                    <label class="custom-file">
+                      <input type="file" id="file" class="custom-file-input">
+                      <span class="custom-file-control"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+          <label for="example-text-input" class="col-xs-2 col-form-label">Tags</label>
+          <div class="col-xs-10">
+            <input type="text" value="" id="tags">
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="example-text-input" class="col-xs-2 col-form-label">Actors</label>
+          <div class="col-xs-10">
+            <input type="text" value="" id="actors">
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="example-text-input" class="col-xs-2 col-form-label">Chatacters</label>
+          <div class="col-xs-10">
+            <input type="text" value="" id="characters">
+          </div>
+        </div>
+      </div> <!--model body-->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" id="create-meme" class="btn btn-primary">Create</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<script>

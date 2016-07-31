@@ -17,8 +17,15 @@ requirejs.config({
 });
 
 // Start the main app logic.
-requirejs(['views/landing/landing'],
-function (landingView) {
-$(document).ready(function(){})
+requirejs(['views/landing/landing', 'text!views/components/mainHeader.html', 'views/create/create'],
+function (landingView, header, createNewView) {
+$(document).ready(function(){
+    //var html   = $(header).html();
+    //console.log()
+    headerTemplate = Handlebars.compile($(header).html());
+    $('#content').append(headerTemplate());
+    $('#create').on('click', createNewView.render);
     crossroads.addRoute('/', landingView.render());
+})
+
 });

@@ -13,6 +13,7 @@ var elastic = function () {
                     userId: {"type" : "string", "index" : "not_analyzed"},
                     title: {"type" : "string"},
                     type: {"type" : "string", "index" : "not_analyzed"},
+                    isAdult: {"type" : "boolean", "index" : "not_analyzed"},
                     imageUrl: {"type" : "string", "index" : "not_analyzed"},
                     descriptions: {"type" : "string"},
                     likes: {"type": "integer",},
@@ -57,7 +58,9 @@ var elastic = function () {
                     if (!createErr) {
                         putMapping(function(err) {
                             if (!err) {
-                                callback();
+                                if (callback && typeof callback === 'function') {
+                                    callback();
+                                }
                             }
                         })
                     }
@@ -67,9 +70,11 @@ var elastic = function () {
     };
     var putDoc = function (doc, callback) {
     var body = {
+                _id: doc.id
                 userId: doc.userId,
                 title: doc.title,
                 type: doc.type,
+                isAdult : doc.isAdult,
                 imageUrl: doc.imageUrl,
                 descriptions: doc.descriptions,
                 tags: doc.tags,
@@ -94,6 +99,7 @@ var elastic = function () {
                 userId: doc.userId,
                 title: doc.title,
                 type: doc.type,
+                isAdult: doc.isAdult,
                 imageUrl: doc.imageUrl,
                 descriptions: doc.descriptions,
                 tags: doc.tags,

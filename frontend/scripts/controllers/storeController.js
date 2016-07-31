@@ -2,7 +2,7 @@ define(['../config/config'], function (config) {
     var get,
         set;
     get = function (key) {
-        return JSON.parse(localStorage.getItem('troller'))[key]
+        return JSON.parse(localStorage.getItem('troller')|| "{}")[key]
     };
     set = function (key, value) {
         var val = JSON.parse(localStorage.getItem('troller'));

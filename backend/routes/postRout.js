@@ -1,6 +1,8 @@
 var Post = require('../models/post.js');
 var elastic = require('../utils/elastic');
-
+var uploadPath = __dirname + '/../uploads/';
+var uuid = require('uuid');
+var fs = require('fs');
 var routes = function () {
     var test = function (req, res) {
         elastic.init();
@@ -31,8 +33,8 @@ var routes = function () {
         var userId = req.body.userId,
             title = req.body.title,
             type = req.body.type,
+            isAdult = req.body.isAdult,
             description = req.body.description,
-            imageUrl = req.file.path,
             tags = req.body.tags,
             movie = req.body.movie,
             language = req.body.language,
@@ -41,29 +43,39 @@ var routes = function () {
             event = req.body.event,
             obj = {},
             postObj;
-        if (req.file && req.body.userId && req.body.type) {
-            obj.userId = userId;
-            obj.title = title;
-            obj.type = type;
-            obj.description = description;
-            obj.imageUrl = imageUrl;
-            obj.tags = tags;
-            obj.movie = movie;
-            obj.language = language;
-            obj.actors = actors;
-            obj.characters = characters;
-            obj.event = event;
-            postObj = new Post(obj);
-            postObj.save(function(saveErr, saveData) {
-                if (!saveErr) {
-                    elastic.putDoc(obj, function(err, data) {
-                        if(!err) {
-                            res.status(201).send(saveData);
+        if (req.body.image && req.body.userId && req.body.type) {
+            var fileLoc = uploadPath + uuid.v1() + '.' + req.body.image.type
+            fs.writeFile(fileLoc, req.body.image.image, 'base64', function(err) {
+                if (!err) {
+                    obj.userId = userId;
+                    obj.title = title;
+                    obj.type = type;
+                    obj.isAdult = isAdult;
+                    obj.description = description;
+                    obj.tags = tags;
+                    obj.movie = movie;
+                    obj.imageUrl = fileLoc;
+                    obj.language = language;
+                    obj.actors = actors;
+                    obj.characters = characters;
+                    obj.event = event;
+                    postObj = new Post(obj);
+                    postObj.save(function(saveErr, saveData) {
+                        if (!saveErr) {
+                            obj._id = saveData.id
+                            elastic.putDoc(obj, function(err, data) {
+                                if(!err) {
+                                    res.status(201).send(saveData);
+                                } else {
+                                    res.status(500).send({err: 'Could not save post'});
+                                }
+                            });                
                         } else {
                             res.status(500).send({err: 'Could not save post'});
                         }
-                    });                
+                    });
                 } else {
+                    console.log(err);
                     res.status(500).send({err: 'Could not save post'});
                 }
             });

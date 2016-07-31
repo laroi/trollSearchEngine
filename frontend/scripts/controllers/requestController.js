@@ -16,13 +16,26 @@ define(['../config/config'], function (config) {
             }
         }); 
     }
-    post = function (url, postdata, callback) {
+    post = function (url, postdata,  callback) {
         $.ajax({
             url: url, 
             method: 'POST',
             data: postdata,
             dataType: 'JSON',
             contentType: "application/json; charset=utf-8",
+            success: function (data){
+                callback(undefined, data);
+            },
+            error: function(xhr, status, err) {
+                callback(JSON.parse(xhr.responseText), undefined);
+            }
+        }); 
+    }
+    postImage = function (url, postdata,  callback) {
+        $.ajax({
+            url: url, 
+            method: 'POST',
+            data: postdata,
             success: function (data){
                 callback(undefined, data);
             },
@@ -49,7 +62,8 @@ define(['../config/config'], function (config) {
     return {
         get: get,
         post: post,
-        put: put
+        put: put,
+        postImage: postImage
     }
 
 })

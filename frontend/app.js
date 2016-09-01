@@ -20,6 +20,22 @@ requirejs.config({
 requirejs(['views/landing/landing', 'text!views/components/mainHeader.html', 'views/create/create'],
 function (landingView, header, createNewView) {
 $(document).ready(function(){
+    FB.init({
+        appId      : '307608722910374',
+        cookie     : true,  // enable cookies to allow the server to access 
+                            // the session
+        xfbml      : true,  // parse social plugins on this page
+        version    : 'v2.5' // use graph api version 2.5
+    });
+    function statusChangeCallback(response) {
+        console.log('statusChangeCallback');
+        console.log(response);
+    }
+    var checkLoginState = function () {
+        FB.getLoginStatus(function(response) {
+            statusChangeCallback(response);
+        });
+    }
     //var html   = $(header).html();
     //console.log()
     headerTemplate = Handlebars.compile($(header).html());

@@ -1,6 +1,7 @@
 <script id="entry-template" type="text/x-handlebars-template">
     <div id='head-container' class='row'>
         <div class="right-cont .col-xs-6 .col-sm-6 .col-lg-6">
+        <fb:login-button scope="public_profile,email" onlogin="checkLoginState();"></fb:login-button>
             <button id="create" type="button" class="btn btn-default">Create</button>
         </div>
     </div>

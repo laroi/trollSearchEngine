@@ -9,9 +9,9 @@ define([
             var render;
             
             render = function () {
-                postCollections.getAllPosts(function(err, posts) {
+                postCollections.getAllPosts(null, function(err, posts) {
                     var html = template({posts: posts});
-                    body.append(html);
+                    $('body').append(html);
                 });
                 
             }

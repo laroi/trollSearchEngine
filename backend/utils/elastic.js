@@ -70,7 +70,7 @@ var elastic = function () {
     };
     var putDoc = function (doc, callback) {
     var body = {
-                _id: doc.id
+                _id: doc.id,
                 userId: doc.userId,
                 title: doc.title,
                 type: doc.type,

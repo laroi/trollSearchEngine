@@ -20,6 +20,7 @@ requirejs.config({
 requirejs(['views/landing/landing', 'text!views/components/mainHeader.html', 'views/create/create'],
 function (landingView, header, createNewView) {
 $(document).ready(function(){
+    $.material.init();
     FB.init({
         appId      : '307608722910374',
         cookie     : true,  // enable cookies to allow the server to access 

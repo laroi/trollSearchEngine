@@ -62,7 +62,8 @@ function isAuthenticated(req, res, next) {
         res.redirect('/');
     }
 }
-
+console.log()
+app.use('/images', express.static(__dirname + '/uploads'));
 app.post('/login', route.login);
 app.post('/token', route.verifyUser);
 app.post('/user', route.register);

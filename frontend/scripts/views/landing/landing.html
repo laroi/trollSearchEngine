@@ -1,7 +1,17 @@
 <script id="entry-template" type="text/x-handlebars-template">
-<div id='items-container' class='row'>
-{{#each posts}}
-{{this._id}}
-{{/each}}
+<div class="panel-cont">
+    <div class="row">
+    {{#each posts}}
+    <div class="col-sm-3">
+          <div class="panel panel-default">
+            <div class="panel-body">
+                <div class="thumbImgCont">
+                    <img class="thumbImg" src={{this.imageUrl}}>
+                </div>
+            </div>
+          </div>
+    </div>    
+    {{/each}}
+    </div>
 </div>
 </script>

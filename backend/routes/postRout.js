@@ -4,8 +4,9 @@ var uploadPath = __dirname + '/../uploads/';
 var uuid = require('uuid');
 var fs = require('fs');
 var routes = function () {
+    elastic.init();
     var test = function (req, res) {
-        elastic.init();
+        
         res.status(200).send();
     },
     isOwner = function (model, id, token, callback) {
@@ -44,7 +45,8 @@ var routes = function () {
             obj = {},
             postObj;
         if (req.body.image && req.body.userId && req.body.type) {
-            var fileLoc = uploadPath + uuid.v1() + '.' + req.body.image.type
+            var filename = uuid.v1() + '.' + req.body.image.type
+            var fileLoc = uploadPath + filename;
             fs.writeFile(fileLoc, req.body.image.image, 'base64', function(err) {
                 if (!err) {
                     obj.userId = userId;
@@ -54,7 +56,7 @@ var routes = function () {
                     obj.description = description;
                     obj.tags = tags;
                     obj.movie = movie;
-                    obj.imageUrl = fileLoc;
+                    obj.imageUrl = '/images/'+filename;
                     obj.language = language;
                     obj.actors = actors;
                     obj.characters = characters;

@@ -51,7 +51,9 @@ var elastic = function () {
     var init = function (callback) {
         client.indices.exists({index:'trolls'}, function (existErr, existData) {
             if (existData) {
-                callback();
+                if (callback && typeof callback === 'function') {
+                    callback();
+                }
                 return
             } else {
                 client.indices.create({index: 'trolls'}, function(createErr, createData) {

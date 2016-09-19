@@ -50,11 +50,15 @@ define([
                     }
                     if (validate()) {
                         save(function(err, data) {
+                            
                             if (!err) {
-                                console.log('Finished')
+                                $('#create-new-form').modal( 'hide' ).data( 'bs.modal', null );
+                                toastr.success('Successfully uploaded!', 'Miracle Max Says')
                             } else {
                                 console.error(err);
+                                toastr.error('Uploading failed.', 'Miracle Max Says')
                             }
+                            
                         });
                     } else {
                         console.error('Validation error');

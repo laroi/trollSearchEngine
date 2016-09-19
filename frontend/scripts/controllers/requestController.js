@@ -2,7 +2,8 @@ define(['../config/config'], function (config) {
     var callView,
         get,
         post,
-        put;
+        put,
+        getErrMsg;
     get = function (url, callback) {
         $.ajax({
             url: url, 
@@ -12,7 +13,7 @@ define(['../config/config'], function (config) {
                 callback(undefined, data);
             },
             error: function(xhr, status, err) {
-                callback(JSON.parse(xhr.responseText), undefined);
+                callback(getErrMsg(xhr.responseText), undefined);
             }
         }); 
     }
@@ -27,10 +28,20 @@ define(['../config/config'], function (config) {
                 callback(undefined, data);
             },
             error: function(xhr, status, err) {
-                callback(JSON.parse(xhr.responseText), undefined);
+                callback(getErrMsg(xhr.responseText), undefined);
             }
         }); 
     }
+    getErrMsg = function (msg) {
+    var ret_msg;
+        try {
+            ret_msg = JSON.parse(msg);
+        }
+        catch (e) {
+            ret_msg = e;
+        }
+        return ret_msg;
+    };
     postImage = function (url, postdata,  callback) {
         $.ajax({
             url: url, 
@@ -40,7 +51,7 @@ define(['../config/config'], function (config) {
                 callback(undefined, data);
             },
             error: function(xhr, status, err) {
-                callback(JSON.parse(xhr.responseText), undefined);
+                callback(getErrMsg(xhr.responseText), undefined);
             }
         }); 
     }
@@ -55,7 +66,7 @@ define(['../config/config'], function (config) {
                 callback(undefined, data);
             },
             error: function(xhr, status, err) {
-                callback(JSON.parse(xhr.responseText), undefined);
+                callback(getErrMsg(xhr.responseText), undefined);
             }
         }); 
     }

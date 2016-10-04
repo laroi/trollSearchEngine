@@ -60,6 +60,7 @@ var elastic = function () {
                     if (!createErr) {
                         putMapping(function(err) {
                             if (!err) {
+                            console.log('Putting index');
                                 if (callback && typeof callback === 'function') {
                                     callback();
                                 }
@@ -72,7 +73,6 @@ var elastic = function () {
     };
     var putDoc = function (doc, callback) {
     var body = {
-                _id: doc.id,
                 userId: doc.userId,
                 title: doc.title,
                 type: doc.type,
@@ -89,15 +89,14 @@ var elastic = function () {
                 characters: doc.characters,
                 comments: doc.comments,
                 event: doc.event,
-                createdAt: doc.createdAt
-            }
-            if (doc._id) {
-                body._id = doc._id
+                createdAt: doc.createdAt,
+                lastModified: doc.lastModified
             }
         client.create({
             index: 'trolls',
+            id: doc.id,
             type: 'post',
-            body: {
+            /*body: {
                 userId: doc.userId,
                 title: doc.title,
                 type: doc.type,
@@ -111,13 +110,15 @@ var elastic = function () {
                 characters: doc.characters,
                 comments: doc.comments,
                 event: doc.event,
+                lastModified: doc.lastModified,
                 createdAt: doc.createdAt
-            }
+            }*/
+            body: body
         }, function (error, response) {
             if (!error) {
                 console.log('Put document ');
             } else {
-                console.error('Problem in putting doc')
+                console.error('Problem in putting doc', JSON.stringify(error))
             }
             callback(error, response);
         });
@@ -172,7 +173,7 @@ var elastic = function () {
                "size" : 10,
               "sort": [
                  {
-                    "createdAt": {
+                    "lastModified": {
                        "order": options.order || "desc"
                     }
                  }

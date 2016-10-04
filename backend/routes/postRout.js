@@ -42,6 +42,8 @@ var routes = function () {
             characters = req.body.characters,
             actors = req.body.actors,
             event = req.body.event,
+            createdAt = req.body.createdAt,
+            lastModified = req.body.lastModified,
             obj = {},
             postObj;
         if (req.body.image && req.body.userId && req.body.type) {
@@ -61,6 +63,8 @@ var routes = function () {
                     obj.actors = actors;
                     obj.characters = characters;
                     obj.event = event;
+                    obj.createdAt = createdAt;
+                    obj.lastModified = lastModified;
                     postObj = new Post(obj);
                     postObj.save(function(saveErr, saveData) {
                         if (!saveErr) {

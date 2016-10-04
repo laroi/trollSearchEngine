@@ -2,6 +2,8 @@ var User = require('../models/user.js');
 var accessToken = require('../models/accessToken.js');
 var mailer = require('../utils/mailer');
 var bcrypt = require('bcrypt');
+var request = require('request');
+var facebook_app_access = "";
 var generateToken = function () {
     var text = "";
     var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -125,6 +127,48 @@ var routes = function () {
                     res.status(404).send({err: 'User not found'});
                 }
             });
+        
+    };
+    verifyFaceToken = function(req, res) {
+        var authResp = req.body.authResponse;        
+        var checkToken = function(){
+            var url = 'https://graph.facebook.com/debug_token?input_token='+authResp.accessToken+'&'+facebook_app_access;
+            request.get(url, function(checkErr, checkData) {
+                var body = JSON.parse(checkData.body)
+                if (!checkErr && checkData.statusCode !== 400 ) {
+                    var
+                    if (authResp.is_valid && authResp.userID===body.user_id) {
+                    
+                    }
+                } else {
+                    
+                    console.log(body)
+                    if (body.error.code === 100) {
+                        console.log('app access token not found, fetching new access token')
+                        var appTokenUrl = 'https://graph.facebook.com/oauth/access_token?client_id=307608722910374&client_secret=6dec5610c25fa4cc814aa30c130d0a39&grant_type=client_credentials';
+                        request.get(appTokenUrl, function(err, data) {
+                            if (!err) {
+                                facebook_app_access = data.body;
+                                url = 'https://graph.facebook.com/debug_token?input_token='+authResp.accessToken+'&'+facebook_app_access;
+                                console.log(url);
+                                 request.get(url, function(checkErr, checkData) {
+                                    if (!checkErr && checkData.statusCode !== 400 ) {
+                                    console.log('data', JSON.stringify(checkData));
+                                    } else {
+                                    console.error('error in getting access token')
+                                    }
+                                });
+                            } else {
+                                console.error('error in getting access token')
+                            }
+                        });
+                    } else {
+                        console.error(checkErr)
+                    }
+                }
+            });
+        }()
+        
         
     };
     logout = function (req, res) {};

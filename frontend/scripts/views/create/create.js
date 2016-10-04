@@ -30,6 +30,7 @@ define([
                         return isValidate;
                     };
                     var save = function (callback) {
+                        var date = new Date();
                         var url = '/api/post',
                             postData = {
                                 image: imageData,
@@ -42,7 +43,9 @@ define([
                                 language:$("#language").val().trim(),
                                 actors:$("#actors").val().split(','),
                                 characters:$("#characters").val().split(','),
-                                event:$("#movie").val().trim()
+                                event:$("#movie").val().trim(),
+                                createdAt: date.toISOString(),
+				                lastModified: date.toISOString()
                             }
                             request.postImage(url, postData, function(err, data) {
                                 callback(err, data)

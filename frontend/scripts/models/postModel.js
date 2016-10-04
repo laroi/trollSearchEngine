@@ -1,5 +1,6 @@
 define(['controllers/requestController', 'controllers/storeController'], function (request, store) {
     //Do setup work here
+    var date = new Date();
     var post = function(inPost) {
         var save = function () {
             var postData = {
@@ -14,7 +15,9 @@ define(['controllers/requestController', 'controllers/storeController'], functio
 				language: this.language,
 				actors:this.actors,
 				characters:this.characters,
-				event: this.event
+				event: this.event,
+				createdAt: date.toISOString(),
+				lastModified: date.toISOString()
             }
         };
             return  {
@@ -30,6 +33,8 @@ define(['controllers/requestController', 'controllers/storeController'], functio
 				actors: inPost.actors || [],
 				characters: inPost.characters || [],
 				event: inPost.event || '',
+				lastModified: inPost.lastModified,
+				createdAt: inPost.createdAt,
                 save: save
             };
         

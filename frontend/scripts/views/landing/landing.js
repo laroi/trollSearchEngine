@@ -8,8 +8,8 @@ define([
         var landingView = function () {
             var render;
             
-            render = function () {
-                postCollections.getAllPosts(null, function(err, posts) {
+            render = function (from) {
+                postCollections.getAllPosts({from: from}, function(err, posts) {
                     var html = template({posts: posts});
                     $('body').append(html);
                 });

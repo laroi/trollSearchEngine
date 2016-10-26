@@ -136,9 +136,10 @@ var routes = function () {
             request.get(url, function(checkErr, checkData) {
                 var body = JSON.parse(checkData.body)
                 if (!checkErr && checkData.statusCode !== 400 ) {
-                    var
                     if (authResp.is_valid && authResp.userID===body.user_id) {
-                    
+                        res.status(200).send();
+                    } else {
+                        res.status(401).send();
                     }
                 } else {
                     
@@ -154,7 +155,9 @@ var routes = function () {
                                  request.get(url, function(checkErr, checkData) {
                                     if (!checkErr && checkData.statusCode !== 400 ) {
                                     console.log('data', JSON.stringify(checkData));
+                                        res.status(200).send();
                                     } else {
+                                        res.status(500).send();
                                     console.error('error in getting access token')
                                     }
                                 });
@@ -180,7 +183,8 @@ var routes = function () {
         register: register,
         login: login,
         updatePassword: updatePassword,
-        verifyUser: verifyUser
+        verifyUser: verifyUser,
+        verifyFaceToken: verifyFaceToken
     }
 }
 

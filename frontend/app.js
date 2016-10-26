@@ -23,30 +23,35 @@ $(document).ready(function(){
     $.material.init();
     headerTemplate = Handlebars.compile($(header).html());
     $('#content').append(headerTemplate());
-    function statusChangeCallback(response) {
-        console.log(response);
-    }
-    var checkLoginState = function () {
-        FB.getLoginStatus(function(response) {
-            statusChangeCallback(response);
-        });
-    }
+
+    
     $('#facebook_login').on('click', function(){
-        checkLoginState();
+        FB.login(function(res) {
+                if (res.status === 'connected') {
+                    $('#create').show();
+                } else {
+                    $('#create').hide();
+                }
+            });
     })
     FB.init({
         appId      : '307608722910374',
         cookie     : true,  // enable cookies to allow the server to access 
                             // the session
         xfbml      : true,  // parse social plugins on this page
-        version    : 'v2.5' // use graph api version 2.5
+        version    : 'v2.5', // use graph api version 2.5,
+        status: true
     });
-
+    FB.getLoginStatus(function(response) {
+      if (response.status === 'connected') {
+        $('#create').show();
+      }
+     });
     //var html   = $(header).html();
     //console.log()
 
     $('#create').on('click', createNewView.render);
-    crossroads.addRoute('/', landingView.render());
+    crossroads.addRoute('/', landingView.render(0));
 })
 
 });

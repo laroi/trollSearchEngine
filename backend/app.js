@@ -37,6 +37,7 @@ var fileFilter = function (req, file, cb) {
 mongoose.connect('mongodb://localhost:27017/trolls');
 
   app.use(bodyParser({limit: '10mb'}));
+  app.use(bodyParser.json())
   app.use(methodOverride());
 
 // set up the RESTful API, handler methods are defined in api.js

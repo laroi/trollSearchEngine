@@ -21,7 +21,7 @@ define(['../config/config'], function (config) {
         $.ajax({
             url: url, 
             method: 'POST',
-            data: postdata,
+            data: JSON.stringify(postdata),
             dataType: 'JSON',
             contentType: "application/json; charset=utf-8",
             success: function (data){

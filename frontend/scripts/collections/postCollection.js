@@ -3,7 +3,7 @@ define(['controllers/requestController', 'controllers/storeController', 'models/
     var post = function() {
         var posts = [];
         getAllPosts = function (postData, callback) {
-            request.post('/api/posts', postData, function (err, data) {
+            request.post('/api/posts', postData, function (err, status, data) {
                 data.hits.hits.forEach(function (post) {
                     var postObj = new PostModel({
                         _id : post._id,

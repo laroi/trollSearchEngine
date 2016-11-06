@@ -5,9 +5,9 @@ define(['../config/config'], function (config) {
         return JSON.parse(localStorage.getItem('troller')|| "{}")[key]
     };
     set = function (key, value) {
-        var val = JSON.parse(localStorage.getItem('troller'));
+        var val = JSON.parse(localStorage.getItem('troller') || '{}');
         val[key] = value;
-        localStorage.setItem('troller', val);
+        localStorage.setItem('troller', JSON.stringify(val));
         return;
     };
     return {

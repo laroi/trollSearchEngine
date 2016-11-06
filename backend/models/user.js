@@ -10,6 +10,11 @@ var user = new Schema({
     password: {type: String},
     date: {type: Date, default: Date.now},
     profile_img: String,
+    fbId: String,
+    name: String,
+    picture : String,
+    phone : String,
+    gender : String
 });
 
 module.exports = mongoose.model('user', user);

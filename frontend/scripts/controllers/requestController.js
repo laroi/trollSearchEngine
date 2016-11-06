@@ -25,10 +25,10 @@ define(['../config/config'], function (config) {
             dataType: 'JSON',
             contentType: "application/json; charset=utf-8",
             success: function (data){
-                callback(undefined, data);
+                callback(undefined, undefined, data);
             },
             error: function(xhr, status, err) {
-                callback(getErrMsg(xhr.responseText), undefined);
+                callback(getErrMsg(xhr.responseText), xhr.status, undefined);
             }
         }); 
     }

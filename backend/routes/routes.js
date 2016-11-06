@@ -13,23 +13,22 @@ var generateToken = function () {
 
     return text;
 }
-var createAccesstoken = function (timeToLive, user, callback) {
+var createAccesstoken = function (timeToLive, user, token, callback) {
     var ttl = 60, token;
     if (timeToLive) {
         ttl = timeToLive
     }
-    token = generateToken()
-    var access = new accessToken({token: token, user: user, ttl: ttl});
-    access.save(function(err, data) {
-        if (!err) {
-            callback({token: token, ttl: ttl, createdAt : Date.now()});
-        }
+    //token = generateToken()
+    var access = {token: token, user: user, ttl: ttl};
+    var options = { upsert: true, new: true, setDefaultsOnInsert: true };
+    accessToken.findOneAndUpdate({user: user}, access, options, function(err, data) {
+        callback(err, data);
     })
 }
 var verifytoken = function (token, callback) {
 
     accessToken.findOne({token: token}, function(err, data) {
-        if (!err) {
+        if (!err && data) {
             var date = Date.now();
             if ((date - data.createdAt)/1000 > (ttl * 60)) {
                 callback(undefined, data);
@@ -40,6 +39,17 @@ var verifytoken = function (token, callback) {
         }
     });
 }
+var init = function () {
+    var appTokenUrl = 'https://graph.facebook.com/oauth/access_token?client_id=307608722910374&client_secret=6dec5610c25fa4cc814aa30c130d0a39&grant_type=client_credentials';
+    request.get(appTokenUrl, function(err, data) {
+        if (!err) {
+            facebook_app_access = data.body;
+            console.log('Got Access token ' + data.body);
+        } else {
+            console.error('error in getting access token');
+        }
+    });
+}();
 var routes = function () {
     register = function (req, res) {
         if (req.body.email && req.body.password) {
@@ -74,9 +84,36 @@ var routes = function () {
             res.status(400).send({err:"Parameters required"});
         }
     };
+    addUser = function(req, res) {
+        var userObj = {
+            fbId : req.body.id,
+            name : req.body.name,
+            picture : req.body.picture,
+            email : req.body.email,
+            phone : req.body.phone,
+            gender : req.body.gender
+        };
+        var options = { upsert: true, new: true, setDefaultsOnInsert: true };
+        User.findOneAndUpdate({email: userObj.email}, userObj, options, function(err, user) {
+            if (!err) {
+                createAccesstoken(undefined, req.body.email, req.body.accessToken, function(accessErr, data) {
+                    if(!accessErr) {
+                        console.log('user created ' + userObj.email)
+                        res.status(200).send({'user': userObj.email});
+                    } else {
+                        console.error(JSON.stringify(accessErr))
+                        res.status(500).send();
+                    }
+                });
+            } else {
+                console.error(JSON.stringify(err))
+                res.status(500).send();
+            }
+        });
+    };
     login = function (req, res) {
-    var email,
-        password;
+            var email,
+            password;
         if (req.body.email && req.body.password) {
             email = req.body.email;
             password = req.body.password;
@@ -95,7 +132,6 @@ var routes = function () {
         } else {
             res.status(400).send({err:"Parameters required"})
         }
-    
     }
     updatePassword = function (req, res) {
         if (req.body.password && req.body.username && req.query.token) {
@@ -117,62 +153,51 @@ var routes = function () {
     verifyUser = function (req, res) {
         var code = req.query.vcode,
             email = req.query.email;
-            User.findOne({where: {email: email, verification: code}}, function (err, data) {
-                if (!err) {
-                    createAccesstoken(undefined, data.id, function (token) {
-                        delete userData.password;
-                        res.status(200).send(JSON.stringify({token: token, user: data}));
-                    });
-                } else {
-                    res.status(404).send({err: 'User not found'});
-                }
-            });
-        
+        User.findOne({where: {email: email, verification: code}}, function (err, data) {
+            if (!err) {
+                createAccesstoken(undefined, data.id, function (token) {
+                    delete userData.password;
+                    res.status(200).send(JSON.stringify({token: token, user: data}));
+                });
+            } else {
+                res.status(404).send({err: 'User not found'});
+            }
+        });
     };
     verifyFaceToken = function(req, res) {
+        if (!req.body.authResponse) {
+            res.status(400).send();
+            return;
+        }
         var authResp = req.body.authResponse;        
-        var checkToken = function(){
-            var url = 'https://graph.facebook.com/debug_token?input_token='+authResp.accessToken+'&'+facebook_app_access;
-            request.get(url, function(checkErr, checkData) {
-                var body = JSON.parse(checkData.body)
-                if (!checkErr && checkData.statusCode !== 400 ) {
-                    if (authResp.is_valid && authResp.userID===body.user_id) {
-                        res.status(200).send();
-                    } else {
-                        res.status(401).send();
-                    }
+        var url = 'https://graph.facebook.com/debug_token?input_token='+authResp.accessToken+'&'+facebook_app_access;
+        console.log(url);
+        request.get(url, function(checkErr, checkData) {
+            if (!checkErr) {
+                var body = checkData.body
+                body = JSON.parse(body);
+                if (body.data && body.data.is_valid && authResp.userID===body.data.user_id) {
+                    User.findOne({fbId: authResp.userID}, function(userErr, userData){
+                        if (!userErr && userData) {
+                            createAccesstoken(undefined, authResp.userID, authResp.accessToken, function(err, data) {
+                                if(!err) {
+                                    res.status(200).send();
+                                } else {
+                                    res.status(500).send();
+                                }
+                            }) ;    
+                        } else {
+                            res.status(404).send();
+                        }
+                    });
                 } else {
-                    
-                    console.log(body)
-                    if (body.error.code === 100) {
-                        console.log('app access token not found, fetching new access token')
-                        var appTokenUrl = 'https://graph.facebook.com/oauth/access_token?client_id=307608722910374&client_secret=6dec5610c25fa4cc814aa30c130d0a39&grant_type=client_credentials';
-                        request.get(appTokenUrl, function(err, data) {
-                            if (!err) {
-                                facebook_app_access = data.body;
-                                url = 'https://graph.facebook.com/debug_token?input_token='+authResp.accessToken+'&'+facebook_app_access;
-                                console.log(url);
-                                 request.get(url, function(checkErr, checkData) {
-                                    if (!checkErr && checkData.statusCode !== 400 ) {
-                                    console.log('data', JSON.stringify(checkData));
-                                        res.status(200).send();
-                                    } else {
-                                        res.status(500).send();
-                                    console.error('error in getting access token')
-                                    }
-                                });
-                            } else {
-                                console.error('error in getting access token')
-                            }
-                        });
-                    } else {
-                        console.error(checkErr)
-                    }
+                    res.status(401).send();
                 }
-            });
-        }()
-        
-        
+            } else {
+                console.error(checkErr);
+                res.status(500).send();
+            }
+        });
     };
     logout = function (req, res) {};
     listAllPosts = function (req, res) {};
@@ -184,7 +209,8 @@ var routes = function () {
         login: login,
         updatePassword: updatePassword,
         verifyUser: verifyUser,
-        verifyFaceToken: verifyFaceToken
+        verifyFaceToken: verifyFaceToken,
+        addUser: addUser
     }
 }
 

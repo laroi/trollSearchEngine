@@ -17,23 +17,15 @@ requirejs.config({
 });
 
 // Start the main app logic.
-requirejs(['views/landing/landing', 'text!views/components/mainHeader.html', 'views/create/create'],
-function (landingView, header, createNewView) {
+requirejs(['views/landing/landing', 'controllers/userController', 'text!views/components/mainHeader.html', 'views/create/create'],
+function (landingView, user, header, createNewView) {
 $(document).ready(function(){
     $.material.init();
     headerTemplate = Handlebars.compile($(header).html());
     $('#content').append(headerTemplate());
 
     
-    $('#facebook_login').on('click', function(){
-        FB.login(function(res) {
-                if (res.status === 'connected') {
-                    $('#create').show();
-                } else {
-                    $('#create').hide();
-                }
-            });
-    })
+    user.init();
     FB.init({
         appId      : '307608722910374',
         cookie     : true,  // enable cookies to allow the server to access 
@@ -42,11 +34,7 @@ $(document).ready(function(){
         version    : 'v2.5', // use graph api version 2.5,
         status: true
     });
-    FB.getLoginStatus(function(response) {
-      if (response.status === 'connected') {
-        $('#create').show();
-      }
-     });
+
     //var html   = $(header).html();
     //console.log()
 

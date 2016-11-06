@@ -134,6 +134,8 @@ var routes = function () {
                 if (!err) {
                     res.status(200).send(JSON.stringify(data));
                     Post.update({_id: id}, { $inc: {views:1}})
+                    data.views = data.views+1;
+                    elastic.update(id, data);
                 } else {
                     console.error(JSON.stringify(err));
                     res.status(500).send(err)

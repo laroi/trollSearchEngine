@@ -193,6 +193,20 @@ var elastic = function () {
             callback(error, response);
         });
     }
+    var updateDoc = function (id, doc, callback) {
+        client.update({
+            index: 'trolls',
+            id: id,
+            type: 'post',
+            body: {
+                doc: doc
+            }
+        }, function(err, data){
+            if (callback && typeof callback === 'function') {
+                callback(err, data);
+            }
+        });
+    }
     return {
         init: init,
         putDoc: putDoc,

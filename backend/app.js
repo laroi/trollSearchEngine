@@ -66,8 +66,8 @@ function isAuthenticated(req, res, next) {
 
 app.use('/images', express.static(__dirname + '/uploads'));
 app.post('/login', route.login);
-app.post('/token', route.verifyUser);
-app.post('/user', route.register);
+app.post('/token', route.verifyFaceToken);
+app.post('/user', route.addUser);
 app.put('/user', isAuthenticated, route.updatePassword);
 app.get('/test', postRoute.test)
 app.post('/posts', postRoute.getPosts);

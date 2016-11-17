@@ -16,7 +16,10 @@ var post = new Schema({
     views: {type: Number},
     downloads: {type: Number},
     description: {type: String},
-    imageUrl: {type: String, required: true},
+    image: {
+        url : {type: String, required: true},
+        type: {type: String, required: true} 
+    },
     tags:[String],
     movie: {type: String},
     language: {type: String},

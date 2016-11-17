@@ -11,7 +11,7 @@ define(['controllers/requestController', 'controllers/storeController', 'models/
                        	title: post._source.title,
                         type: post._source.type,
                         isAdult: post._source.isAdult,
-                        imageUrl: post._source.imageUrl,
+                        imageUrl: post._source.image.url,
 				        description: post._source.description,
 				        tags: post._source.tags,
 				        movie: post._source.movie,

@@ -14,7 +14,8 @@ var user = new Schema({
     name: String,
     picture : String,
     phone : String,
-    gender : String
+    gender : String,
+    favorites:[String]
 });
 
 module.exports = mongoose.model('user', user);

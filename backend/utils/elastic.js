@@ -14,7 +14,12 @@ var elastic = function () {
                     title: {"type" : "string"},
                     type: {"type" : "string", "index" : "not_analyzed"},
                     isAdult: {"type" : "boolean", "index" : "not_analyzed"},
-                    imageUrl: {"type" : "string", "index" : "not_analyzed"},
+                    image: {"type" : "object", 
+                        "properties" : {
+                            "url" : {"type" : "string", "index" : "not_analyzed"},
+                            "type" : {"type" : "string", "index" : "not_analyzed"}
+                        }
+                    },
                     descriptions: {"type" : "string"},
                     likes: {"type": "integer",},
                     views: {"type": "integer"},
@@ -77,7 +82,7 @@ var elastic = function () {
                 title: doc.title,
                 type: doc.type,
                 isAdult : doc.isAdult,
-                imageUrl: doc.imageUrl,
+                image: doc.image,
                 descriptions: doc.descriptions,
                 tags: doc.tags,
                 movie: doc.movie,
@@ -116,7 +121,7 @@ var elastic = function () {
             body: body
         }, function (error, response) {
             if (!error) {
-                console.log('Put document ');
+                console.log('Put document ' + response._id);
             } else {
                 console.error('Problem in putting doc', JSON.stringify(error))
             }

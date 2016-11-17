@@ -3,6 +3,7 @@ var elastic = require('../utils/elastic');
 var uploadPath = __dirname + '/../uploads/';
 var uuid = require('uuid');
 var fs = require('fs');
+var path = require('path');
 var routes = function () {
     elastic.init();
     var test = function (req, res) {
@@ -58,7 +59,7 @@ var routes = function () {
                     obj.description = description;
                     obj.tags = tags;
                     obj.movie = movie;
-                    obj.imageUrl = '/images/'+filename;
+                    obj.image = {url: '/images/'+filename, type: req.body.image.type};
                     obj.language = language;
                     obj.actors = actors;
                     obj.characters = characters;
@@ -68,7 +69,8 @@ var routes = function () {
                     postObj = new Post(obj);
                     postObj.save(function(saveErr, saveData) {
                         if (!saveErr) {
-                            obj._id = saveData.id
+                            console.log('Saved Post ' + saveData.id)
+                            obj.id = saveData.id
                             elastic.putDoc(obj, function(err, data) {
                                 if(!err) {
                                     res.status(201).send(saveData);
@@ -188,6 +190,36 @@ var routes = function () {
                 })  
             }
         })
+    },
+    downloadImage = function (req, res){
+        postId = req.params.id;
+        Post.findById(postId, function(err, post){
+            if (!err) {
+                var fileName = post.image.url.split('/')[2]
+                fs.stat(uploadPath+fileName, function(statErr, statData) {
+                    if (!statErr) {
+                        res.writeHead(200, {
+                            'Content-Type': 'image/'+post.image.type,
+                            'Content-Length': statData.size,
+                            'Access-Control-Allow-Origin': '*',
+                            'Content-Disposition': 'attachment; filename='+fileName
+                        });
+                        var readStream = fs.createReadStream(uploadPath+fileName);
+                        readStream.pipe(res);
+                        Post.update({_id: postId}, { $inc: {downloads:1}})
+                        data.downloads = data.downloads+1;
+                        elastic.update(id, data);
+                    } else {
+                        console.error(JSON.stringify(statErr));
+                        res.status(500).send();
+                    }                
+                })
+                
+            } else {
+                console.error(JSON.stringify(err));
+                res.status(500).send();
+            }
+        })
     }
     
     return { 
@@ -195,7 +227,8 @@ var routes = function () {
         post: post,
         getPost: getPost,
         getPosts: getPosts,
-        updatePost: updatePost
+        updatePost: updatePost,
+        downloadImage: downloadImage
     }
 }
 

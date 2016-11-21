@@ -14,13 +14,13 @@
                 <div class="form-group">
                    <div class="form-group label-floating">
                     <label for="title" class="control-label">Title</label>
-                    <input type="text" class="form-control" id="title">
+                    <input type="text" class="form-control" id="title" value={{post.title}}>
                   </div>
                 </div>
                 <div class="form-group">
                     <div class="form-group label-floating">
                         <label for="movie" class="control-label">Movie</label>
-                        <input type="text" class="form-control" id="movie">
+                        <input type="text" class="form-control" id="movie" value={{post.movie}}>
                     </div>
                 </div>
                 <div class="form-group row">
@@ -36,13 +36,13 @@
                 <div class="form-group">
                     <div class="form-group label-floating">
                         <label for="event" class="control-label">Event</label>
-                        <input type="text" class="form-control" id="event">
+                        <input type="text" class="form-control" id="event" value={{post.movie}}>
                     </div>
                 </div>
             </div>
             <div class="create-right col-xs-4 col-md-4 col-lg-4">
                 <div class="img-preview-cont">
-                    <img class="img-preview" width="100%" height="100%">
+                    <img class="img-preview" width="100%" height="100%" src="{{post.imageUrl}}">
                 </div>
             </div>
         </div>
@@ -51,14 +51,14 @@
               <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
                   <div class="togglebutton">
-                    <label><input type="checkbox" id="isClean"> Clean</label>
+                  <label><input type="checkbox" id="isClean"> Clean</label>
                   </div>
                 </div>
               </div>
               <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
                   <div class="togglebutton">
-                    <label><input type="checkbox" id="isAdult" > Adult</label>
+                  <label><input type="checkbox" id="isAdult"> Adult</label>
                   </div>
                 </div>
               </div>

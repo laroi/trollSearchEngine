@@ -10,6 +10,8 @@ define(['controllers/requestController', 'controllers/storeController', 'models/
                         userId: post._source.userId,
                        	title: post._source.title,
                         type: post._source.type,
+                        views: post._source.views,
+                        downloads: post._source.downloads,
                         isAdult: post._source.isAdult,
                         imageUrl: post._source.image.url,
 				        description: post._source.description,
@@ -25,8 +27,19 @@ define(['controllers/requestController', 'controllers/storeController', 'models/
                 callback(err, posts)
             });
         }
+        getPostById = function(id) {
+            var retPost;
+            for(var i = 0; i < posts.length; i += 1) {
+                if (posts[i]._id === id) {
+                    retPost = posts[i];
+                    break;
+                }
+            }
+            return retPost;
+         }
         return  {
-           getAllPosts: getAllPosts
+           getAllPosts: getAllPosts,
+           getPostById: getPostById
         };
         
     };

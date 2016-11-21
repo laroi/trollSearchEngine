@@ -13,10 +13,22 @@ define(['../config/config'], function (config) {
                 callback(undefined, data);
             },
             error: function(xhr, status, err) {
-                callback(getErrMsg(xhr.responseText), undefined);
+                callback(getErrMsg(xhr.responseText));
             }
         }); 
     }
+    getImage = function (url, callback) {
+        $.ajax({
+            url: url, 
+            method: 'GET',
+            success: function (data){
+                callback(undefined, data);
+            },
+            error: function(xhr, status, err) {
+                callback(getErrMsg(xhr.responseText));
+            }
+        }); 
+    } 
     post = function (url, postdata,  callback) {
         $.ajax({
             url: url, 
@@ -28,7 +40,7 @@ define(['../config/config'], function (config) {
                 callback(undefined, undefined, data);
             },
             error: function(xhr, status, err) {
-                callback(getErrMsg(xhr.responseText), xhr.status, undefined);
+                callback(getErrMsg(xhr.responseText), xhr.status);
             }
         }); 
     }
@@ -54,7 +66,20 @@ define(['../config/config'], function (config) {
                 callback(getErrMsg(xhr.responseText), undefined);
             }
         }); 
-    }
+    };
+    putImage = function (url, postData, callback) {
+        $.ajax({
+            url: url, 
+            method: 'PUT',
+            data: postData,
+            success: function (data){
+                callback(undefined, data);
+            },
+            error: function(xhr, status, err) {
+                callback(getErrMsg(xhr.responseText), undefined);
+            }
+        }); 
+    };
     put = function (url, postdata, contenttype, callback) {
         $.ajax({
             url: url, 
@@ -74,7 +99,9 @@ define(['../config/config'], function (config) {
         get: get,
         post: post,
         put: put,
-        postImage: postImage
+        postImage: postImage,
+        getImage: getImage,
+        putImage: putImage
     }
 
 })

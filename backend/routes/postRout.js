@@ -4,6 +4,20 @@ var uploadPath = __dirname + '/../uploads/';
 var uuid = require('uuid');
 var fs = require('fs');
 var path = require('path');
+var access = require('../models/accessToken')
+var saveFile = function(fileLoc, image, callback){
+    if (image && fileLoc) {
+        fs.writeFile(fileLoc, image.image, 'base64', function(fileErr) {
+            if (!fileErr) {
+                callback(undefined, fileLoc)
+            } else {
+                callback(filErr, undefined)
+            }
+        });
+    } else {
+        callback();
+    }
+}
 var routes = function () {
     elastic.init();
     var test = function (req, res) {
@@ -12,7 +26,7 @@ var routes = function () {
     },
     isOwner = function (model, id, token, callback) {
         model.find({userId: id}, function(docErr, docData) {
-            access.findOne({token: req.query.accessToken}, function(err, data) {
+            access.findOne({token: token}, function(err, data) {
                 if (!err) {
                     if (data.user = docData.userId) {
                         console.log('ownership verified');
@@ -20,19 +34,22 @@ var routes = function () {
                         return;
                     } else {
                         console.log('failed to verify ownership');
-                        callback({err: 'failed to verify ownership'});
+                        //callback({err: 'failed to verify ownership'});
+                        callback();
                         return;
                     }
                 } else {
                     console.log('token not found');
-                    callback(err)
+                    //callback(err)
+                    callback();
                     return;
                 }
             });
         })
     },
     post = function(req, res) {
-        var userId = req.body.userId,
+        var _id = req.body._id || undefined,
+            userId = req.body.userId,
             title = req.body.title,
             type = req.body.type,
             isAdult = req.body.isAdult,
@@ -75,10 +92,12 @@ var routes = function () {
                                 if(!err) {
                                     res.status(201).send(saveData);
                                 } else {
+                                    console.error(JSON.stringify(err))
                                     res.status(500).send({err: 'Could not save post'});
                                 }
                             });                
                         } else {
+                            console.error(JSON.stringify(saveErr))
                             res.status(500).send({err: 'Could not save post'});
                         }
                     });
@@ -88,7 +107,9 @@ var routes = function () {
                 }
             });
         } else {
+            console.error('Params not provided');
             res.status(400).send({err: 'Bad Parameter'});
+            return;
         }
     },
     getPosts = function (req, res) {
@@ -149,47 +170,71 @@ var routes = function () {
     },
     updatePost = function (req, res) {
         isOwner(Post, req.body.userId, req.query.accessToken, function (err) {
-            var updateObj = {},
-                doc = req.body.doc,
-                id = req.body._id;
-            if (!err) {
-                if (doc.title) {
-                    updateObj.title = doc.title
+            if (!err) {                
+                var updateObj = {},
+                doc = req.body,
+                id = doc._id;
+                if (req.body.userId && req.body.type) {
+                if (req.body.image) {
+                    var filename = req.body.image.name;
+                    var fileLoc = uploadPath + filename;
                 }
-                if (doc.type) {
-                    updateObj.type = doc.type
-                }
-                if (doc.description) {
-                    updateObj.description = doc.description
-                }
-                if (doc.tags) {
-                    updateObj.tags = doc.tags
-                }
-                if (doc.movie) {
-                    updateObj.movie = doc.movie
-                }
-                if (doc.language) {
-                    updateObj.language = doc.language
-                }
-                if (doc.actors) {
-                    updateObj.actors = doc.actors
-                }
-                if (doc.characters) {
-                    updateObj.characters = doc.characters
-                }
-                if (doc.event) {
-                    updateObj.event = doc.event
-                }
-                Post.update({_id: id}, {$set: updateObj}, function(err, numAffected) {
-                    if (!err) {
-                        res.status(200).send();
+                saveFile(fileLoc, req.body.image, function(fileErr, imageLoc) {
+                    if (!fileErr) {
+                        if (doc.title) {
+                            updateObj.title = doc.title
+                        }
+                        if (doc.type) {
+                            updateObj.type = doc.type
+                        }
+                        if (doc.description) {
+                            updateObj.description = doc.description
+                        }
+                        if (doc.tags) {
+                            updateObj.tags = doc.tags
+                        }
+                        if (doc.movie) {
+                            updateObj.movie = doc.movie
+                        }
+                        if (doc.language) {
+                            updateObj.language = doc.language
+                        }
+                        if (doc.actors) {
+                            updateObj.actors = doc.actors
+                        }
+                        if (doc.characters) {
+                            updateObj.characters = doc.characters
+                        }
+                        if (doc.event) {
+                            updateObj.event = doc.event
+                        }
+                        Post.update({_id: id}, {$set: updateObj}, function(err, numAffected) {
+                            if (!err) {
+                                console.log('Updated post ' + id + ' in database');
+                                elastic.updateDoc(id, updateObj, function(err, data) {
+                                    if(!err) {
+                                        console.log('Updated post ' + id + ' in elasticsearch');
+                                        res.status(200).send();
+                                    } else {
+                                        res.status(500).send({err: 'Could not save post'});
+                                    }
+                                });           
+                            } else {
+                                console.error('Could not update post', err);
+                                res.status(500).send({'err':'Something went wrong'})
+                            }
+                        }) 
                     } else {
-                        console.error('Could not update post', err);
+                        console.error('Could not update post', fileErr);
                         res.status(500).send({'err':'Something went wrong'})
                     }
-                })  
+                });
             }
-        })
+        } else {
+            console.error('Could not update post', err);
+            res.status(401).send({'err':'Something went wrong'})
+        }
+    });
     },
     downloadImage = function (req, res){
         postId = req.params.id;
@@ -207,8 +252,8 @@ var routes = function () {
                         var readStream = fs.createReadStream(uploadPath+fileName);
                         readStream.pipe(res);
                         Post.update({_id: postId}, { $inc: {downloads:1}})
-                        data.downloads = data.downloads+1;
-                        elastic.update(id, data);
+                        post.downloads = post.downloads+1;
+                        elastic.updateDoc(postId, post);
                     } else {
                         console.error(JSON.stringify(statErr));
                         res.status(500).send();

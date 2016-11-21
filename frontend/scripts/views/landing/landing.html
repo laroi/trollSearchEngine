@@ -4,9 +4,22 @@
     {{#each posts}}
     <div class="col-sm-2">
           <div class="panel panel-default">
-            <div class="panel-body">
+            <div id={{this._id}} class="panel-body">
                 <div class="thumbImgCont">
                     <img class="thumbImg" src={{this.imageUrl}}>
+                </div>
+                <div class="bottom-panel">
+                    <div class="info-panel">
+                        <div class="pan-info views">{{this.views}}</div>
+                        <div class="pan-info downloads">{{this.downloads}}</div>
+                        <div class="pan-info user"></div>
+                    </div>
+                    <div class="button-panel">
+                        <a href="/api/image/{{this._id}}" > <div class="pan-btn download"></div></a>
+                        <div class="pan-btn favorite"></div>
+                        <div class="pan-btn edit"></div>
+                        <div class="pan-btn use"></div>
+                    </div>
                 </div>
             </div>
           </div>

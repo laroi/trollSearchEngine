@@ -215,7 +215,8 @@ var elastic = function () {
     return {
         init: init,
         putDoc: putDoc,
-        getDocs: getDocs
+        getDocs: getDocs,
+        updateDoc: updateDoc
     }
 }
 

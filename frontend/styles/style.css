@@ -23,3 +23,70 @@
 #create {
     display: none;
 }
+.info-panel {
+    float:left;
+    
+}
+.button-panel {
+    float: right;
+}
+.views {
+    height:30px;
+    width:16px;
+    background-image: url('../image/views.png');  
+}
+.downloads {
+    height:30px;
+    width:16px;
+    background-image: url('../image/download.png');  
+}
+.pan-info {
+    line-height:3;
+    text-align:center;
+    background-repeat: no-repeat;
+    background-attachment: local;
+    background-position: top center;
+    float:left;
+}
+.download{
+    background-image: url('../image/download.png');
+}
+.favorite {
+    background-image: url('../image/fav.png');
+}
+.edit {
+    background-image: url('../image/edit.png');
+}
+.use {
+    background-image: url('../image/use.png');
+}
+.download:hover{
+    background-image: url('../image/download_hvr.png');
+}
+.favorite:hover {
+    background-image: url('../image/fav_hvr.png');
+}
+.edit:hover {
+    background-image: url('../image/edit_hvr.png');
+}
+.use:hover {
+    background-image: url('../image/use_hvr.png');
+}
+.pan-btn {
+    cursor: pointer;
+    background-repeat: no-repeat;
+    background-attachment: local;
+    background-position: top center;
+    float:right;
+    margin-right:2px;
+    margin-left:2px;
+    height: 24px;
+    width: 24px;
+}
+.bottom-panel {
+    padding-top:5px;
+    margin-top:5px;
+}
+.bottom-panel, .panel-body, .info-panel, .button-panel {
+    overflow:hidden;
+}

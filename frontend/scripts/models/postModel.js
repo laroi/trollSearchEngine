@@ -29,6 +29,8 @@ define(['controllers/requestController', 'controllers/storeController'], functio
 				imageUrl: inPost.imageUrl || '',
 				tags: inPost.tags || [],
 				movie: inPost.movie || '',
+				views: inPost.views || 0,
+				downloads: inPost.downloads || 0,
 				language: inPost.language || '',
 				actors: inPost.actors || [],
 				characters: inPost.characters || [],

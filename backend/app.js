@@ -60,7 +60,8 @@ function isAuthenticated(req, res, next) {
         });
     } else {
         console.log('access token not provided');
-        res.redirect('/');
+        //res.redirect('/');
+        next();
     }
 }
 

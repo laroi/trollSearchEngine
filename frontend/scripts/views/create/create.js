@@ -6,14 +6,20 @@ define([
      var source   = $(html).html(),
         template = Handlebars.compile(source),
         render;
-        var createNew = function () {
+        var createNew = function (post) {
             var render;
-            var html = template();
-            $('body').append(html);
-            $('#create-new-form').modal({
-                show: false
-            }); 
-            render = function () {
+            render = function (e, post) {
+             var tags,
+                actors,
+                characters;
+                post ? tags = post.tags : tags = [];
+                post ? actors = post.actors : actors = [];
+                post ? characters = post.characters : characters = [];
+                var html = template({post: post});
+                $('#createModel').empty().append(html);
+                 $('#create-new-form').modal({
+                    show: false
+                }); 
                 var imageData = '';
                 var uploadMeme = function () {
                     var validate = function(){
@@ -24,7 +30,7 @@ define([
                         if ($('#movie').val() == '') {
                             isValidate = false
                         }
-                        if(imageData == ''){
+                        if(!(post && post._id) && imageData == ''){
                             isValidate = false;
                         }
                         return isValidate;
@@ -33,6 +39,7 @@ define([
                         var date = new Date();
                         var url = '/api/post',
                             postData = {
+                                title: $('#title').val().trim(),
                                 image: imageData,
                                 userId: store.get('userId') || 'test',
                                 type:$("#isClean").is(":checked")?'clean':'default',
@@ -47,9 +54,17 @@ define([
                                 createdAt: date.toISOString(),
 				                lastModified: date.toISOString()
                             }
-                            request.postImage(url, postData, function(err, data) {
-                                callback(err, data)
-                            });
+                            if (post && post._id) {
+                                url += '/'+ post._id;
+                                postData._id = post._id;
+                                request.putImage(url, postData, function(err, data) {
+                                    callback(err, data)
+                                });                                
+                            } else {
+                                request.postImage(url, postData, function(err, data) {
+                                    callback(err, data)
+                                });
+                            }
                     }
                     if (validate()) {
                         save(function(err, data) {
@@ -69,8 +84,21 @@ define([
                 }
                 $('#create-new-form').modal('show'); 
                 $("#tags").tagit();
+                tags.forEach(function(tag) {
+                    $("#tags").tagit("createTag", tag);
+                });
                 $("#actors").tagit();
+                actors.forEach(function(actor) {
+                    $("#tags").tagit("createTag", actor);
+                });
                 $("#characters").tagit();
+                characters.forEach(function(character) {
+                    $("#tags").tagit("createTag", character);
+                });
+                //Change or set title
+                if (post && post.title) {
+                    $('.modal-title').empty().html(post.title);
+                }
                 $('#title').on('keyup', function() {
                     if($(this).val()) {
                         $('.modal-title').empty().html($(this).val());
@@ -86,11 +114,19 @@ define([
                             imageData = e.target.result;
                             $('.img-preview').attr('src', imageData);
                             imageData = {type: input.files[0].type.split('/')[1], image:imageData.replace(/^data:image\/(png|jpg|jpeg);base64,/, "")};
+                            if (file.imageUrl) {
+                                imageData.name = imageUrl.split("/")[1]
+                            }
                         }
                         reader.readAsDataURL(input.files[0]);
                     }
                 });
                 $('#create-meme').on('click', uploadMeme)
+                //$('#create-new-form').modal( 'hide' ).data( 'bs.modal', null );
+                $('#create-new-form').on('hidden.bs.modal', function(e)
+                { 
+                    $(this).data('bs.modal', null );
+                }) ;
             };
             return {
                 render: render

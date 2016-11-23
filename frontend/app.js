@@ -17,12 +17,14 @@ requirejs.config({
 });
 
 // Start the main app logic.
-requirejs(['views/landing/landing', 'controllers/userController', 'text!views/components/mainHeader.html', 'views/create/create'],
-function (landingView, user, header, createNewView) {
+requirejs(['views/landing/landing', 'controllers/userController', 'text!views/components/mainHeader.html', 'views/create/create','text!views/components/search.html'],
+function (landingView, user, header, createNewView, search) {
 $(document).ready(function(){
     $.material.init();
     headerTemplate = Handlebars.compile($(header).html());
+    var searchTemplate = Handlebars.compile($(search).html());
     $('#content').append(headerTemplate());
+    $('#search-box').html(searchTemplate());
 
     
     user.init();

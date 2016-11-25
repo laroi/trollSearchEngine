@@ -5,6 +5,9 @@
 .btn-group {
     margin:0;
 }
+#basic-search {
+    width:400px;
+}
 .input-group-btn .btn-group {
     display: flex !important;
 }

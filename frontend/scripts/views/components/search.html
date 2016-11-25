@@ -1,36 +1,29 @@
 <script id="entry-template" type="text/x-handlebars-template">
-<div class="input-group" id="adv-search">
-    <input type="text" class="form-control" placeholder="Search for snippets" />
-    <div class="input-group-btn">
-        <div class="btn-group" role="group">
-            <div class="dropdown dropdown-lg">
-                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="caret"></span></button>
-                <div class="dropdown-menu dropdown-menu-right" role="menu">
-                    <form class="form-horizontal" role="form">
-                      <div class="control-group">
-                        <label for="filter">Filter by</label>
-                        <select class="controls">
-                            <option value="0" selected>All Snippets</option>
-                            <option value="1">Featured</option>
-                            <option value="2">Most popular</option>
-                            <option value="3">Top rated</option>
-                            <option value="4">Most commented</option>
-                        </select>
-                      </div>
-                      <div class="control-group">
-                        <label for="contain">Author</label>
-                        <input class="controls" type="text" />
-                      </div>
-                      <div class="control-group">
-                        <label for="contain">Contains the words</label>
-                        <input class="controls" type="text" />
-                      </div>
-                      <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
-                    </form>
+<div class="form-inline" id="adv-search">
+    <div class= "form-group">
+        <input type="text" class="form-control" id="basic-search" placeholder="Search for snippets" />
+    </div>
+    <div class="dropdown btn-group dropdown-lg form-group">
+        <button type="button" class="btn btn-default dropdown-toggle form-group" data-toggle="dropdown" aria-expanded="false"><span class="caret"></span></button>
+        <div class="dropdown-menu dropdown-menu-right">
+            <div class="form-horizontal">
+                <div class="form-group"> 
+                    <input type="text" class="form-control" placeholder="Search for snippets" />
+                </div>
+                <div class="form-group"> 
+                    <input type="text" class="form-control" placeholder="Search for snippets" />
+                </div>
+                <div class="form-group"> 
+                    <input type="text" class="form-control" placeholder="Search for snippets" />
+                </div>
+                <div class="form-group"> 
+                    <input type="text" class="form-control" placeholder="Search for snippets" />
                 </div>
             </div>
-            <button type="button" class="btn btn-primary"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
         </div>
+    </div>
+    <div class= "form-group">
+        <button type="button" class="btn btn-primary"><span class="glyphicon glyphicon-search form-group" aria-hidden="true"></span></button>
     </div>
 </div>
 </div>

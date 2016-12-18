@@ -76,5 +76,6 @@ app.get('/post/:id', postRoute.getPost);
 app.put('/post/:id', isAuthenticated, postRoute.updatePost)
 app.post('/post', postRoute.post)
 app.get('/image/:id', postRoute.downloadImage);
+app.get('/suggestions', postRoute.autoSuggestion);
 app.listen(3000);
 console.log("Express server listening on port 3000");

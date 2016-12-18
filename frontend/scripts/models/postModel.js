@@ -23,6 +23,7 @@ define(['controllers/requestController', 'controllers/storeController'], functio
             return  {
                 _id: inPost._id || "",
                	title: inPost.title || '',
+               	userId: inPost.userId || '',
                 type: inPost.type || '',
                 isAdult: inPost.isAdult || '',
 				description: inPost.description || '',
@@ -37,6 +38,7 @@ define(['controllers/requestController', 'controllers/storeController'], functio
 				event: inPost.event || '',
 				lastModified: inPost.lastModified,
 				createdAt: inPost.createdAt,
+				isOwner: false,
                 save: save
             };
         

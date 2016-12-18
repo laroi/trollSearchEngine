@@ -38,7 +38,55 @@ var elastic = function () {
                     characters: {"type" : "string"},
                     event: {"type" : "string"},
                     createdAt: {"type" : "date"},
-                    lastModified: {"type": "date"}
+                    lastModified: {"type": "date"},
+                    titleSuggest: {
+                        type: "completion",
+                        analyzer: "simple",
+                        payloads: true,
+                        preserve_separators: true,
+                        preserve_position_increments: true,
+                        max_input_length: 50
+                    },
+                    tagSuggest: {
+                        type: "completion",
+                        analyzer: "simple",
+                        payloads: true,
+                        preserve_separators: true,
+                        preserve_position_increments: true,
+                        max_input_length: 50
+                    },
+                    actorSuggest: {
+                        type: "completion",
+                        analyzer: "simple",
+                        payloads: true,
+                        preserve_separators: true,
+                        preserve_position_increments: true,
+                        max_input_length: 50
+                    },
+                    characterSuggest: {
+                        type: "completion",
+                        analyzer: "simple",
+                        payloads: true,
+                        preserve_separators: true,
+                        preserve_position_increments: true,
+                        max_input_length: 50
+                    },
+                    eventSuggest: {
+                        type: "completion",
+                        analyzer: "simple",
+                        payloads: true,
+                        preserve_separators: true,
+                        preserve_position_increments: true,
+                        max_input_length: 50
+                    },
+                    movieSuggest: {
+                        type: "completion",
+                        analyzer: "simple",
+                        payloads: true,
+                        preserve_separators: true,
+                        preserve_position_increments: true,
+                        max_input_length: 50
+                    }
                 }
             }
             
@@ -95,7 +143,61 @@ var elastic = function () {
                 comments: doc.comments,
                 event: doc.event,
                 createdAt: doc.createdAt,
-                lastModified: doc.lastModified
+                lastModified: doc.lastModified,
+                titleSuggest: {
+                    input: doc.title.split(" "),
+                    output: doc.title,
+                    payload:{
+                        user: doc.userId,
+                        image:  doc.image,
+                        movie: doc.movie
+                    }
+                },
+                tagSuggest: {
+                    input: doc.tags,
+                    output: doc.tags,
+                    payload:{
+                        user: doc.userId,
+                        image:  doc.image,
+                        movie: doc.movie
+                    }
+                },
+                actorSuggest: {
+                    input: doc.actors,
+                    output: doc.actors,
+                    payload:{
+                        user: doc.userId,
+                        image:  doc.image,
+                        movie: doc.movie
+                    }
+                },
+                characterSuggest: {
+                    input: doc.characters,
+                    output: doc.characters,
+                    payload:{
+                        user: doc.userId,
+                        image:  doc.image,
+                        movie: doc.movie
+                    }
+                },
+                eventSuggest: {
+                    input: doc.event.split(" "),
+                    output: doc.event,
+                    payload:{
+                        user: doc.userId,
+                        image:  doc.image,
+                        movie: doc.movie
+                    }
+                },
+                movieSuggest: {
+                    input: doc.movie.split(" "),
+                    output: doc.movie,
+                    payload:{
+                        user: doc.userId,
+                        image:  doc.image,
+                        movie: doc.language
+                    }
+                }
             }
         client.create({
             index: 'trolls',
@@ -171,6 +273,13 @@ var elastic = function () {
             should_array.push({ "match": { "type": options.type }});
         }
         body = {
+            aggs : {
+                posts:{
+                   top_hits:{
+                     size:1
+                   }
+                 }
+            },
             query: {
                 bool: {}
               },
@@ -198,6 +307,44 @@ var elastic = function () {
             callback(error, response);
         });
     }
+    var getSuggestions = function(options, callback) {
+        var fieldMap = {
+            title: 'titleSuggest',
+            tag: 'tagSuggest',
+            actor: 'actorSuggest',
+            character: 'characterSuggest',
+            event: 'eventSuggest',
+            movie: 'movieSuggest'
+        },
+        suggestObj = {
+            suggest: {}
+        };
+        if (Array.isArray(options.fields) && options.fields.length > 0) {
+            options.fields.forEach(function(field) {
+                suggestObj.suggest[field]={text: options.query,
+                    completion : {
+                        field: fieldMap[field]
+                    } 
+                  }
+            });            
+        } else {
+            Object.keys(fieldMap).forEach(function(field) {
+                suggestObj.suggest[field]={text: options.query,
+                    completion : {
+                        field: fieldMap[field]
+                    } 
+                  }
+            });         
+        }
+        console.log('\n' + JSON.stringify(suggestObj) + '\n')
+        client.search({
+            index: 'trolls',
+            type: 'post',
+            body: suggestObj
+        }, function (error, response) {
+            callback(error, response);
+        });
+    }
     var updateDoc = function (id, doc, callback) {
         client.update({
             index: 'trolls',
@@ -216,7 +363,8 @@ var elastic = function () {
         init: init,
         putDoc: putDoc,
         getDocs: getDocs,
-        updateDoc: updateDoc
+        updateDoc: updateDoc,
+        getSuggestions: getSuggestions
     }
 }
 

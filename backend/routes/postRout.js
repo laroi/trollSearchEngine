@@ -143,6 +143,7 @@ var routes = function () {
             opts.type = type;
         elastic.getDocs(opts, function(err, data) {
             if (!err) {
+            console.log(JSON.stringify(data));
                 res.status(200).send(data)
             } else {
                 console.error(JSON.stringify(err));
@@ -265,7 +266,24 @@ var routes = function () {
                 res.status(500).send();
             }
         })
+    },
+    autoSuggestion = function (req, res) {
+        var field = req.query.field,
+        searchTerm = req.query.query;
+        field = field ? field.split(',') : [];
+        if (searchTerm) {
+            elastic.getSuggestions({fields: field, query: searchTerm}, function(err, data) {
+                if (!err) {
+                    res.status(200).send(data.suggest)
+                } else {
+                    res.status(500).send(err)          
+                }
+            });
+        } else {
+            res.status(400).send({err: 'search term required'});
+        }
     }
+    
     
     return { 
         test: test,
@@ -273,7 +291,8 @@ var routes = function () {
         getPost: getPost,
         getPosts: getPosts,
         updatePost: updatePost,
-        downloadImage: downloadImage
+        downloadImage: downloadImage,
+        autoSuggestion: autoSuggestion
     }
 }
 

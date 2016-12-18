@@ -8,6 +8,20 @@
 #basic-search {
     width:400px;
 }
+.dropdown {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+}
+.advanced-search {
+    width:400px;
+} 
+.dropdown-menu {
+  left: 22%;
+  right: auto;
+  text-align: center;
+  transform: translate(-50%, 0);
+}
 .input-group-btn .btn-group {
     display: flex !important;
 }
@@ -38,6 +52,12 @@
     margin-right:0px;
     
 }
+.se-form {
+    width:100%
+}
+.se_input {
+    color:black!important;
+}
 @media screen and (min-width: 768px) {
     #adv-search {
         width: 500px;
@@ -45,8 +65,5 @@
     }
     .dropdown.dropdown-lg {
         position: static !important;
-    }
-    .dropdown.dropdown-lg .dropdown-menu {
-        min-width: 500px;
     }
 }

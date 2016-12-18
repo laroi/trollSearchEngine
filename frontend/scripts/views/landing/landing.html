@@ -16,8 +16,10 @@
                     </div>
                     <div class="button-panel">
                         <a href="/api/image/{{this._id}}" > <div class="pan-btn download"></div></a>
-                        <div class="pan-btn favorite"></div>
-                        <div class="pan-btn edit"></div>
+                        <div class="pan-btn favorite"></div>                        
+                        {{#if this.isOwner}}
+                            <div class="pan-btn edit"></div>
+                        {{/if}}
                         <div class="pan-btn use"></div>
                     </div>
                 </div>

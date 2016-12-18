@@ -4,6 +4,9 @@ define(['controllers/requestController', 'controllers/storeController', 'models/
         var posts = [];
         getAllPosts = function (postData, callback) {
             request.post('/api/posts', postData, function (err, status, data) {
+                if (!err) {
+                    posts = [];
+                }
                 data.hits.hits.forEach(function (post) {
                     var postObj = new PostModel({
                         _id : post._id,
@@ -22,6 +25,9 @@ define(['controllers/requestController', 'controllers/storeController', 'models/
 				        characters: post._source.characters,
 				        event: post._source.event
 				    });
+				    if (store.get('userID') === post._source.userId) {
+				       postObj.isOwner = true; 
+				    }
 				    posts.push(postObj)
                 });
                 callback(err, posts)

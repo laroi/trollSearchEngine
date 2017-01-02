@@ -57,11 +57,16 @@ var getBasicSuggestion = function () {
           }
 };
 $(document).ready(function(){
-    $.material.init();
+
     headerTemplate = Handlebars.compile($(header).html());
     var searchTemplate = Handlebars.compile($(search).html());
     $('#content').append(headerTemplate());
     $('#search-box').html(searchTemplate());
+    $.material.init();
+    $("#s1").dropdown({"optionClass": "withripple"});
+    $('.dropdown-menu').click(function(e) {
+        e.stopPropagation();
+    });
     $('#basic-search').typeahead({
         source: getBasicSuggestion(),
           updater: function(item) {
@@ -125,7 +130,12 @@ $(document).ready(function(){
     //console.log()
 
     $('#create').on('click', createNewView.render);
-    crossroads.addRoute('/', landingView.render(0));
+    crossroads.addRoute('/#{?query}', landingView.render);
+    window.onhashchange = function(){
+       crossroads.parse(window.location.hash)
+    };
+    window.location.hash='?from=0';
+    
 })
 
 });

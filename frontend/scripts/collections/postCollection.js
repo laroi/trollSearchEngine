@@ -4,6 +4,11 @@ define(['controllers/requestController', 'controllers/storeController', 'models/
         var posts = [];
         getAllPosts = function (postData, callback) {
             request.post('/api/posts', postData, function (err, status, data) {
+                postData.from = postData.from || 1;
+                postData.from = parseInt(postData.from, 10);
+                postData.limit = postData.limit || 10;
+                postData.limit = parseInt(postData.limit, 10);
+                var current = (postData.from  + postData.limit)/postData.limit
                 if (!err) {
                     posts = [];
                 }
@@ -30,7 +35,7 @@ define(['controllers/requestController', 'controllers/storeController', 'models/
 				    }
 				    posts.push(postObj)
                 });
-                callback(err, posts)
+                callback(err, {posts:posts, total: data.hits.total, current: current, limit: postData.limit});
             });
         }
         getPostById = function(id) {

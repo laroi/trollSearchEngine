@@ -1,0 +1,11 @@
+.togglebutton>label {
+    float:left;
+    margin-left:10px;
+}
+.group-lists {
+    float:left
+}
+.group-list {
+    margin-left:10px!important;
+    color:rgba(0,0,0, 0.26)!important;
+}

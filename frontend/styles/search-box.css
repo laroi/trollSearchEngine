@@ -17,9 +17,10 @@
     width:400px;
 } 
 .dropdown-menu {
-  left: 22%;
+  left: 41%;
   right: auto;
   text-align: center;
+  border-radius:0;
   transform: translate(-50%, 0);
 }
 .input-group-btn .btn-group {
@@ -46,11 +47,7 @@
     border-bottom-left-radius: 4px;
 }
 #search-box {
-    margin-top:10px;
-    margin-bottom:0px;
-    margin-left:0px;
-    margin-right:0px;
-    
+    margin-top:0px;
 }
 .se-form {
     width:100%
@@ -66,4 +63,7 @@
     .dropdown.dropdown-lg {
         position: static !important;
     }
+}
+.filter-drop {
+    width: 200px;
 }

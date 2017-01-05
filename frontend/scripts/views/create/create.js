@@ -17,6 +17,7 @@ define([
                 post ? characters = post.characters : characters = [];
                 var html = template({post: post});
                 $('#createModel').empty().append(html);
+                 $.material.init();
                  $('#create-new-form').modal({
                     show: false
                 }); 

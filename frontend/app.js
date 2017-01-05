@@ -56,6 +56,7 @@ var getBasicSuggestion = function () {
             });
           }
 };
+
 $(document).ready(function(){
 
     headerTemplate = Handlebars.compile($(header).html());

@@ -2,10 +2,11 @@ define([
 '../../controllers/requestController',
 '../../controllers/storeController',
 '../../controllers/urlController',
+'../../controllers/highlightController',
 '../../collections/postCollection',
  'text!./landing.html',
  '../create/create'
-], function (request, store, url, postCollections, html, create) {
+], function (request, store, url, highlight, postCollections, html, create) {
      var source   = $(html).html(),
         template = Handlebars.compile(source),
         render;
@@ -13,7 +14,7 @@ define([
             if (postUser === store.get('userID')) {
                 return true;
             } else {
-                return false;
+                return false;highlight
             }
         });
         Handlebars.registerHelper('pageLink', function(total, limit, current) {
@@ -52,6 +53,17 @@ define([
             store.set('from', (((current - 1) * limit)));
             url.navigate();
         };
+        var applyFilter = function (e) {
+            var f_group = $('.grp-list').val(),
+                isPlain = $('.isPlain').is(':checked'),
+                isAdult = $('.isAdult').is(':checked'),
+                isFavorite = $('.isFavorite').is(':checked'),
+                isMine = $('.isMine').is(':checked'),
+                filtObj = {group: f_group, isPlain: isPlain, isAdult: isAdult, isFavorite: isFavorite, isMine: isMine};
+                store.set('filters', filtObj);                    
+                $('.dropdown.open').removeClass('open');
+                url.navigate();
+        };
         var landingView = function () {
             var render;
             store.set('limit', 10);
@@ -70,6 +82,8 @@ define([
                     $('.edit').on('click', editPost);
                     $('.btn-basic-search').off().on('click', search)
                     $('.page-nav').on('click', paginate)
+                    $('.btn-apply-filter').on('click', applyFilter);
+                    highlight.highlight();
                 });              
             }
             return {

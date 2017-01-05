@@ -5,7 +5,7 @@ var nodemailer = require('nodemailer'),
             port: 587,
             auth: {
                 user: 'akbar.ali@mobinius.com',
-                pass: 'welcome123'
+                pass: ''
             },
             secure:false,
             tls: {rejectUnauthorized: false},

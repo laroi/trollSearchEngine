@@ -90,3 +90,29 @@
 .bottom-panel, .panel-body, .info-panel, .button-panel {
     overflow:hidden;
 }
+.highlight-cont{
+    border:1px solid black;
+    padding-left:18px;
+    margin-left:10px;
+    padding-right:5px;
+    padding-top:5px;
+    padding-bottom:5px;
+    background-position: 0;
+}
+.hl-filter {
+background-image: url("../image/filter.png");
+background-repeat: no-repeat;
+}
+.hl-search {
+background-image: url("../image/search.png");
+background-repeat: no-repeat;
+}
+.hl-close {
+width:16px;
+height:16px;
+display: inline-block;
+margin-left:5px;
+cursor:pointer;
+background-image: url("../image/cancel.png");
+background-repeat: no-repeat;
+}

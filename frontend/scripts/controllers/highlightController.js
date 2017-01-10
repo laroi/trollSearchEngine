@@ -2,15 +2,18 @@ define(['./storeController'], function (store) {
     var highlight,
     getHighlight;
     getHighlight = function(type, val, key) {
+    var className ="";
         if (key && val) {
             var updateVal = "";
             if (type === 'filter' && val === true) {
                 updateVal = key;
+                className = 'hl-filter'
             } else {
+                className = 'hl-search'
                 updateVal = key + " : " + val;
             }
             
-            var html = "<div class='highlight-cont'>"+updateVal+"</div>";
+            var html = "<span data-type='" + type + " 'data-key='" + key + "' class=' " + className + " highlight-cont'>"+updateVal+"<span class='hl-close'></span></span>";
             return html;
         }
         return "";
@@ -29,7 +32,7 @@ define(['./storeController'], function (store) {
             filterKeys.forEach(function(key) {
                 html +=  getHighlight('filter', filters[key], key);
             });
-            console.log(html);                                   
+            $('#high-lighter').empty().html(html);
     };
     return {
         highlight: highlight

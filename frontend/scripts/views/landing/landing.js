@@ -64,6 +64,11 @@ define([
                 $('.dropdown.open').removeClass('open');
                 url.navigate();
         };
+        var cancelFilter = function(e) {
+            var type = $(this).parent().attr('data-type'),
+                key = $(this).parent().attr('data-key');
+                console.log(type, key)
+        }
         var landingView = function () {
             var render;
             store.set('limit', 10);
@@ -84,6 +89,7 @@ define([
                     $('.page-nav').on('click', paginate)
                     $('.btn-apply-filter').on('click', applyFilter);
                     highlight.highlight();
+                    $('.hl-close').on('click', cancelFilter)
                 });              
             }
             return {

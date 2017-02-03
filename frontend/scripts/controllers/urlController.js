@@ -4,12 +4,12 @@ define(['./storeController'], function (store) {
         var hash = '';
         hash += '?from=';
         hash += store.get('from') || 0;
-        var search_term = store.get('search'),
+        var search_term = store.get('search_term'),
             filters = store.get('filters') || {},
             filterKeys = Object.keys(filters);
-        if (search_term) {
+        if (search_term.basic_search) {
             hash += '&search=';
-            hash += search_term
+            hash += search_term.basic_search;
         }        
         if(filterKeys.length > 0) {
             filterKeys.forEach(function(key) {

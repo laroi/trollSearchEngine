@@ -5,12 +5,17 @@ define(['./storeController'], function (store) {
     var className ="";
         if (key && val) {
             var updateVal = "";
-            if (type === 'filter' && val === true) {
+            if (type === 'filters') {
                 updateVal = key;
                 className = 'hl-filter'
             } else {
                 className = 'hl-search'
-                updateVal = key + " : " + val;
+                if (typeof val === "object"){
+                    Object.keys(val).forEach(function(va){
+                        updateVal = va + " : " + val[va];
+                    })
+                }
+                
             }
             
             var html = "<span data-type='" + type + " 'data-key='" + key + "' class=' " + className + " highlight-cont'>"+updateVal+"<span class='hl-close'></span></span>";
@@ -19,18 +24,20 @@ define(['./storeController'], function (store) {
         return "";
     }
     highlight = function () {
-        var search = store.get('search'),
+        var search_term = store.get('search_term'),
             advSearch = store.get('advSearch') || {},
             searchKeys = Object.keys(advSearch),
             filters = store.get('filters') || {},
             filterKeys = Object.keys(filters),
             html = '';
-            html +=  getHighlight('search', search, 'search');
+            if (Object.keys(search_term).length>0) {
+                html +=  getHighlight('search_term', search_term, 'basic_search');
+            }
             searchKeys.forEach(function(key) {
                 html +=  getHighlight('search', advSearch[key], key);
             });
             filterKeys.forEach(function(key) {
-                html +=  getHighlight('filter', filters[key], key);
+                html +=  getHighlight('filters', filters[key], key);
             });
             $('#high-lighter').empty().html(html);
     };

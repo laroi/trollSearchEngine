@@ -1,20 +1,20 @@
 define(['./storeController'], function (store) {
     var highlight,
     getHighlight;
-    getHighlight = function(type, val, key) {
+    getHighlight = function(type, key, val) {
     var className ="";
-        if (key && val) {
+        if (key) {
             var updateVal = "";
             if (type === 'filters') {
                 updateVal = key;
                 className = 'hl-filter'
             } else {
                 className = 'hl-search'
-                if (typeof val === "object"){
-                    Object.keys(val).forEach(function(va){
-                        updateVal = va + " : " + val[va];
-                    })
-                }
+                //if (typeof val === "object"){
+                    //Object.keys(val).forEach(function(va){
+                        updateVal = key + ' : ' + val;
+                    //})
+                //}
                 
             }
             
@@ -25,19 +25,16 @@ define(['./storeController'], function (store) {
     }
     highlight = function () {
         var search_term = store.get('search_term'),
-            advSearch = store.get('advSearch') || {},
-            searchKeys = Object.keys(advSearch),
             filters = store.get('filters') || {},
             filterKeys = Object.keys(filters),
             html = '';
-            if (Object.keys(search_term).length>0) {
-                html +=  getHighlight('search_term', search_term, 'basic_search');
+            if (search_term && Object.keys(search_term).length>0) {
+                Object.keys(search_term).forEach(function(sKey) {
+                    html +=  getHighlight('search_term', sKey, search_term[sKey] );
+                });
             }
-            searchKeys.forEach(function(key) {
-                html +=  getHighlight('search', advSearch[key], key);
-            });
             filterKeys.forEach(function(key) {
-                html +=  getHighlight('filters', filters[key], key);
+                html +=  getHighlight('filters', key);
             });
             $('#high-lighter').empty().html(html);
     };

@@ -48,7 +48,7 @@ define([
             }
         }
         var advancedSearch = function(e) {
-            var se_title = $('#basic-search').val().trim(),
+            var se_title = $('#se_title').val().trim(),
             se_tag = $('#se_tag').val().trim(),
             se_movie = $('#se_movie').val().trim(),
             se_actor = $('#se_actor').val().trim(),
@@ -74,7 +74,8 @@ define([
                 advSearchTerm.event = se_event;                
             }
             if (Object.keys(advSearchTerm).length > 0) {
-                store.set('search_term', advSearchTerm) 
+                store.set('search_term', advSearchTerm);
+                $('.dropdown.open').removeClass('open');
                 url.navigate();
             }
         }
@@ -90,7 +91,25 @@ define([
                 isAdult = $('.isAdult').is(':checked'),
                 isFavorite = $('.isFavorite').is(':checked'),
                 isMine = $('.isMine').is(':checked'),
-                filtObj = {group: f_group, isPlain: isPlain, isAdult: isAdult, isFavorite: isFavorite, isMine: isMine};
+                filtObj = {};
+                if (f_group) {
+                    filtObj.group = f_group;
+                }
+                if (f_group) {
+                    filtObj.group = f_group;
+                }
+                if (isPlain) {
+                    filtObj.isPlain = isPlain;
+                }
+                if (isAdult) {
+                    filtObj.isAdult = isAdult;
+                }
+                if (isFavorite) {
+                    filtObj.isFavorite = isFavorite;
+                }
+                if (isMine) {
+                    filtObj.isMine = isMine;
+                }
                 store.set('filters', filtObj);                    
                 $('.dropdown.open').removeClass('open');
                 url.navigate();
@@ -123,7 +142,7 @@ define([
                     $('.btn-basic-search').off().on('click', search)
                     $('.page-nav').on('click', paginate)
                     $('.btn-apply-filter').on('click', applyFilter);
-                    $('#advanced-search').on('click', advancedSearch);
+                    $('#advanced-search').off('click').on('click', advancedSearch);
                     highlight.highlight();
                     $('.hl-close').on('click', cancelFilter)
                 });              

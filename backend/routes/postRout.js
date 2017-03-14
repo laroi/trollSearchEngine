@@ -118,6 +118,7 @@ var routes = function () {
             userId = req.body.userId,
             tags = req.body.tag,
             movie = req.body.movie,
+            group = req.body.group,
             language = req.body.language,
             characters = req.body.character,
             actors = req.body.actor,
@@ -125,22 +126,34 @@ var routes = function () {
             event = req.body.event,
             from = req.body.from,
             order = req.body.order,
+            isAdult = req.body.isAdult,
             opts = {};
             if (search) {
                 opts.search = search;
             } else {
                 opts.title = title;
-                opts.userId = userId;
+                
                 opts.tags = tags;
                 opts.movie = movie;
                 opts.characters = characters;
                 opts.actors = actors;
                 opts.event = event;
-               
+                
+            }
+            if (group) {
+                opts.group = group;
+            }
+            if (isPlain) {
+                opts.type = 'plain';
+            }
+            if (userId) {
+                opts.userId = userId;
+            }
+            if (isAdult) {
+                opts.isAdult = isAdult;
             }
             opts.from = from;
             opts.order = order;
-            opts.type = type;
         elastic.getDocs(opts, function(err, data) {
             if (!err) {
             console.log(JSON.stringify(data));

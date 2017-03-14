@@ -92,10 +92,7 @@ define([
                 isFavorite = $('.isFavorite').is(':checked'),
                 isMine = $('.isMine').is(':checked'),
                 filtObj = {};
-                if (f_group) {
-                    filtObj.group = f_group;
-                }
-                if (f_group) {
+                if (f_group && f_group !== "0") {
                     filtObj.group = f_group;
                 }
                 if (isPlain) {
@@ -108,7 +105,7 @@ define([
                     filtObj.isFavorite = isFavorite;
                 }
                 if (isMine) {
-                    filtObj.isMine = isMine;
+                    filtObj.userId = store.get('userID');
                 }
                 store.set('filters', filtObj);                    
                 $('.dropdown.open').removeClass('open');

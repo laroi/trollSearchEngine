@@ -54,6 +54,12 @@
 .favorite {
     background-image: url('../image/fav.png');
 }
+.star {
+    background-image: url('../image/star.png');
+}
+.star:hover {
+    background-image: url('../image/star_hvr.png');
+}
 .edit {
     background-image: url('../image/edit.png');
 }

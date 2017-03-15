@@ -2,3 +2,4 @@
 *.css~
 *.html~
 backend/uploads
+backend/node_modules

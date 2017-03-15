@@ -143,8 +143,8 @@ var routes = function () {
             if (group) {
                 opts.group = group;
             }
-            if (isPlain) {
-                opts.type = 'plain';
+            if (type) {
+                opts.type = type;
             }
             if (userId) {
                 opts.userId = userId;

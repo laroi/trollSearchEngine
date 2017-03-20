@@ -10,13 +10,6 @@ define([
      var source   = $(html).html(),
         template = Handlebars.compile(source),
         render;
-        Handlebars.registerHelper('isOwner', function(postUser) {
-            if (postUser === store.get('userID')) {
-                return true;
-            } else {
-                return false;
-            }
-        });
         Handlebars.registerHelper('pageLink', function(total, limit, current) {
             var accum = '',
             n = Math.ceil(total/limit),

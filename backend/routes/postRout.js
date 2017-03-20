@@ -20,8 +20,7 @@ var saveFile = function(fileLoc, image, callback){
 }
 var routes = function () {
     elastic.init();
-    var test = function (req, res) {
-        
+    var test = function (req, res) {        
         res.status(200).send();
     },
     isOwner = function (model, id, token, callback) {
@@ -295,8 +294,46 @@ var routes = function () {
         } else {
             res.status(400).send({err: 'search term required'});
         }
-    }
-    
+    },
+    updateLike = function (req, res) {
+        var user = req.body.user,
+            postId = req.params.id;
+        Post.findByIdAndUpdate(postId, {$push: {likes: {user: user, time: new Date().toISOString()}}}, {safe: true, new: true, upsert: true}, function(lkErr, lkData) {
+            if (!lkErr) {
+                elastic.updateDoc(postId, lkData, function(elErr, elData) {
+                    if (!elErr) {
+                        res.status(200).send()
+                    } else {
+                        console.error(erErr);
+                        res.status(500).send({err: erlErr});
+                    }
+                })
+            } else {
+                console.error(lkErr);
+                res.status(500).send({err: lkErr})
+            }            
+        });
+    },
+    updateComment = function (req, res) {
+        var user = req.body.user,
+            comment = req.body.comment,
+            postId = req.params.id;
+        Post.findByIdAndUpdate(postId, {$push: {comments: {userId: user, comment:  comment, date: new Date().toISOString()}}}, {safe: true, new: true, upsert: true}, function(lkErr, lkData) {
+            if (!lkErr) {
+                elastic.updateDoc(postId, lkData, function(elErr, elData) {
+                    if (!elErr) {
+                        res.status(200).send()
+                    } else {
+                        console.error(erErr);
+                        res.status(500).send({err: erlErr});
+                    }
+                })
+            } else {
+                console.error(lkErr);
+                res.status(500).send({err: lkErr})
+            }            
+        });
+    };
     
     return { 
         test: test,
@@ -305,7 +342,9 @@ var routes = function () {
         getPosts: getPosts,
         updatePost: updatePost,
         downloadImage: downloadImage,
-        autoSuggestion: autoSuggestion
+        autoSuggestion: autoSuggestion,
+        updateLike: updateLike,
+        updateComment: updateComment
     }
 }
 

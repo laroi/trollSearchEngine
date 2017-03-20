@@ -12,8 +12,7 @@ var post = new Schema({
     title: {type: String},
     type: {type: String, required: true},
     isAdult: {type: Boolean, required: true},
-    likes: {type: Number},
-    stars: {}
+    likes: [],
     views: {type: Number},
     downloads: {type: Number},
     description: {type: String},

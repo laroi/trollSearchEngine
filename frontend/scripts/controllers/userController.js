@@ -29,6 +29,9 @@ define(['./requestController', './storeController'], function (request, store) {
                 if (!regErr) {
                         store.set('accessKey', authResp.accessToken);
                         store.set('userID', authResp.userID);
+                        store.set('username', regData.username);
+                        store.set('stars', regData.stars);
+                        store.set('picture', regData.picture);
                     }
                     callback(regErr, regData);
                 })
@@ -38,10 +41,18 @@ define(['./requestController', './storeController'], function (request, store) {
         } else {
             store.set('accessKey', authResp.accessToken);
             store.set('userID', authResp.userID);
-            callback();
+            request.post('/api'+resp.user, function(userErr, userData) {
+                if (!userErr) {
+                    store.set('username', userData.username);
+                    store.set('stars', userData.stars);
+                    store.set('picture', userData.picture);
+                    callback();
+                } else {
+                    callback(userErr);
+                }            
+            });
         }
-        
-        })
+      });
     };
     var isUserLoggedIn = function() {
         var acessKey = store.get('accessKey'),

@@ -181,7 +181,7 @@ var routes = function () {
                         if (!userErr && userData) {
                             createAccesstoken(undefined, authResp.userID, authResp.accessToken, function(err, data) {
                                 if(!err) {
-                                    res.status(200).send();
+                                    res.status(200).send({user: '/user/' + authResp.userID});
                                 } else {
                                     res.status(500).send();
                                 }
@@ -200,17 +200,41 @@ var routes = function () {
         });
     };
     logout = function (req, res) {};
-    listAllPosts = function (req, res) {};
-    showPost = function (req, res) {};
-    createPost = function (req, res) {};
-    addComment = function (req, res) {};
+    var starPost = function (req, res) {
+        var postId = req.body.postId,
+            userId = req.params.id;
+        User.findByIdAndUpdate(userId, {$push: {stars: postId}}, function(strErr, strData) {
+            if (!strErr) {
+                res.status(200).send();
+            } else {
+                console.error(strErr);
+                res.status(500).send({err: strErr});
+            }
+        });   
+    };
+    var getUserDetail = function (req, res) {
+        var id = req.params.id;
+        User.findById(id, function (err, data) {
+            if (!err && data) {
+                res.status(200).send(data);
+            } else {
+                if (!err) {
+                    res.status(404).send();
+                } else {
+                    res.status(500).send();
+                }
+            }
+        });
+    }
     return {
         register: register,
         login: login,
         updatePassword: updatePassword,
         verifyUser: verifyUser,
         verifyFaceToken: verifyFaceToken,
-        addUser: addUser
+        addUser: addUser,
+        starPost: starPost,
+        getUserDetail: getUserDetail
     }
 }
 

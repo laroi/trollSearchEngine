@@ -42,7 +42,7 @@ define([
                             postData = {
                                 title: $('#title').val().trim(),
                                 image: imageData,
-                                userId: store.get('userId') || 'test',
+                                user: {id: store.get('userID'), name: store.get('username')},
                                 type:$("#isClean").is(":checked")?'clean':'default',
                                 isAdult: $("#isAdult").is(":checked")?true:false,
                                 description:'',

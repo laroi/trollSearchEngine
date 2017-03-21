@@ -98,8 +98,8 @@ var routes = function () {
             if (!err) {
                 createAccesstoken(undefined, req.body.email, req.body.accessToken, function(accessErr, data) {
                     if(!accessErr) {
-                        console.log('user created ' + userObj.email)
-                        res.status(200).send({'user': userObj.email});
+                        console.log('user created ', data);
+                        res.status(200).send({user: user, token: data});
                     } else {
                         console.error(JSON.stringify(accessErr))
                         res.status(500).send();

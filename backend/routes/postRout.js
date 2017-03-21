@@ -48,7 +48,7 @@ var routes = function () {
     },
     post = function(req, res) {
         var _id = req.body._id || undefined,
-            userId = req.body.userId,
+            user = req.body.user,
             title = req.body.title,
             type = req.body.type,
             isAdult = req.body.isAdult,
@@ -63,12 +63,12 @@ var routes = function () {
             lastModified = req.body.lastModified,
             obj = {},
             postObj;
-        if (req.body.image && req.body.userId && req.body.type) {
+        if (req.body.image && req.body.user.id && req.body.type) {
             var filename = uuid.v1() + '.' + req.body.image.type
             var fileLoc = uploadPath + filename;
             fs.writeFile(fileLoc, req.body.image.image, 'base64', function(err) {
                 if (!err) {
-                    obj.userId = userId;
+                    obj.user= user;
                     obj.title = title;
                     obj.type = type;
                     obj.isAdult = isAdult;
@@ -101,7 +101,7 @@ var routes = function () {
                         }
                     });
                 } else {
-                    console.log(err);
+                    console.error(err);
                     res.status(500).send({err: 'Could not save post'});
                 }
             });

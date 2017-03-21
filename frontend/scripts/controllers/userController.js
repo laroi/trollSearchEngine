@@ -16,43 +16,54 @@ define(['./requestController', './storeController'], function (request, store) {
                 gender: data.gender,
                 email: data.email
             };
-            request.post('/api/user', postData, function(err, data){
+            request.post('/api/user', postData, function(err, status, data){
                 callback(err, data);
             });
         })
     }
     var setToken = function(authResp, callback) {
-        request.post('/api/token', {authResponse: authResp}, function(err, status, resp){
-        if (err) {
-            if (status === 404) {
-                regNewUser(authResp.userId, authResp.accessToken, function(regErr, regData){
-                if (!regErr) {
-                        store.set('accessKey', authResp.accessToken);
-                        store.set('userID', authResp.userID);
-                        store.set('username', regData.username);
-                        store.set('stars', regData.stars);
-                        store.set('picture', regData.picture);
-                    }
-                    callback(regErr, regData);
-                })
-            } else {
-                callback(err);
-            }
-        } else {
-            store.set('accessKey', authResp.accessToken);
-            store.set('userID', authResp.userID);
-            request.post('/api'+resp.user, function(userErr, userData) {
-                if (!userErr) {
-                    store.set('username', userData.username);
-                    store.set('stars', userData.stars);
-                    store.set('picture', userData.picture);
-                    callback();
+        if (authResp && Object.keys(authResp).length > 0) {
+            request.post('/api/token', {authResponse: authResp}, function(err, status, resp){
+            if (err) {
+                if (status === 404) {
+                    regNewUser(authResp.userId, authResp.accessToken, function(regErr, regData){
+                    if (!regErr && regData) {
+                            store.set('accessKey', authResp.accessToken);
+                            store.set('userID', authResp.userID);
+                            store.set('username', regData.user.username);
+                            store.set('stars', regData.user.stars);
+                            store.set('picture', regData.user.picture);
+                            store.set('email', regData.user.email);
+                        }
+                        callback(regErr, regData);
+                    })
                 } else {
-                    callback(userErr);
-                }            
-            });
-        }
-      });
+                    callback(err);
+                }
+            } else {
+                if (authResp.accessToken && authResp.userID) {
+                    store.set('accessKey', authResp.accessToken);
+                    store.set('userID', authResp.userID);
+                    request.post('/api'+resp.user, function(userErr, status, userData) {
+                        if (!userErr) {
+                            store.set('username', userData.username);
+                            store.set('email', userData.email);
+                            store.set('stars', userData.stars);
+                            store.set('picture', userData.picture);
+                            callback(userErr, userData);
+                        } else {
+                            callback(userErr);
+                        }            
+                    });
+                } else {
+                    callback('Facebook Login not successful');
+                }
+            }
+          });
+      } else {
+        console.log('auth resp not found', authResp);
+        callback('Could not authenticate');
+      }
     };
     var isUserLoggedIn = function() {
         var acessKey = store.get('accessKey'),
@@ -68,26 +79,32 @@ define(['./requestController', './storeController'], function (request, store) {
         } else {
             disableFeatures();
             $('#facebook_login').on('click', function(){
-                FB.getLoginStatus(function(response) {
-                  if (response.status === 'connected') {
-                    setToken(response.authResponse, function(err){
-                        if (!err) {
-                            enableFeatures();
-                        }
-                    });
-                  } else {
-                    disableFeatures();
-                    FB.login(function(res) {
-                        if (res.status === 'connected') {
-                           setToken(response.authResponse, function(err){
-                                if (!err) {
-                                    enableFeatures();
-                                }
-                            });
-                        }
-                    
-                    });
-                  }
+                FB.getLoginStatus(function(response) {                 
+                      if (response.status === 'connected') {
+                        setToken(response.authResponse, function(err, data){
+                            if (!err && data) {
+                                enableFeatures();
+                            } else {
+                                console.error('Some error happened ', err);
+                                toastr.error('Could not authenticate you', 'Torller Says')
+                            }
+                        });
+                      } else {
+                        disableFeatures();
+                        FB.login(function(res) {
+                            if (res.status === 'connected') {
+                               setToken(response.authResponse, function(err, data){
+                                    if (!err && data) {
+                                        enableFeatures();
+                                    } else {                                    
+                                        console.error('Some error happened ', err);
+                                        toastr.error('Could not authenticate you', 'Troller Says')                                 
+                                    }
+                                });
+                            }
+                        
+                        });
+                      }
                 });
 
             });

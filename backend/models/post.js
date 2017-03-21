@@ -8,7 +8,7 @@ var comment = new Schema({
     date: {type: Date, default: Date.now}
 });
 var post = new Schema({
-    userId: {type: String, required: true},
+    user: {id: {type: String, required: true}, name: {type: String, required: false}},
     title: {type: String},
     type: {type: String, required: true},
     isAdult: {type: Boolean, required: true},
@@ -27,7 +27,7 @@ var post = new Schema({
     characters:[String],
     event: {type: String},
     comments:[comment],
-    date: {type: Date, default: Date.now}
+    dates: {createdAt: {type: Date}, lastUpdated:{type: Date, default: Date.now}}
 });
 
 module.exports = mongoose.model('post', post);

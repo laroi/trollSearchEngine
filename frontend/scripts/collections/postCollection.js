@@ -15,7 +15,7 @@ define(['controllers/requestController', 'controllers/storeController', 'models/
                 data.hits.hits.forEach(function (post) {
                     var postObj = new PostModel({
                         _id : post._id,
-                        userId: post._source.userId,
+                        user: post._source.user,
                        	title: post._source.title,
                         type: post._source.type,
                         views: post._source.views,

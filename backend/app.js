@@ -72,7 +72,7 @@ app.post('/token', route.verifyFaceToken);
 app.post('/user', route.addUser);
 app.put('/user', isAuthenticated, route.updatePassword);
 app.put('/user/:id/star', isAuthenticated, route.starPost);
-app.get('/user/:id', isAuthenticated, getUserDetail)
+app.get('/user/:id', isAuthenticated, route.getUserDetail)
 app.get('/test', postRoute.test)
 app.post('/posts', postRoute.getPosts);
 app.get('/post/:id', postRoute.getPost);

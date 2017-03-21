@@ -10,7 +10,12 @@ var elastic = function () {
             type: 'post',
             body:{
                 properties: {
-                    userId: {"type" : "string", "index" : "not_analyzed"},
+                    user: {"type" : "object", 
+                    "properties" : {
+                            "id" : {"type" : "string", "index" : "not_analyzed"},
+                            "name" : {"type" : "string", "index" : "not_analyzed"}
+                        }
+                    },
                     title: {"type" : "string"},
                     type: {"type" : "string", "index" : "not_analyzed"},
                     isAdult: {"type" : "boolean", "index" : "not_analyzed"},
@@ -126,7 +131,7 @@ var elastic = function () {
     };
     var putDoc = function (doc, callback) {
     var body = {
-                userId: doc.userId,
+                user: {id: doc.userId, name: doc.name},
                 title: doc.title,
                 type: doc.type,
                 isAdult : doc.isAdult,
@@ -236,7 +241,7 @@ var elastic = function () {
         body = {};
         if (options.advanced && Object.keys(options.advanced).length > 0) {
             if (options.advanced.userId) {
-                must_array.push({ "match": { "userId": options.advanced.userId }});
+                must_array.push({ "match": { "user.id": options.advanced.userId }});
             }
             if (options.advanced.title) {
                 must_array.push({ "match": { "title": options.advanced.title }});
@@ -260,7 +265,7 @@ var elastic = function () {
                 must_array.push({ "match": { "event": options.advanced.event }});
             }
         } else if (options.search){
-            should_array.push({ "match": { "userId": options.search}});
+            should_array.push({ "match": { "user.id": options.search}});
             should_array.push({ "match": { "title": options.search }});
             should_array.push({ "match": { "tags": options.search }});
             should_array.push({ "match": { "movie": options.search }});

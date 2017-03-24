@@ -130,14 +130,12 @@ var routes = function () {
             if (search) {
                 opts.search = search;
             } else {
-                opts.title = title;
-                
+                opts.title = title;                
                 opts.tags = tags;
                 opts.movie = movie;
                 opts.characters = characters;
                 opts.actors = actors;
-                opts.event = event;
-                
+                opts.event = event;                
             }
             if (group) {
                 opts.group = group;
@@ -153,9 +151,9 @@ var routes = function () {
             }
             opts.from = from;
             opts.order = order;
+            console.log('searching ', opts);
         elastic.getDocs(opts, function(err, data) {
             if (!err) {
-            console.log(JSON.stringify(data));
                 res.status(200).send(data)
             } else {
                 console.error(JSON.stringify(err));

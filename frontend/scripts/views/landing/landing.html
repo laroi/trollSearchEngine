@@ -16,7 +16,12 @@
                         <div class="pan-info user"></div>
                     </div>
                     <div class="button-panel">
-                        <div class="pan-btn star"></div>
+                        {{#if this.isStarred}}
+                            <div class="pan-btn starred"></div>
+                        {{else}}
+                            <div class="pan-btn star"></div>
+                        {{/if}}
+                        
                         <a href="/api/image/{{this._id}}" > <div class="pan-btn download"></div></a>
                         <div class="pan-btn favorite"></div>                        
                         {{#if this.isOwner}}

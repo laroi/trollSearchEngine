@@ -60,6 +60,12 @@
 .star:hover {
     background-image: url('../image/star_hvr.png');
 }
+.starred {
+    background-image: url('../image/starred.png');
+}
+.starred:hover {
+    background-image: url('../image/starred_hvr.png');
+}
 .edit {
     background-image: url('../image/edit.png');
 }

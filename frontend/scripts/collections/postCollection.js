@@ -8,7 +8,8 @@ define(['controllers/requestController', 'controllers/storeController', 'models/
                 postData.from = parseInt(postData.from, 10);
                 postData.limit = postData.limit || 10;
                 postData.limit = parseInt(postData.limit, 10);
-                var current = (postData.from  + postData.limit)/postData.limit
+                var current = (postData.from  + postData.limit)/postData.limit,
+                    stars = store.get('stars') || [];
                 if (!err) {
                     posts = [];
                 }
@@ -32,6 +33,9 @@ define(['controllers/requestController', 'controllers/storeController', 'models/
 				    });
 				    if (store.get('userID') === post._source.userId) {
 				       postObj.isOwner = true; 
+				    }
+				    if (stars.indexOf(post._id) > -1) {
+				        postObj.isStarred = true;
 				    }
 				    posts.push(postObj)
                 });

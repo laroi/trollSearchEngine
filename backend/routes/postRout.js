@@ -295,15 +295,16 @@ var routes = function () {
     },
     updateLike = function (req, res) {
         var user = req.body.user,
+            email = req.body.email,
             postId = req.params.id;
-        Post.findByIdAndUpdate(postId, {$push: {likes: {user: user, time: new Date().toISOString()}}}, {safe: true, new: true, upsert: true}, function(lkErr, lkData) {
+        Post.findByIdAndUpdate(postId, {$push: {likes: {userId: user, email: email, time: new Date().toISOString()}}}, {safe: true, new: true, upsert: true}, function(lkErr, lkData) {
             if (!lkErr) {
                 elastic.updateDoc(postId, lkData, function(elErr, elData) {
                     if (!elErr) {
-                        res.status(200).send()
+                        res.status(200).send({likes: lkData.length})
                     } else {
-                        console.error(erErr);
-                        res.status(500).send({err: erlErr});
+                        console.error(elErr);
+                        res.status(500).send({err: elErr});
                     }
                 })
             } else {
@@ -312,6 +313,34 @@ var routes = function () {
             }            
         });
     },
+    unLike = function (req, res) {
+        var user = req.body.user,
+            postId = req.params.id;
+        Post.findById(postId, function(lkErr, lkData) {
+            if (!lkErr) {
+                rmIndex = lkData.likes.find(function(like, index, array){ if (like.user = user) {return index}});
+                lkData.likes.splice(rmIndex, 1);
+                Post.findByIdAndUpdate(postId, {$set:{likes: lkData.likes}}, function(updErr, updData) {
+                    if (!updErr) {
+                        elastic.updateDoc(postId, lkData, function(elErr, elData) {
+                            if (!elErr) {
+                                res.status(200).send({likes: lkData.length})
+                            } else {
+                                console.error(elErr);
+                                res.status(500).send({err: elErr});
+                            }
+                        });
+                    } else {
+                        console.error(updErr);
+                        res.status(500).send({err: updErr})
+                    }
+                });
+            } else {
+                console.error(lkErr);
+                res.status(500).send({err: lkErr})
+            }            
+        });
+    }
     updateComment = function (req, res) {
         var user = req.body.user,
             comment = req.body.comment,
@@ -342,6 +371,7 @@ var routes = function () {
         downloadImage: downloadImage,
         autoSuggestion: autoSuggestion,
         updateLike: updateLike,
+        unLike: unLike,
         updateComment: updateComment
     }
 }

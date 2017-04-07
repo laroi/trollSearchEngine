@@ -2,11 +2,12 @@ define([
 '../../controllers/requestController',
 '../../controllers/storeController',
 '../../controllers/urlController',
+'../../controllers/userController',
 '../../controllers/highlightController',
 '../../collections/postCollection',
  'text!./landing.html',
  '../create/create'
-], function (request, store, url, highlight, postCollections, html, create) {
+], function (request, store, url, user, highlight, postCollection, html, create) {
      var source   = $(html).html(),
         template = Handlebars.compile(source),
         render;
@@ -30,7 +31,7 @@ define([
         });
         var editPost = function(e) {
             var id = $(e.target).parent().parent().parent().attr('id');
-            var post = postCollections.getPostById(id);
+            var post = postCollection.getPostById(id);
             create.render(undefined, post);                
         }
         var search = function() {
@@ -113,6 +114,66 @@ define([
                 store.set(type, storage);
                 url.navigate();
         }
+        var processStar = function (e) {
+            var postId = $(e.target).parent().parent().parent().attr('id'),
+                unStar,
+                updatedStar,
+                star;
+            star = function (postId) {
+                var stars = store.get('stars') || [];
+                stars.push(postId);
+                store.set('stars', stars);
+                return stars;
+            }
+            unStar = function (postId) {
+                var stars = store.get('stars') || [];
+                if (stars.indexOf(postId) > -1) {
+                    stars.splice(stars.indexOf(postId), 1);
+                }
+                store.set('stars', stars);
+                return stars;
+            }
+            if ($(e.target).hasClass('star')) {
+                updatedStar= star(postId)
+            } else if ($(e.target).hasClass('starred')) {
+                updatedStar = unStar(postId);
+            }
+            user.updateUser({stars: updatedStar}, function(err, data) {
+                if (!err) {
+                    if ($(e.target).hasClass('star')) {
+                        $(e.target).removeClass('star');
+                        $(e.target).addClass('starred');
+                    } else if ($(e.target).hasClass('starred')) {
+                        $(e.target).addClass('star');
+                        $(e.target).removeClass('starred');
+                    }
+                } else {
+                    console.error('Error in updating star', err);
+                }
+            });
+        }
+        var processLike = function (e) {
+            var postId = $(e.target).parent().parent().parent().attr('id');
+            var processCallback = function (err, data) {
+                if (!err) {
+                    if ($(e.target).hasClass('faved')) {
+                        $(e.target).removeClass('faved');
+                        $(e.target).addClass('favorite');
+                    } else if ($(e.target).hasClass('favorite')) {
+                        $(e.target).removeClass('favorite');
+                        $(e.target).addClass('faved');
+                    }
+                } else {
+                    console.error(err);
+                }
+            };
+            if ($(e.target).hasClass('faved')) {
+                postCollection.getPostById(postId).unlike(store.get('userId'), processCallback)
+            } else if ($(e.target).hasClass('favorite')) {
+                postCollection.getPostById(postId).like(store.get('userId'), (store.get('username') || store.get('email')), processCallback)
+            }
+            
+        }
         var landingView = function () {
             var render;
             store.set('limit', 10);
@@ -125,7 +186,7 @@ define([
                 if (query.search) {
                     postData.search = query.search;
                 }
-                postCollections.getAllPosts(postData, function(err, posts) {
+                postCollection.getAllPosts(postData, function(err, posts) {
                     var html = template({posts: posts});
                     $('#post-contents').empty().append(html);
                     $('.edit').on('click', editPost);
@@ -134,7 +195,9 @@ define([
                     $('.btn-apply-filter').on('click', applyFilter);
                     $('#advanced-search').off('click').on('click', advancedSearch);
                     highlight.highlight();
-                    $('.hl-close').on('click', cancelFilter)
+                    $('.hl-close').on('click', cancelFilter);
+                    $('.star-btn').on('click', processStar);
+                    $('.fav').on('click', processLike)
                 });              
             }
             return {

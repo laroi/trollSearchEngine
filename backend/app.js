@@ -71,7 +71,7 @@ app.post('/login', route.login);
 app.post('/token', route.verifyFaceToken);
 app.post('/user', route.addUser);
 app.put('/user', isAuthenticated, route.updatePassword);
-app.put('/user/:id/star', isAuthenticated, route.starPost);
+app.put('/user/:id', isAuthenticated, route.updateUser);
 app.get('/user/:id', isAuthenticated, route.getUserDetail)
 app.get('/test', postRoute.test)
 app.post('/posts', postRoute.getPosts);
@@ -79,6 +79,7 @@ app.get('/post/:id', postRoute.getPost);
 app.put('/post/:id', isAuthenticated, postRoute.updatePost);
 app.put('/post/:id/comment', isAuthenticated, postRoute.updateComment);
 app.put('/post/:id/like', isAuthenticated, postRoute.updateLike);
+app.put('/post/:id/unlike', isAuthenticated, postRoute.unLike);
 app.post('/post', postRoute.post)
 app.get('/image/:id', postRoute.downloadImage);
 app.get('/suggestions', postRoute.autoSuggestion);

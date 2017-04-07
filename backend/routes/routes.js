@@ -43,8 +43,8 @@ var init = function () {
     var appTokenUrl = 'https://graph.facebook.com/oauth/access_token?client_id=307608722910374&client_secret=6dec5610c25fa4cc814aa30c130d0a39&grant_type=client_credentials';
     request.get(appTokenUrl, function(err, data) {
         if (!err) {
-            facebook_app_access = data.body;
-            console.log('Got Access token ' + data.body);
+            facebook_app_access = JSON.parse(data.body).access_token;
+            console.log('Got Access token ' + facebook_app_access);
         } else {
             console.error('error in getting access token');
         }
@@ -86,7 +86,7 @@ var routes = function () {
     };
     addUser = function(req, res) {
         var userObj = {
-            fbId : req.body.id,
+            fbId : req.body.fbId,
             name : req.body.name,
             picture : req.body.picture,
             email : req.body.email,
@@ -120,7 +120,7 @@ var routes = function () {
             User.findOne({email:email}, function(userErr, userData) {
                 if (!userErr && userData) {
                     if (bcrypt.compareSync(password, userData.password)) {
-                        createAccesstoken(undefined, userData.id, function (token) {
+                        createAccesstoken(undefined, userData._id, function (token) {
                             delete userData.password;
                             res.status(200).send(JSON.stringify({token: token, user: userData}));
                         });
@@ -155,7 +155,7 @@ var routes = function () {
             email = req.query.email;
         User.findOne({where: {email: email, verification: code}}, function (err, data) {
             if (!err) {
-                createAccesstoken(undefined, data.id, function (token) {
+                createAccesstoken(undefined, data._id, function (token) {
                     delete userData.password;
                     res.status(200).send(JSON.stringify({token: token, user: data}));
                 });
@@ -169,8 +169,8 @@ var routes = function () {
             res.status(400).send();
             return;
         }
-        var authResp = req.body.authResponse;        
-        var url = 'https://graph.facebook.com/debug_token?input_token='+authResp.accessToken+'&'+facebook_app_access;
+        var authResp = req.body.authResponse;
+        var url = 'https://graph.facebook.com/debug_token?input_token='+authResp.accessToken + '&access_token='+facebook_app_access;
         console.log(url);
         request.get(url, function(checkErr, checkData) {
             if (!checkErr) {
@@ -179,9 +179,9 @@ var routes = function () {
                 if (body.data && body.data.is_valid && authResp.userID===body.data.user_id) {
                     User.findOne({fbId: authResp.userID}, function(userErr, userData){
                         if (!userErr && userData) {
-                            createAccesstoken(undefined, authResp.userID, authResp.accessToken, function(err, data) {
+                            createAccesstoken(undefined, userData._id, authResp.accessToken, function(err, data) {
                                 if(!err) {
-                                    res.status(200).send({user: '/user/' + authResp.userID});
+                                    res.status(200).send({user: '/user/' + userData._id});
                                 } else {
                                     res.status(500).send();
                                 }
@@ -191,6 +191,7 @@ var routes = function () {
                         }
                     });
                 } else {
+                    console.error(body);
                     res.status(401).send();
                 }
             } else {
@@ -200,18 +201,6 @@ var routes = function () {
         });
     };
     logout = function (req, res) {};
-    var starPost = function (req, res) {
-        var postId = req.body.postId,
-            userId = req.params.id;
-        User.findByIdAndUpdate(userId, {$push: {stars: postId}}, function(strErr, strData) {
-            if (!strErr) {
-                res.status(200).send();
-            } else {
-                console.error(strErr);
-                res.status(500).send({err: strErr});
-            }
-        });   
-    };
     var getUserDetail = function (req, res) {
         var id = req.params.id;
         User.findById(id, function (err, data) {
@@ -226,6 +215,36 @@ var routes = function () {
             }
         });
     }
+    updateUser = function (req, res) {
+        var userId = req.params.id,
+            updateFields = {};
+        if (req.body.name) {
+            updateFields.name = req.body.name;
+        }
+        if (req.body.picture) {
+            updateFields.picture = req.body.picture;
+        }
+        if (req.body.phone) {
+            updateFields.phone = req.body.phone;
+        }
+        if (Array.isArray(req.body.stars)) {
+            updateFields.stars = req.body.stars;
+        }
+        if (userId) {
+            User.findByIdAndUpdate(userId, {$set:updateFields}, {new: true}, function (err, data) {
+                if (!err) {
+                    console.log('updated useruser', userId)
+                    res.status(200).send(data);
+                } else {
+                    console.error('Error in updating user ' + userId, err)
+                    res.status(500).send();
+                }
+            })
+        } else {
+            res.status(400).send({err: 'invalid_params'});
+        }
+        
+    };
     return {
         register: register,
         login: login,
@@ -233,8 +252,8 @@ var routes = function () {
         verifyUser: verifyUser,
         verifyFaceToken: verifyFaceToken,
         addUser: addUser,
-        starPost: starPost,
-        getUserDetail: getUserDetail
+        getUserDetail: getUserDetail,
+        updateUser: updateUser
     }
 }
 

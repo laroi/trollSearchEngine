@@ -26,7 +26,13 @@ var elastic = function () {
                         }
                     },
                     descriptions: {"type" : "string"},
-                    likes: {"type": "integer",},
+                    likes: {
+                        properties:{
+                            userId: {"type": "string", "index" : "not_analyzed"},
+                            username: {"type": "string", "index" : "not_analyzed"},
+                            time:  {"type": "date"}
+                        }
+                    },
                     views: {"type": "integer"},
                     downloads: {"type": "integer"},
                     comments:{
@@ -141,7 +147,7 @@ var elastic = function () {
                 movie: doc.movie,
                 language: doc.language,
                 actors: doc.actors,
-                likes: doc.likes || 0,
+                likes: doc.likes || [],
                 downloads: doc.downloads || 0,
                 views : doc.views || 0,
                 characters: doc.characters,

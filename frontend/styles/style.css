@@ -54,6 +54,9 @@
 .favorite {
     background-image: url('../image/fav.png');
 }
+.faved {
+    background-image: url('../image/faved.png');
+}
 .star {
     background-image: url('../image/star.png');
 }
@@ -77,6 +80,9 @@
 }
 .favorite:hover {
     background-image: url('../image/fav_hvr.png');
+}
+.faved:hover {
+    background-image: url('../image/faved_hvr.png');
 }
 .edit:hover {
     background-image: url('../image/edit_hvr.png');

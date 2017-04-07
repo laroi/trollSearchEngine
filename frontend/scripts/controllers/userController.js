@@ -14,26 +14,34 @@ define(['./requestController', './storeController'], function (request, store) {
                 name: data.name,
                 picture: data.picture.data.url,
                 gender: data.gender,
-                email: data.email
+                email: data.email,
+                accessToken: token
             };
             request.post('/api/user', postData, function(err, status, data){
                 callback(err, data);
             });
         })
     }
+    var updateUser = function (updateObj, callback) {
+        var url = '/api/user/'+store.get('userId');
+        request.put(url, updateObj, undefined, function(err, data) {
+            callback(err, data);
+        })
+    };
     var setToken = function(authResp, callback) {
         if (authResp && Object.keys(authResp).length > 0) {
             request.post('/api/token', {authResponse: authResp}, function(err, status, resp){
             if (err) {
                 if (status === 404) {
-                    regNewUser(authResp.userId, authResp.accessToken, function(regErr, regData){
+                    regNewUser(authResp.userID, authResp.accessToken, function(regErr, regData){
                     if (!regErr && regData) {
                             store.set('accessKey', authResp.accessToken);
-                            store.set('userID', authResp.userID);
+                            store.set('fbId', authResp.userID);
                             store.set('username', regData.user.username);
                             store.set('stars', regData.user.stars);
                             store.set('picture', regData.user.picture);
                             store.set('email', regData.user.email);
+                            store.set('userId', regData.user._id);
                         }
                         callback(regErr, regData);
                     })
@@ -43,8 +51,8 @@ define(['./requestController', './storeController'], function (request, store) {
             } else {
                 if (authResp.accessToken && authResp.userID) {
                     store.set('accessKey', authResp.accessToken);
-                    store.set('userID', authResp.userID);
-                    request.post('/api'+resp.user, function(userErr, status, userData) {
+                    store.set('fbId', authResp.userID);
+                    request.post('/api/'+resp.user, function(userErr, status, userData) {
                         if (!userErr) {
                             store.set('username', userData.username);
                             store.set('email', userData.email);
@@ -111,6 +119,7 @@ define(['./requestController', './storeController'], function (request, store) {
         }
     }
     return {
-        init: init
+        init: init,
+        updateUser: updateUser
     }
 });

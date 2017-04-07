@@ -1,4 +1,4 @@
-define(['../config/config'], function (config) {
+define(['../config/config', './storeController'], function (config, store) {
     var callView,
         get,
         post,
@@ -9,6 +9,11 @@ define(['../config/config'], function (config) {
             url: url, 
             method: 'GET',
             dataType: 'JSON',
+            beforeSend: function (xhr){
+                if (store.get('accessKey')) {
+                    xhr.setRequestHeader('Authorization', store.get('accessKey'));
+                }
+            },
             success: function (data){
                 callback(undefined, data);
             },
@@ -21,6 +26,11 @@ define(['../config/config'], function (config) {
         $.ajax({
             url: url, 
             method: 'GET',
+            beforeSend: function (xhr){
+                if (store.get('accessKey')) {
+                    xhr.setRequestHeader('Authorization', store.get('accessKey'));
+                }
+            },
             success: function (data){
                 callback(undefined, data);
             },
@@ -36,6 +46,11 @@ define(['../config/config'], function (config) {
             data: JSON.stringify(postdata),
             dataType: 'JSON',
             contentType: "application/json; charset=utf-8",
+            beforeSend: function (xhr){
+                if (store.get('accessKey')) {
+                    xhr.setRequestHeader('Authorization', store.get('accessKey'));
+                }
+            },
             success: function (data){
                 callback(undefined, undefined, data);
             },
@@ -59,6 +74,11 @@ define(['../config/config'], function (config) {
             url: url, 
             method: 'POST',
             data: postdata,
+            beforeSend: function (xhr){
+                if (store.get('accessKey')) {
+                    xhr.setRequestHeader('Authorization', store.get('accessKey'));
+                }
+            },
             success: function (data){
                 callback(undefined, data);
             },
@@ -72,6 +92,11 @@ define(['../config/config'], function (config) {
             url: url, 
             method: 'PUT',
             data: postData,
+            beforeSend: function (xhr){
+                if (store.get('accessKey')) {
+                    xhr.setRequestHeader('Authorization', store.get('accessKey'));
+                }
+            },
             success: function (data){
                 callback(undefined, data);
             },
@@ -81,12 +106,20 @@ define(['../config/config'], function (config) {
         }); 
     };
     put = function (url, postdata, contenttype, callback) {
+        if (postdata) {       
+            postdata = JSON.stringify(postdata);
+        }
         $.ajax({
             url: url, 
             method: 'PUT',
             data: postdata,
             contentType: contenttype || "application/json; charset=utf-8",
             dataType: 'JSON',
+            beforeSend: function (xhr){
+                if (store.get('accessKey')) {
+                    xhr.setRequestHeader('Authorization', store.get('accessKey'));
+                }
+            },
             success: function (data){
                 callback(undefined, data);
             },

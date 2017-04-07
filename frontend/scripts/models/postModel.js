@@ -2,6 +2,16 @@ define(['controllers/requestController', 'controllers/storeController'], functio
     //Do setup work here
     var date = new Date();
     var post = function(inPost) {
+    var like = function(user, email, callback) {
+        request.put('/api/post/'+this._id+'/like',{user: user, email:email}, undefined, function(err, data) {
+            callback(err, data)
+        });
+     };
+     var unlike = function (user, callback) {
+        request.put('/api/post/'+this._id+'/unlike',{user: user}, undefined, function(err, data) {
+            callback(err, data)
+        })
+     };
         var save = function () {
             var postData = {
             	userId: store.get('userId'),
@@ -39,7 +49,9 @@ define(['controllers/requestController', 'controllers/storeController'], functio
 				lastModified: inPost.lastModified,
 				createdAt: inPost.createdAt,
 				isOwner: false,
-                save: save
+                save: save,
+                like: like,
+                unlike: unlike
             };
         
     };

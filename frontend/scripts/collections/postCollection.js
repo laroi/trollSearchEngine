@@ -20,6 +20,7 @@ define(['controllers/requestController', 'controllers/storeController', 'models/
                        	title: post._source.title,
                         type: post._source.type,
                         views: post._source.views,
+                        likes: post._source.likes,
                         downloads: post._source.downloads,
                         isAdult: post._source.isAdult,
                         imageUrl: post._source.image.url,
@@ -31,9 +32,12 @@ define(['controllers/requestController', 'controllers/storeController', 'models/
 				        characters: post._source.characters,
 				        event: post._source.event
 				    });
+				    
 				    if (store.get('userID') === post._source.userId) {
 				       postObj.isOwner = true; 
 				    }
+				    postObj.isLiked = post._source.likes.find(function(like){return like.userId === store.get('userId')})
+				    postObj.isLiked = postObj.isLiked && postObj.isLiked.userId ? true : false;
 				    if (stars.indexOf(post._id) > -1) {
 				        postObj.isStarred = true;
 				    }

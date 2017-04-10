@@ -23,25 +23,22 @@ var routes = function () {
     var test = function (req, res) {        
         res.status(200).send();
     },
-    isOwner = function (model, id, token, callback) {
-        model.find({userId: id}, function(docErr, docData) {
+    isOwner = function (model, doc_id, id, token, callback) {       
+        model.findById(doc_id, function(docErr, docData) {
             access.findOne({token: token}, function(err, data) {
-                if (!err) {
-                    if (data.user = docData.userId) {
+                if (!err && data) {
+                    if (data.user = docData.user.id) {
                         console.log('ownership verified');
                         callback();
-                        return;
                     } else {
                         console.log('failed to verify ownership');
-                        //callback({err: 'failed to verify ownership'});
-                        callback();
-                        return;
+                        callback({err: 'failed to verify ownership'});
+                        //callback();
                     }
                 } else {
                     console.log('token not found');
-                    //callback(err)
-                    callback();
-                    return;
+                    callback(err)
+                    //callback();
                 }
             });
         })
@@ -180,17 +177,19 @@ var routes = function () {
         }        
     },
     updatePost = function (req, res) {
-        isOwner(Post, req.body.userId, req.query.accessToken, function (err) {
-            if (!err) {                
+        var tok = req.query.accessToken || req.headers['authorization'];
+        isOwner(Post, req.body._id, req.body.user.id, tok, function (err) {
+            if (!err) {
                 var updateObj = {},
                 doc = req.body,
                 id = doc._id;
-                if (req.body.userId && req.body.type) {
+                if (req.body.user.id && req.body.type) {
                 if (req.body.image) {
                     var filename = req.body.image.name;
                     var fileLoc = uploadPath + filename;
                 }
                 saveFile(fileLoc, req.body.image, function(fileErr, imageLoc) {
+                    console.log('saved file');
                     if (!fileErr) {
                         if (doc.title) {
                             updateObj.title = doc.title
@@ -220,9 +219,11 @@ var routes = function () {
                             updateObj.event = doc.event
                         }
                         Post.update({_id: id}, {$set: updateObj}, function(err, numAffected) {
+                            console.log('updated db')
                             if (!err) {
                                 console.log('Updated post ' + id + ' in database');
                                 elastic.updateDoc(id, updateObj, function(err, data) {
+                                    console.log('updated elastic')
                                     if(!err) {
                                         console.log('Updated post ' + id + ' in elasticsearch');
                                         res.status(200).send();
@@ -301,7 +302,8 @@ var routes = function () {
             if (!lkErr) {
                 elastic.updateDoc(postId, lkData, function(elErr, elData) {
                     if (!elErr) {
-                        res.status(200).send({likes: lkData.length})
+                        console.log('[Like] current likes ' + lkData.likes.length )
+                        res.status(200).send({likes: lkData.likes.length})
                     } else {
                         console.error(elErr);
                         res.status(500).send({err: elErr});
@@ -324,7 +326,8 @@ var routes = function () {
                     if (!updErr) {
                         elastic.updateDoc(postId, lkData, function(elErr, elData) {
                             if (!elErr) {
-                                res.status(200).send({likes: lkData.length})
+                                console.log('[Unlike] current likes ', lkData.likes.length )
+                                res.status(200).send({likes: lkData.likes.length})
                             } else {
                                 console.error(elErr);
                                 res.status(500).send({err: elErr});

@@ -46,8 +46,8 @@ mongoose.connect('mongodb://localhost:27017/trolls');
 //app.get('/thread/:title/:format', api.show);
 //app.get('/thread', api.list);
 function isAuthenticated(req, res, next) {
-    if (req.query.accessToken || req.headers['Authorization']) {
-        var tok = req.query.accessToken || req.headers['Authorization'];
+    if (req.query.accessToken || req.headers['authorization']) {
+        var tok = req.query.accessToken || req.headers['authorization'];
         access.findOne({token: req.query.accessToken}, function(err, data) {
             if (!err) {
                 console.log('authenticated');
@@ -55,17 +55,31 @@ function isAuthenticated(req, res, next) {
                 return;
             } else {
                 console.log('access token not found');
-                res.redirect('/');
+                res.status(401).send({err:'unauthorized'});
+                //next();
                 return;
             }
         });
     } else {
         console.log('access token not provided');
-        //res.redirect('/');
-        next();
+        res.status(403).send({err:'forbidden'});
+        //next();
     }
 }
-
+if (!Array.prototype.find) {
+  Array.prototype.find = function (callback, thisArg) {
+    "use strict";
+    var arr = this,
+        arrLen = arr.length,
+        i;
+    for (i = 0; i < arrLen; i += 1) {
+        if (callback.call(thisArg, arr[i], i, arr)) {
+            return arr[i];
+        }
+    }
+    return undefined;
+  };
+}
 app.use('/images', express.static(__dirname + '/uploads'));
 app.post('/login', route.login);
 app.post('/token', route.verifyFaceToken);

@@ -10,29 +10,29 @@
                     <img class="thumbImg" src={{this.imageUrl}}>
                 </div>
                 <div class="bottom-panel">
-                    <div class="info-panel">
-                        <div class="pan-info views">{{this.views}}</div>
-                        <div class="pan-info downloads">{{this.downloads}}</div>
-                        <div class="pan-info user"></div>
-                    </div>
                     <div class="button-panel">
                         {{#if this.isStarred}}
                             <div class="pan-btn star-btn starred"></div>
                         {{else}}
                             <div class="pan-btn star-btn star"></div>
                         {{/if}}
-                        
-                        <a href="/api/image/{{this._id}}" > <div class="pan-btn download"></div></a>
-                        {{#if this.isLiked}}
-                            <div class="pan-btn fav faved"></div>
-                        {{else}}
-                            <div class="pan-btn fav favorite"></div>            
-                        {{/if}}
-                                    
+                        <div class="pan-btn-cont">
+                            <a href="/api/image/{{this._id}}" > <div class="pan-btn download"></div></a>
+                            <div class='pan-count down-count'>{{this.downloads}}</div>
+                        </div>
+                        <div class="pan-btn-cont">
+                            {{#if this.isLiked}}
+                                <div class="pan-btn fav faved"></div>
+                            {{else}}
+                                <div class="pan-btn fav favorite"></div>            
+                            {{/if}}
+                            <div class='pan-count fav-count'>{{this.likes.length}}</div>
+                        </div>          
                         {{#if this.isOwner}}
                             <div class="pan-btn edit"></div>
                         {{/if}}
                         <div class="pan-btn use"></div>
+                        <div class="pan-btn user"><img class="user-img" src={{this.user.image}}></div>
                     </div>
                 </div>
             </div>

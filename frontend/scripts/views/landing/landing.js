@@ -153,7 +153,7 @@ define([
             });
         }
         var processLike = function (e) {
-            var postId = $(e.target).parent().parent().parent().attr('id');
+            var postId = $(e.target).parent().parent().parent().parent().attr('id');
             var processCallback = function (err, data) {
                 if (!err) {
                     if ($(e.target).hasClass('faved')) {
@@ -163,6 +163,7 @@ define([
                         $(e.target).removeClass('favorite');
                         $(e.target).addClass('faved');
                     }
+                    $(e.target).next().empty().html(data.likes);
                 } else {
                     console.error(err);
                 }

@@ -17,8 +17,8 @@ requirejs.config({
 });
 
 // Start the main app logic.
-requirejs(['views/landing/landing', 'controllers/userController', 'text!views/components/mainHeader.html', 'views/create/create','text!views/components/search.html'],
-function (landingView, user, header, createNewView, search) {
+requirejs(['views/landing/landing', 'controllers/urlController', 'controllers/userController', 'text!views/components/mainHeader.html', 'views/create/create','text!views/components/search.html'],
+function (landingView, url, user, header, createNewView, search) {
 var getSuggestion = function (field) {
     var url = '/api/suggestions?field='+field+'&query=';
     return function( request, response ) {
@@ -148,7 +148,7 @@ $(document).ready(function(){
     window.onhashchange = function(){
        crossroads.parse(window.location.hash)
     };
-    window.location.hash='?from=0';
+    url.navigate();
     
 })
 

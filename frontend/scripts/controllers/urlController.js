@@ -1,7 +1,7 @@
 define(['./storeController'], function (store) {
     var navigate;
     navigate = function (key) {
-        var hash = '';
+        var hash = '#';
         hash += '?from=';
         hash += store.get('from') || 0;
         var search_term = store.get('search_term'),
@@ -33,19 +33,30 @@ define(['./storeController'], function (store) {
                 hash += search_term.character;
             }
             if (search_term.event) {
-                hash += '&search=';
+                hash += '&se_event=';
                 hash += search_term.event;
             }
         }        
         if(filterKeys.length > 0) {
             filterKeys.forEach(function(key) {
-                hash += "&"
-                hash += key
-                hash += "=";
-                hash += filters[key];
+                if (key === 'isFavorite') {
+                    hash += "&";
+                    hash += key;
+                    hash += "=";
+                    hash +=  store.get('stars').join(',') || ""
+                } else {
+                    hash += "&"
+                    hash += key
+                    hash += "=";
+                    hash += filters[key];
+                }
             });
         }
-        window.location.hash = hash
+        if (window.location.hash !== hash) {
+            window.location.hash = hash
+        } else { // Its  a refresh
+            //window.location.reload();
+        }
     };
     return {
         navigate: navigate

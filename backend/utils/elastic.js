@@ -248,7 +248,7 @@ var elastic = function () {
         body = {};
         if (options.advanced && Object.keys(options.advanced).length > 0) {
             if (options.advanced.userId) {
-                must_array.push({ "match": { "user.id": options.advanced.userId }});
+                must_array.push({ "match": { "user.id": options.userId }});
             }
             if (options.advanced.title) {
                 must_array.push({ "match": { "title": options.advanced.title }});
@@ -260,7 +260,7 @@ var elastic = function () {
                 must_array.push({ "match": { "movie": options.advanced.movie }});
             }
             if (options.advanced.language) {
-                must_array.push({ "match": { "movie": options.advanced.language }});
+                must_array.push({ "match": { "language": options.advanced.language }});
             }
             if (options.advanced.actors) {
                 must_array.push({ "match": { "actors": options.advanced.actors }});
@@ -270,7 +270,7 @@ var elastic = function () {
             }
             if (options.advanced.event) {
                 must_array.push({ "match": { "event": options.advanced.event }});
-            }
+            }            
         } else if (options.search){
             should_array.push({ "match": { "user.id": options.search}});
             should_array.push({ "match": { "title": options.search }});
@@ -281,8 +281,20 @@ var elastic = function () {
             should_array.push({ "match": { "event": options.search }});
             
         }
+        if (options.ids && options.ids.length > 0) {
+                must_array.push({ "terms": { "_id": options.ids }});
+        }
+        if (options.group) {
+            must_array.push({ "match": { "group": options.group }});
+        }
         if (options.type) {
-            should_array.push({ "match": { "type": options.type }});
+            must_array.push({ "match": { "type": options.type }});
+        }
+        if (options.isAdult) {
+            must_array.push({ "match": { "isAdult": options.isAdult }});
+        }            
+        if (options.type) {
+            must_array.push({ "match": { "type": options.type }});
         }
         body = {
             aggs : {
@@ -293,10 +305,13 @@ var elastic = function () {
                  }
             },
             query: {
-                bool: {}
+                bool: {
+                    must:must_array,
+                    should:should_array
+                }
               },
                "from" : options.from || 0,
-               "size" : 10,
+               "size" : 1,
               "sort": [
                  {
                     "lastModified": {
@@ -311,6 +326,12 @@ var elastic = function () {
         if (should_array.length > 0) {
             body.query.bool.must = must_array
         }
+        console.log('options\n');
+        console.log(JSON.stringify(options));
+        console.log('options Ends\n');
+        console.log('Search Query\n');
+        console.log(JSON.stringify(body));
+        console.log('Search Query Ends\n');
         client.search({
             index: 'trolls',
             type: 'post',

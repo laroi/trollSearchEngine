@@ -123,19 +123,24 @@ var routes = function () {
             from = req.body.from,
             order = req.body.order,
             isAdult = req.body.isAdult,
+            isFavorite =  req.body.isFavorite ? req.body.isFavorite.split(',') : [];
             opts = {};
             if (search) {
                 opts.search = search;
             } else {
-                opts.title = title;                
-                opts.tags = tags;
-                opts.movie = movie;
-                opts.characters = characters;
-                opts.actors = actors;
-                opts.event = event;                
+                opts.advanced = {};
+                opts.advanced.title = title;                
+                opts.advanced.tags = tags;
+                opts.advanced.movie = movie;
+                opts.advanced.characters = characters;
+                opts.advanced.actors = actors;
+                opts.advanced.event = event;                
             }
             if (group) {
                 opts.group = group;
+            }
+            if (isFavorite.length > 0) {
+                opts.ids = isFavorite;
             }
             if (type) {
                 opts.type = type;

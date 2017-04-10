@@ -33,7 +33,7 @@ define(['controllers/requestController', 'controllers/storeController', 'models/
 				        event: post._source.event
 				    });
 				    
-				    if (store.get('userID') === post._source.userId) {
+				    if (store.get('userId') === post._source.user.id) {
 				       postObj.isOwner = true; 
 				    }
 				    postObj.isLiked = post._source.likes.find(function(like){return like.userId === store.get('userId')})

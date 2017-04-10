@@ -1,12 +1,27 @@
 define(['./storeController'], function (store) {
     var highlight,
-    getHighlight;
+    getHighlight,
+    dispalyTitles = {
+        'basic_search': 'Search',
+        group: 'Group',
+        isPlain: 'Plain Memes',
+        isAdult: 'Adult Memes',
+        isFavorite: 'Favorite Memes',
+        userId: 'User'
+    };
     getHighlight = function(type, key, val) {
     var className ="";
         if (key) {
             var updateVal = "";
             if (type === 'filters') {
-                updateVal = key;
+                if (val && typeof val !== 'boolean') {
+                    if (key === 'userId') {
+                        val = store.get('username');
+                    }
+                    updateVal = dispalyTitles[key] + ' : ' + val;                    
+                } else {
+                    updateVal = dispalyTitles[key];
+                }
                 className = 'hl-filter'
             } else {
                 className = 'hl-search'
@@ -33,8 +48,9 @@ define(['./storeController'], function (store) {
                     html +=  getHighlight('search_term', sKey, search_term[sKey] );
                 });
             }
+            console.log(filterKeys)
             filterKeys.forEach(function(key) {
-                html +=  getHighlight('filters', key);
+                html +=  getHighlight('filters', key, filters[key]);
             });
             $('#high-lighter').empty().html(html);
     };

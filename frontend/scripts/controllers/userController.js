@@ -52,9 +52,10 @@ define(['./requestController', './storeController'], function (request, store) {
                 if (authResp.accessToken && authResp.userID) {
                     store.set('accessKey', authResp.accessToken);
                     store.set('fbId', authResp.userID);
-                    request.post('/api/'+resp.user, function(userErr, status, userData) {
+                    request.get('/api'+resp.user, function(userErr, userData) {
                         if (!userErr) {
-                            store.set('username', userData.username);
+                            store.set('userId', userData._id);
+                            store.set('username', userData.name);
                             store.set('email', userData.email);
                             store.set('stars', userData.stars);
                             store.set('picture', userData.picture);

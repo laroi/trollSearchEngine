@@ -75,6 +75,7 @@ define([
         }
         var paginate = function(e){
             var current = parseInt($(e.target).text(), 10);
+            //var limit = store.get('limit');
             var limit = store.get('limit');
             store.set('from', (((current - 1) * limit)));
             url.navigate();
@@ -99,7 +100,7 @@ define([
                     filtObj.isFavorite = isFavorite;
                 }
                 if (isMine) {
-                    filtObj.userId = store.get('userID');
+                    filtObj.userId = store.get('userId');
                 }
                 store.set('filters', filtObj);                    
                 $('.dropdown.open').removeClass('open');
@@ -174,11 +175,20 @@ define([
                 postCollection.getPostById(postId).like(store.get('userId'), (store.get('username') || store.get('email')), processCallback)
             }
             
+        };
+        var processUserClick = function (e) {
+            var postId = $(e.target).parent().parent().parent().parent().attr('id');
+            var poster = postCollection.getPostById(postId).user.id;
+            var storage = store.get('filters');
+            storage.userId = poster;
+            store.set('filters', storage);
+            url.navigate();
         }
         var landingView = function () {
             var render;
             store.set('limit', 10);
             render = function (query) {
+                // Read params from url, transform to apply in post requests
                 var from = query.from || 0;
                 var postData = {};
                 if (from) {
@@ -186,6 +196,39 @@ define([
                 }
                 if (query.search) {
                     postData.search = query.search;
+                }
+                if (query.se_title) {
+                    postData.title = query.se_title
+                }
+                if (query.se_tag) {
+                    postData.tag = query.se_tag
+                }
+                if (query.se_actor) {
+                    postData.actor = query.se_actor
+                }
+                if (query.se_movie) {
+                    postData.movie = query.se_movie
+                }
+                if (query.se_character) {
+                    postData.character = query.se_character
+                }
+                if (query.se_event) {
+                    postData.event = query.se_event
+                }
+                if (query.group) {
+                    postData.group = query.group
+                }
+                if (query.isPlain) {
+                    postData.isPlain = query.isPlain
+                }
+                if (query.isAdult) {
+                    postData.isAdult = query.isAdult
+                }
+                if (query.isFavorite) {
+                    postData.isFavorite = query.isFavorite
+                }
+                if (query.userId) {
+                    postData.userId = query.isFavorite
                 }
                 postCollection.getAllPosts(postData, function(err, posts) {
                     var html = template({posts: posts});
@@ -198,7 +241,8 @@ define([
                     highlight.highlight();
                     $('.hl-close').on('click', cancelFilter);
                     $('.star-btn').on('click', processStar);
-                    $('.fav').on('click', processLike)
+                    $('.fav').on('click', processLike);
+                    $('.user-img').on('click', processUserClick)
                 });              
             }
             return {

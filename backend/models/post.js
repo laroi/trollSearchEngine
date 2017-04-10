@@ -21,6 +21,7 @@ var post = new Schema({
         type: {type: String, required: true} 
     },
     tags:[String],
+    group:{type: String},
     movie: {type: String},
     language: {type: String},
     actors:[String],

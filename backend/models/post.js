@@ -8,7 +8,7 @@ var comment = new Schema({
     date: {type: Date, default: Date.now}
 });
 var post = new Schema({
-    user: {id: {type: String, required: true}, name: {type: String, required: false}},
+    user: {id: {type: String, required: true}, name: {type: String, required: false}, image: {type: String, required: false}},
     title: {type: String},
     type: {type: String, required: true},
     isAdult: {type: Boolean, required: true},

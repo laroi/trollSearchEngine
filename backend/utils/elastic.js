@@ -13,7 +13,8 @@ var elastic = function () {
                     user: {"type" : "object", 
                     "properties" : {
                             "id" : {"type" : "string", "index" : "not_analyzed"},
-                            "name" : {"type" : "string", "index" : "not_analyzed"}
+                            "name" : {"type" : "string", "index" : "not_analyzed"},
+                            "image" : {"type" : "string", "index" : "not_analyzed"}
                         }
                     },
                     title: {"type" : "string"},
@@ -137,7 +138,7 @@ var elastic = function () {
     };
     var putDoc = function (doc, callback) {
     var body = {
-                user: {id: doc.userId, name: doc.name},
+                user: doc.user,
                 title: doc.title,
                 type: doc.type,
                 isAdult : doc.isAdult,

@@ -268,9 +268,14 @@ var routes = function () {
                         });
                         var readStream = fs.createReadStream(uploadPath+fileName);
                         readStream.pipe(res);
-                        Post.update({_id: postId}, { $inc: {downloads:1}})
+                        Post.update({_id: postId}, { $inc: {downloads:1}}, function(updErr, updData) {
+                            console.log('Increment download mongo \n',updErr, updData)
+                        });
                         post.downloads = post.downloads+1;
-                        elastic.updateDoc(postId, post);
+                        console.log(post.downloads);
+                        elastic.updateDoc(postId, post, function(updErr, updData) {
+                            console.log('Increment download elastic\n',updErr, updData)
+                        });
                     } else {
                         console.error(JSON.stringify(statErr));
                         res.status(500).send();

@@ -39,17 +39,17 @@ define(['./storeController'], function (store) {
         }        
         if(filterKeys.length > 0) {
             filterKeys.forEach(function(key) {
-                if (key === 'isFavorite') {
+                /*if (key === 'isFavorite') {
                     hash += "&";
                     hash += key;
                     hash += "=";
                     hash +=  store.get('stars').join(',') || ""
-                } else {
+                } else {*/
                     hash += "&"
                     hash += key
                     hash += "=";
                     hash += filters[key];
-                }
+                //}
             });
         }
         if (window.location.hash !== hash) {

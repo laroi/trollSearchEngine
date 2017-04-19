@@ -14,19 +14,23 @@ define([
         Handlebars.registerHelper('pageLink', function(total, limit, current) {
             var accum = '',
             n = Math.ceil(total/limit),
-            limit = n < 5 ? n : 5;
-            if (current > 2) {
-                accum += '<li class="page-item"><span class="page-prev page-link" aria-label="Previous"><span aria-hidden="true">&laquo;</span><span class="sr-only">Previous</span></span></li>'
+            limit = n < 5 ? n : 5,
+            classNamePrev ='page-item';
+            classNameNext ='page-item';
+            if (current < 2) {
+               classNamePrev += ' disabled';
             }
+            accum += '<li class="' + classNamePrev + '"><span class="page-prev page-link" aria-label="Previous"><span aria-hidden="true">&laquo;</span><span class="sr-only">Previous</span></span></li>'
             for(var i = 0; i < limit; ++i) {
                 accum += '<li class="page-item"><span class="page-nav page-link">' + (i+1) + '</a></li>';
             }
             if (limit>5){
                 accum += '<li class="page-item"><span class="page-nav page-link">' + n + '</a></li>';
             }
-            if (current === n-1) {
-                accum += '<li class="page-item"><span class="page-next page-link" aria-label="Next"><span aria-hidden="true">&raquo;</span><span class="sr-only">Next</span></span></li>'
+            if (current !== n-1) {
+                classNameNext += ' disabled';
             }
+            accum += '<li class="' + classNameNext + '"><span class="page-next page-link" aria-label="Next"><span aria-hidden="true">&raquo;</span><span class="sr-only">Next</span></span></li>'
             return accum;
         });
         var editPost = function(e) {
@@ -79,6 +83,22 @@ define([
             var limit = store.get('limit');
             store.set('from', (((current - 1) * limit)));
             url.navigate();
+        };
+        var navNext = function(e){
+            if (!$(e.target).closest('.page-item').hasClass('disabled')) {
+                var from = store.get('from');
+                var limit = store.get('limit');
+                store.set('from', ((from + 1) * limit));
+                url.navigate();
+            }
+        };
+        var navPrev = function(e){
+            if (!$(e.target).closest('.page-item').hasClass('disabled')) {        
+                var from = store.get('from');
+                var limit = store.get('limit');
+                store.set('from', ((from - 1) * limit));
+                url.navigate();
+            }
         };
         var applyFilter = function (e) {
             var f_group = $('.grp-list').val(),
@@ -186,7 +206,7 @@ define([
         }
         var landingView = function () {
             var render;
-            store.set('limit', 10);
+            store.set('limit', 1);
             render = function (query) {
                 // Read params from url, transform to apply in post requests
                 var from = query.from || 0;
@@ -225,10 +245,10 @@ define([
                     postData.isAdult = query.isAdult
                 }
                 if (query.isFavorite) {
-                    postData.isFavorite = query.isFavorite
+                    postData.isFavorite = store.get('stars').join(',')
                 }
                 if (query.userId) {
-                    postData.userId = query.isFavorite
+                    postData.userId = query.userId
                 }
                 postCollection.getAllPosts(postData, function(err, posts) {
                     var html = template({posts: posts});
@@ -243,6 +263,8 @@ define([
                     $('.star-btn').on('click', processStar);
                     $('.fav').on('click', processLike);
                     $('.user-img').on('click', processUserClick)
+                    $('.page-prev').on('click', navPrev)
+                    $('.page-next').on('click', navNext)
                 });              
             }
             return {

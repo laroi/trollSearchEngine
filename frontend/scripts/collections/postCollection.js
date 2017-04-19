@@ -4,9 +4,9 @@ define(['controllers/requestController', 'controllers/storeController', 'models/
         var posts = [];
         getAllPosts = function (postData, callback) {
             request.post('/api/posts', postData, function (err, status, data) {
-                postData.from = postData.from || 1;
+                postData.from = postData.from || 0;
                 postData.from = parseInt(postData.from, 10);
-                postData.limit = postData.limit || 10;
+                postData.limit = postData.limit || 1;
                 postData.limit = parseInt(postData.limit, 10);
                 var current = (postData.from  + postData.limit)/postData.limit,
                     stars = store.get('stars') || [];
@@ -43,6 +43,7 @@ define(['controllers/requestController', 'controllers/storeController', 'models/
 				    }
 				    posts.push(postObj)
                 });
+                console.log('current', current, 'limit', postData.limit, 'total', data.hits.total);
                 callback(err, {posts:posts, total: data.hits.total, current: current, limit: postData.limit});
             });
         }

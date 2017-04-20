@@ -126,10 +126,41 @@ define([
                 $('.dropdown.open').removeClass('open');
                 url.navigate();
         };
+        var updateUi = function (type, key) {
+            var mapping = {
+                    basic_search:'#basic-search',
+                    title: '#se_title',
+                    tag: '#se_tag',
+                    movie: '#se_movie',
+                    actor: '#se_actor',
+                    character: '#se_character',
+                    event: '#se_event',
+                    group: '.group-list',
+                    isPlain: '.isPlain',
+                    isAdult: '.isAdult',
+                    isFavorite: '.isFavorite',
+                    userId: '.isMine'                    
+                }
+                $('.se-control').val('');
+                $('.group-list').prop('selectedIndex', 0);                
+                $('.fi-input').prop('checked', false);
+                seTerms = store.get('search_term');
+                fiTerms = store.get('filters');
+                Object.keys(seTerms).forEach(function(se) {
+                    $(mapping[se]).val(seTerms[se]);
+                });
+                Object.keys(fiTerms).forEach(function(fi) {
+                    if (fi === 'group') {
+                       $('.group-list').val(fiTerms[fi]); 
+                    } else {
+                        $(mapping[fi]).prop('checked', true);
+                    }
+                });
+        }
         var cancelFilter = function(e) {
             var type = $(this).parent().attr('data-type').trim(),
-                key = $(this).parent().attr('data-key').trim();
-                console.log(type, key)
+                key = $(this).parent().attr('data-key').trim();               
+                console.log(type, key);
                 var storage = store.get(type);
                 delete storage[key];
                 store.set(type, storage);
@@ -245,7 +276,7 @@ define([
                     postData.isAdult = query.isAdult
                 }
                 if (query.isFavorite) {
-                    postData.isFavorite = store.get('stars').join(',')
+                    postData.isFavorite = (store.get('stars') || []).join(',')
                 }
                 if (query.userId) {
                     postData.userId = query.userId
@@ -253,6 +284,7 @@ define([
                 postCollection.getAllPosts(postData, function(err, posts) {
                     var html = template({posts: posts});
                     $('#post-contents').empty().append(html);
+                    updateUi();
                     $('.edit').on('click', editPost);
                     $('.btn-basic-search').off().on('click', search)
                     $('.page-nav').on('click', paginate)

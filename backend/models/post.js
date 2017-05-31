@@ -2,11 +2,7 @@ var mongoose = require('mongoose'),
     Schema = mongoose.Schema,
     ObjectId = Schema.ObjectId;
 
-var comment = new Schema({
-    userId: {type: String, required: true},
-    comment: {type: String, required: true},
-    date: {type: Date, default: Date.now}
-});
+
 var post = new Schema({
     user: {id: {type: String, required: true}, name: {type: String, required: false}, image: {type: String, required: false}},
     title: {type: String},
@@ -20,6 +16,7 @@ var post = new Schema({
         url : {type: String, required: true},
         type: {type: String, required: true} 
     },
+    context:{type: String},
     tags:[String],
     group:{type: String},
     movie: {type: String},
@@ -27,7 +24,7 @@ var post = new Schema({
     actors:[String],
     characters:[String],
     event: {type: String},
-    comments:[comment],
+    comments:[String],
     dates: {createdAt: {type: Date}, lastUpdated:{type: Date, default: Date.now}}
 });
 

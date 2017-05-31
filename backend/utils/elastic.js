@@ -18,6 +18,7 @@ var elastic = function () {
                         }
                     },
                     title: {"type" : "string"},
+                    context: {"type" : "string"},
                     type: {"type" : "string", "index" : "not_analyzed"},
                     isAdult: {"type" : "boolean", "index" : "not_analyzed"},
                     image: {"type" : "object", 

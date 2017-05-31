@@ -144,8 +144,8 @@ define([
                 $('.se-control').val('');
                 $('.group-list').prop('selectedIndex', 0);                
                 $('.fi-input').prop('checked', false);
-                seTerms = store.get('search_term');
-                fiTerms = store.get('filters');
+                seTerms = store.get('search_term') || {};
+                fiTerms = store.get('filters') || {};
                 Object.keys(seTerms).forEach(function(se) {
                     $(mapping[se]).val(seTerms[se]);
                 });

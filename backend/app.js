@@ -86,7 +86,9 @@ app.post('/token', route.verifyFaceToken);
 app.post('/user', route.addUser);
 app.put('/user', isAuthenticated, route.updatePassword);
 app.put('/user/:id', isAuthenticated, route.updateUser);
-app.get('/user/:id', isAuthenticated, route.getUserDetail)
+app.get('/user/:id', isAuthenticated, route.getUserDetail);
+app.get('/groups', route.listGroups);
+app.get('/contexts', route.listContexts);
 app.get('/test', postRoute.test)
 app.post('/posts', postRoute.getPosts);
 app.get('/post/:id', postRoute.getPost);

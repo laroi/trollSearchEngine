@@ -1,4 +1,6 @@
 var User = require('../models/user.js');
+var Contexts = require('../models/contexts.js');
+var Group = require('../models/group.js');
 var accessToken = require('../models/accessToken.js');
 var mailer = require('../utils/mailer');
 var bcrypt = require('bcrypt');
@@ -245,6 +247,48 @@ var routes = function () {
         }
         
     };
+    listGroups = function (req, res) {
+        console.log('[list groups]')     
+        Group.find({}, function(grpErr, grpData) {
+            if (!grpErr) {
+                console.log('[list groups] listed ', grpData.length, ' groups');
+                res.status(200).send(grpData);
+            } else {
+                console.error('[list groups]', grpErr);
+                res.status(500).send({err: grpErr});
+            }
+        });
+    };
+    listContexts = function (req, res) {
+        console.log('[list contexts]');
+        Contexts.findById('contexts', function(contErr, contData) {
+            if (!contErr && contData) {
+                console.log('[list groups] listed ', contData.contexts.length, ' contexts');
+                res.status(200).send(contData.contexts);
+            } else {
+                if (contErr) {
+                    console.error('[list contexts]', contErr);
+                    res.status(500).send({err: contErr});
+                } else {
+                    console.error('[list contexts] not found');
+                    res.status(404).send({err: 'not found'});
+                }                
+            }
+        });
+    };
+    addContext = function (req, res) {
+        var contexts = req. body.contexts;
+        console.log('[add contexts]')     
+        Contexts.updateById('contexts', {contexts: contexts}, function (updErr, updData) {
+            if (!updErr) {
+                console.log('[add groups] total ', contexts.length, ' contexts');
+                res.status(240).send();
+            } else {
+                console.error('update context', updErr);
+                res.status(500).send({err: updErr});
+            }
+        });
+    };
     return {
         register: register,
         login: login,
@@ -253,7 +297,10 @@ var routes = function () {
         verifyFaceToken: verifyFaceToken,
         addUser: addUser,
         getUserDetail: getUserDetail,
-        updateUser: updateUser
+        updateUser: updateUser,
+        listContexts: listContexts,
+        listGroups: listGroups,
+        addContext: addContext
     }
 }
 

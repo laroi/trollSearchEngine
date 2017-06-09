@@ -150,3 +150,7 @@ cursor:pointer;
 background-image: url("../image/cancel.png");
 background-repeat: no-repeat;
 }
+.page-cont{
+    margin-right:5px;
+    margin-left:5px;
+}

@@ -237,7 +237,7 @@ define([
         }
         var landingView = function () {
             var render;
-            store.set('limit', 1);
+            store.set('limit', 10);
             render = function (query) {
                 // Read params from url, transform to apply in post requests
                 var from = query.from || 0;

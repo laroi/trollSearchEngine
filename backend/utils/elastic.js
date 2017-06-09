@@ -301,7 +301,7 @@ var elastic = function () {
             aggs : {
                 posts:{
                    top_hits:{
-                     size:1
+                     size:10
                    }
                  }
             },
@@ -312,7 +312,7 @@ var elastic = function () {
                 }
               },
                "from" : options.from || 0,
-               "size" : 1,
+               "size" : 10,
               "sort": [
                  {
                     "lastModified": {

@@ -6,7 +6,7 @@
     margin:0;
 }
 #basic-search {
-    width:400px;
+    width:100%;
 }
 .dropdown {
     position: relative;
@@ -60,9 +60,9 @@
         width: 500px;
         margin: 0 auto;
     }
-    .dropdown.dropdown-lg {
-        position: static !important;
-    }
+}
+.dropdown {
+    float:left;
 }
 .filter-drop {
     width: 200px;

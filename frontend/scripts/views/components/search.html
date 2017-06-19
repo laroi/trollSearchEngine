@@ -1,42 +1,35 @@
 <script id="entry-template" type="text/x-handlebars-template">
-    <div class="form-group">
-    <input type="text" class="search-control form-control se-control" id="basic-search" placeholder="Search for snippets"/>
-    <div class="dropdown btn-group dropdown-lg" id="search-drop">
-        <button type="button" class="btn btn-default dropdown-toggle form-group" data-toggle="dropdown" aria-expanded="false"><span class="caret"></span></button>
-        <div class="advanced-search dropdown-menu">
-            <div class="form">
-                <div class="form-group se-form"> 
-                    <label class="col-md-2 control-label" for="se_title">Title</label>
-                    <input type="text" class="form-control se_input se-control col-md-10" id="se_title" placeholder="Title" data-provide="typeahead">
-                </div>
-                <li class="form-group se-form"> 
-                    <label  class="col-md-2 control-label" for="se_tag">Tag</label>
-                    <input type="text" class="form-control se_input se-control" id="se_tag" placeholder="Tag">
-                </div>
-                <div class="form-group se-form"> 
-                    <label class="col-md-2 control-label" for="se_movie">Movie</label>
-                    <input type="text" class="form-control se_input se-control col-md-10" id="se_movie" placeholder="Movie">
-                </div>
-                <div class="form-group se-form"> 
-                    <label  class="col-md-2 control-label" for="se_actor">Actor</label>
-                    <input type="text" class="form-control se_input se-control" id="se_actor" placeholder="Actor">
-                </div>
-                <div class="form-group se-form"> 
-                    <label class="col-md-2 control-label" for="se_character">Character</label>
-                    <input type="text" class="form-control se_input se-control col-md-10" id="se_character" placeholder="Character">
-                </div>
-                <div class="form-group se-form"> 
-                    <label  class="col-md-2 control-label" for="se_event">Event</label>
-                    <input type="text" class="form-control se-control se_input" id="se_event" placeholder="Event">
-                </div>
-                <div class="form-group se-form"> 
-                    <div class="btn btn-primary" id="advanced-search">Search</div>
-                </div>
-            </ul>
-        </div>
-    </span>
-        <button type="submit" class="btn-basic-search btn btn-default"><span class="glyphicon glyphicon-search form-group" aria-hidden="true"></span></button>
+
+<div class="form-horizontal">
+    <div class="form-group se-form"> 
+        <label class="control-label" for="se_title">Title</label>
+        <input type="text" class="form-control se_input se-control col-md-10" id="se_title" placeholder="Title" data-provide="typeahead">
     </div>
+    <div class="form-group se-form"> 
+        <label  class="control-label" for="se_tag">Tag</label>
+        <input type="text" class="form-control se_input  se-control" id="se_tag" placeholder="Tag">
+    </div>
+    <div class="form-group se-form"> 
+        <label class="control-label" for="se_movie">Movie</label>
+        <input type="text" class="form-control se_input se-control col-md-10" id="se_movie" placeholder="Movie">
+    </div>
+    <div class="form-group se-form"> 
+        <label  class="control-label" for="se_actor">Actor</label>
+        <input type="text" class="form-control se_input se-control" id="se_actor" placeholder="Actor">
+    </div>
+    <div class="form-group se-form"> 
+        <label class="control-label" for="se_character">Character</label>
+        <input type="text" class="form-control se_input se-control col-md-10" id="se_character" placeholder="Character">
+    </div>
+    <div class="form-group se-form"> 
+        <label  class="control-label" for="se_event">Event</label>
+        <input type="text" class="form-control se-control se_input" id="se_event" placeholder="Event">
+    </div>
+    <div class="form-group se-form"> 
+        <div class="btn btn-primary" id="advanced-search">Search</div>
+    </div>
+</div>
+
 
 
 

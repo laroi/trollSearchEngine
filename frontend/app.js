@@ -75,7 +75,7 @@ $(document).ready(function(){
     headerTemplate = Handlebars.compile($(header).html());
     var searchTemplate = Handlebars.compile($(search).html());
     $('#content').append(headerTemplate());
-    $('#search-box').html(searchTemplate());
+    $('.drop-form').html(searchTemplate());
     $.material.init();
     $("#s1").dropdown({"optionClass": "withripple"});
     $('.dropdown-menu').click(function(e) {

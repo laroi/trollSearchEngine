@@ -36,6 +36,10 @@ var getSuggestion = function (field) {
             });
           }
 };
+var getBadge = function(field) {
+    var className = 'badge-default';
+    return '<span class="badge ' + className + 'badge-pill"> ' + field + '</span>'
+}
 var getBasicSuggestion = function () {
     var url = '/api/suggestions?&query=';
     return function( request, response ) {
@@ -47,10 +51,11 @@ var getBasicSuggestion = function () {
                 var c = []
                 Object.keys(data).forEach(function(field){
                     $.map(data[field][0].options, function( item ) {
-                      c.push(item.text + ' , ' + field);
+                      c.push({text: item.text, field: field});
                     });
                 })
                 /**/
+                console.log(c);
                 response(c);
               }
             });
@@ -81,11 +86,20 @@ $(document).ready(function(){
     $('.dropdown-menu').click(function(e) {
         e.stopPropagation();
     });
-    $('#basic-search').typeahead({
+   /* $('#basic-search').typeahead({
         source: getBasicSuggestion(),
+        display:'text',
           updater: function(item) {
-            return item.split(",")[0];
+            return item;
           }
+    });*/
+        $('#basic-search').typeahead({
+        source: getBasicSuggestion(),
+        displayText: function (text){
+            return text.text + ' ' + getBadge(text.field);
+        },
+        highlighter: Object,
+            afterSelect: function(item) { $('#basic-search').val(item.text).change(); }
     });
     $('#se_title').typeahead({
         source: getSuggestion('title'),
@@ -148,6 +162,7 @@ $(document).ready(function(){
     window.onhashchange = function(){
        crossroads.parse(window.location.hash)
     };
+    crossroads.parse(window.location.hash)
     url.navigate();
     
 })

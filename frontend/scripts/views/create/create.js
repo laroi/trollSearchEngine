@@ -94,11 +94,11 @@ define([
                         });
                         $("#actors").tagit({allowSpaces: true});
                         actors.forEach(function(actor) {
-                            $("#tags").tagit("createTag", actor);
+                            $("#actors").tagit("createTag", actor);
                         });
                         $("#characters").tagit({allowSpaces: true});
                         characters.forEach(function(character) {
-                            $("#tags").tagit("createTag", character);
+                            $("#characters").tagit("createTag", character);
                         });
                         //Change or set title
                         if (post && post.title) {

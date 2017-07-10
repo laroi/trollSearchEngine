@@ -21,9 +21,7 @@
   text-align: center;
   border-radius:0;
   width:100%;
-  transform: translate(-50%, 0);
   overflow:hidden;
-  left: -797%;
 }
 .input-group-btn .btn-group {
     display: flex !important;

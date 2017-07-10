@@ -6,7 +6,7 @@ define(['controllers/requestController', 'controllers/storeController', 'models/
             request.post('/api/posts', postData, function (err, status, data) {
                 postData.from = postData.from || 0;
                 postData.from = parseInt(postData.from, 10);
-                postData.limit = postData.limit || 1;
+                postData.limit = postData.limit || 10;
                 postData.limit = parseInt(postData.limit, 10);
                 var current = (postData.from  + postData.limit)/postData.limit,
                     stars = store.get('stars') || [];
@@ -32,7 +32,9 @@ define(['controllers/requestController', 'controllers/storeController', 'models/
 				        characters: post._source.characters,
 				        event: post._source.event
 				    });
-				    
+				    if (postObj.type === 'clean') {
+				        postObj.isClean = true;
+				    }
 				    if (store.get('userId') === post._source.user.id) {
 				       postObj.isOwner = true; 
 				    }

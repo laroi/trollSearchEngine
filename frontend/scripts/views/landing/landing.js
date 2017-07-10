@@ -144,6 +144,7 @@ define([
                 $('.se-control').val('');
                 $('.group-list').prop('selectedIndex', 0);                
                 $('.fi-input').prop('checked', false);
+                $('#basic-search').val('');
                 seTerms = store.get('search_term') || {};
                 fiTerms = store.get('filters') || {};
                 Object.keys(seTerms).forEach(function(se) {

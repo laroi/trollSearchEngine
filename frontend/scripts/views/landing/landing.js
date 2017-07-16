@@ -285,6 +285,13 @@ define([
                 postCollection.getAllPosts(postData, function(err, posts) {
                     var html = template({posts: posts});
                     $('#post-contents').empty().append(html);
+                    /*$('.panel-cont').imagesLoaded(function () {
+                        $('.panel-cont').masonry({
+                          // options
+                          itemSelector: '.elem-cont'    
+                        });
+                    })*/
+                    
                     updateUi();
                     $('.edit').on('click', editPost);
                     $('.btn-basic-search').off().on('click', search)

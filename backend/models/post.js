@@ -12,6 +12,7 @@ var post = new Schema({
     views: {type: Number},
     downloads: {type: Number},
     description: {type: String},
+    isApproved: {type: Boolean, default: false},
     image: {
         url : {type: String, required: true},
         type: {type: String, required: true} 

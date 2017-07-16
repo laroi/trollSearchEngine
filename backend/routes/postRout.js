@@ -1,9 +1,11 @@
 var Post = require('../models/post.js');
 var elastic = require('../utils/elastic');
-var uploadPath = __dirname + '/../uploads/';
+const uploadPath = __dirname + '/../uploads/';
+const waterkImg = __dirname + '/../assets/logo.png';
 var uuid = require('uuid');
 var fs = require('fs');
 var path = require('path');
+var gm = require('gm');
 var access = require('../models/accessToken')
 var saveFile = function(fileLoc, image, callback){
     if (image && fileLoc) {
@@ -61,9 +63,14 @@ var routes = function () {
             obj = {},
             postObj;
         if (req.body.image && req.body.user.id && req.body.type) {
-            var filename = uuid.v1() + '.' + req.body.image.type
+            var filename = uuid.v1();
             var fileLoc = uploadPath + filename;
-            fs.writeFile(fileLoc, req.body.image.image, 'base64', function(err) {
+            var base64Data = req.body.image.image;
+            base64Data = base64Data.replace(/^data:image\/png;base64,/,'')
+            base64data = new Buffer(base64Data,'base64')
+            gm(base64data)
+            .setFormat('jpg')            
+            .write(fileLoc, function(err){
                 if (!err) {
                     obj.user= user;
                     obj.title = title;
@@ -72,7 +79,7 @@ var routes = function () {
                     obj.description = description;
                     obj.tags = tags;
                     obj.movie = movie;
-                    obj.image = {url: '/images/'+filename, type: req.body.image.type};
+                    obj.image = {url: '/images/'+filename + '.jpg', type: 'jpg'};
                     obj.language = language;
                     obj.actors = actors;
                     obj.characters = characters;
@@ -267,7 +274,29 @@ var routes = function () {
                             'Content-Disposition': 'attachment; filename='+fileName
                         });
                         var readStream = fs.createReadStream(uploadPath+fileName);
-                        readStream.pipe(res);
+                        var getGravity = function () {
+                            var gravity;
+                            var gravities = [
+                                'NorthWest',
+                                'North',
+                                'NorthEast',
+                                'West',
+                                'Center',
+                                'East',
+                                'SouthWest',
+                                'South',
+                                'SouthEast'
+                            ];
+                            gravity = gravities[Math.floor(Math.random() * (8 - 0))];
+                            console.log('selected gravity ', gravity)
+                            return gravity
+                        }
+                        gm(readStream)
+                        .gravity(getGravity())
+                        .draw(['text 0,0 findameme.com'])
+                        .stream(function (err, stdout, stderr) {                          
+                          stdout.pipe(res);
+                        });
                         Post.update({_id: postId}, { $inc: {downloads:1}}, function(updErr, updData) {
                             console.log('Increment download mongo \n',updErr, updData)
                         });

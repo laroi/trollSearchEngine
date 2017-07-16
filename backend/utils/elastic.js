@@ -21,6 +21,7 @@ var elastic = function () {
                     context: {"type" : "string"},
                     type: {"type" : "string", "index" : "not_analyzed"},
                     isAdult: {"type" : "boolean", "index" : "not_analyzed"},
+                    isApproved: {"type" : "boolean", "index" : "not_analyzed"},
                     image: {"type" : "object", 
                         "properties" : {
                             "url" : {"type" : "string", "index" : "not_analyzed"},
@@ -155,6 +156,7 @@ var elastic = function () {
                 characters: doc.characters,
                 comments: doc.comments,
                 event: doc.event,
+                isApproved: doc.isApproved,
                 createdAt: doc.createdAt,
                 lastModified: doc.lastModified,
                 titleSuggest: {
@@ -244,34 +246,52 @@ var elastic = function () {
         });
     };
     var getDocs = function(options, callback) {
+    var isAdvancedSearch = function (opts) {
+        var opt;
+        for (opt in opts) {
+            if (opts[opt]) {
+                return true
+            }
+        }
+        return false;
+    }
     var should_array = [],
         must_array = [],
+        sort =[];
         body = {};
-        if (options.advanced && Object.keys(options.advanced).length > 0) {
+        if (options.advanced && isAdvancedSearch()) {
             if (options.advanced.userId) {
                 must_array.push({ "match": { "user.id": options.userId }});
+                sort.push({"_score": {"order": "desc"}});
             }
             if (options.advanced.title) {
                 must_array.push({ "match": { "title": options.advanced.title }});
+                sort.push({"_score": {"order": "desc"}});
             }
             if (options.advanced.tags) {
                 must_array.push({ "match": { "tags": options.advanced.tags }});
+                sort.push({"_score": {"order": "desc"}});
             }
             if (options.advanced.movie) {
                 must_array.push({ "match": { "movie": options.advanced.movie }});
+                sort.push({"_score": {"order": "desc"}});
             }
             if (options.advanced.language) {
                 must_array.push({ "match": { "language": options.advanced.language }});
+                sort.push({"_score": {"order": "desc"}});
             }
             if (options.advanced.actors) {
                 must_array.push({ "match": { "actors": options.advanced.actors }});
+                sort.push({"_score": {"order": "desc"}});
             }
             if (options.advanced.characters) {
                 must_array.push({ "match": { "characters": options.advanced.characters }});
+                sort.push({"_score": {"order": "desc"}});
             }
             if (options.advanced.event) {
                 must_array.push({ "match": { "event": options.advanced.event }});
-            }            
+                sort.push({"_score": {"order": "desc"}});
+            }
         } else if (options.search){
             should_array.push({ "match": { "user.id": options.search}});
             should_array.push({ "match": { "title": options.search }});
@@ -280,7 +300,17 @@ var elastic = function () {
             should_array.push({ "match": { "actors": options.search }});
             should_array.push({ "match": { "characters": options.search }});
             should_array.push({ "match": { "event": options.search }});
-            
+            sort.push({
+                "_score": {
+                   "order": "desc"
+                }
+             });
+        } else {
+            sort.push({
+                    "lastModified": {
+                       "order": options.order || "desc"
+                    }
+                 })
         }
         if (options.ids && options.ids.length > 0) {
                 must_array.push({ "terms": { "_id": options.ids }});
@@ -297,6 +327,11 @@ var elastic = function () {
         if (options.type) {
             must_array.push({ "match": { "type": options.type }});
         }
+        if (options.isApproved) {
+            must_array.push({ "match": { "isApproved": options.isApproved }});
+        } /*else {
+            must_array.push({ "match": { "isApproved": true }});
+        }*/
         body = {
             aggs : {
                 posts:{
@@ -313,14 +348,9 @@ var elastic = function () {
               },
                "from" : options.from || 0,
                "size" : 10,
-              "sort": [
-                 {
-                    "lastModified": {
-                       "order": options.order || "desc"
-                    }
-                 }
-              ]
+               "sort" : sort
         };
+        console.log('sort ', sort); 
         if (should_array.length > 0) {
             body.query.bool.should = should_array
         }

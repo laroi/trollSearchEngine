@@ -70,7 +70,7 @@ var routes = function () {
             base64data = new Buffer(base64Data,'base64')
             gm(base64data)
             .setFormat('jpg')            
-            .write(fileLoc, function(err){
+            .write(fileLoc + '.jpg', function(err){
                 if (!err) {
                     obj.user= user;
                     obj.title = title;

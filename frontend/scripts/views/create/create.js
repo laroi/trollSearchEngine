@@ -6,6 +6,23 @@ define([
      var source   = $(html).html(),
         template = Handlebars.compile(source),
         render;
+    var getSuggestion = function (field) {
+        var url = '/api/suggestions?field='+field+'&query=';
+            return function( request, response ) {
+                    $.ajax({
+                      type: 'GET',
+                      url: url+(request.toLowerCase()),
+                      dataType: "json",
+                      success: function( data ) {
+                        var c = []
+                        $.map(data[field][0].options, function( item ) {
+                          c.push(item.text);
+                        });
+                        response(c);
+                      }
+                  });
+              }
+    };
         var createNew = function (post) {
             var render;
             render = function (e, post) {
@@ -54,7 +71,7 @@ define([
                                         language:$("#language").val().trim(),
                                         actors:$("#actors").val().split(','),
                                         characters:$("#characters").val().split(','),
-                                        event:$("#movie").val().trim(),
+                                        event:$("#event").val().trim(),
                                         createdAt: date.toISOString(),
 				                        lastModified: date.toISOString()
                                     }
@@ -92,7 +109,14 @@ define([
                         tags.forEach(function(tag) {
                             $("#tags").tagit("createTag", tag);
                         });
-                        $("#actors").tagit({allowSpaces: true});
+                        $("#actors").tagit({
+                            allowSpaces: true,
+                            autocomplete: {
+                               delay: 0,
+                               minLength: 1,
+                               source :  getSuggestion('actor')
+                            }
+                        });
                         actors.forEach(function(actor) {
                             $("#actors").tagit("createTag", actor);
                         });

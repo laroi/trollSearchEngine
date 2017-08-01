@@ -21,19 +21,19 @@ requirejs(['views/landing/landing', 'controllers/urlController', 'controllers/us
 function (landingView, url, user, header, createNewView, search) {
 var getSuggestion = function (field) {
     var url = '/api/suggestions?field='+field+'&query=';
-    return function( request, response ) {
-            $.ajax({
-              type: 'GET',
-              url: url+request,
-              dataType: "json",
-              success: function( data ) {
-                var c = []
-                $.map(data[field][0].options, function( item ) {
-                  c.push(item.text);
-                });
-                response(c);
-              }
-            });
+        return function( request, response ) {
+                $.ajax({
+                  type: 'GET',
+                  url: url+(request.toLowerCase()),
+                  dataType: "json",
+                  success: function( data ) {
+                    var c = []
+                    $.map(data[field][0].options, function( item ) {
+                      c.push(item.text);
+                    });
+                    response(c);
+                  }
+              });
           }
 };
 var getBadge = function(field) {
@@ -45,7 +45,7 @@ var getBasicSuggestion = function () {
     return function( request, response ) {
             $.ajax({
               type: 'GET',
-              url: url+request,
+              url: url+(request.toLowerCase()),
               dataType: "json",
               success: function( data ) {
                 var c = []
@@ -145,14 +145,23 @@ $(document).ready(function(){
 
     
     user.init();
+window.fbAsyncInit = function() {
     FB.init({
-        appId      : '307608722910374',
-        cookie     : true,  // enable cookies to allow the server to access 
-                            // the session
-        xfbml      : true,  // parse social plugins on this page
-        version    : 'v2.5', // use graph api version 2.5,
-        status: true
+      appId      : '307608722910374',
+      cookie     : true,
+      xfbml      : true,
+      version    : 'v2.8'
     });
+    FB.AppEvents.logPageView();   
+  };
+
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "//connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
 
     //var html   = $(header).html();
     //console.log()

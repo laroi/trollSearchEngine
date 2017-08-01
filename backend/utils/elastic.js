@@ -1,140 +1,194 @@
 var elasticsearch = require('elasticsearch');
 var client = new elasticsearch.Client({
   host: 'localhost:9200',
-  log: 'info'
+  log: 'info',
+  apiVersion: '5.5'
 });
 var elastic = function () {
+    var putSettings = function (callback) {        
+        client.indices.close({index: 'trolls'},function(err) {
+        console.log('closed index')
+          if (!err) {
+          client.indices.putSettings({
+          index: 'trolls',
+          body:{
+            "settings": {
+              "analysis": {
+                 "filter": {
+                    "edge_ngram_filter": {
+                       "type": "edge_ngram",
+                       "min_gram": 2,
+                       "max_gram": 20
+                    }
+                 },
+                 "analyzer": {
+                    "edge_ngram_analyzer": {
+                       "type": "custom",
+                       "tokenizer": "standard",
+                       "filter": [
+                          "lowercase",
+                          "edge_ngram_filter"
+                       ]
+                    }
+                 }
+              }
+            }
+            }
+        }, function(setErr, setResp, setRespCode) {
+            if (!setErr) {
+                console.log('put settings', setErr, setResp,  setRespCode)
+                client.indices.open({index: 'trolls'}, function() {
+                    console.log('opened index')
+                    callback();
+                });     
+            } else {
+                console.error(setErr);
+                callback(setErr);
+                return;
+            }
+            });
+        } else {
+            console.error('error in closing index', err);
+            callback(err);
+        }
+        })
+        
+    }
     var putMapping = function (callback) {
-        client.indices.putMapping({
-            index: 'trolls',
-            type: 'post',
-            body:{
-                properties: {
-                    user: {"type" : "object", 
-                    "properties" : {
-                            "id" : {"type" : "string", "index" : "not_analyzed"},
-                            "name" : {"type" : "string", "index" : "not_analyzed"},
-                            "image" : {"type" : "string", "index" : "not_analyzed"}
-                        }
-                    },
-                    title: {"type" : "string"},
-                    context: {"type" : "string"},
-                    type: {"type" : "string", "index" : "not_analyzed"},
-                    isAdult: {"type" : "boolean", "index" : "not_analyzed"},
-                    isApproved: {"type" : "boolean", "index" : "not_analyzed"},
-                    image: {"type" : "object", 
+            client.indices.putMapping({
+                index: 'trolls',
+                type: 'post',
+                body:{
+                    properties: {
+                        user: {"type" : "object", 
                         "properties" : {
-                            "url" : {"type" : "string", "index" : "not_analyzed"},
-                            "type" : {"type" : "string", "index" : "not_analyzed"}
+                                "id" : {"type" : "string", "index" : "not_analyzed"},
+                                "name" : {"type" : "string", "index" : "not_analyzed"},
+                                "image" : {"type" : "string", "index" : "not_analyzed"}
+                            }
+                        },
+                        title: {"type" : "string"},
+                        context: {"type" : "string"},
+                        type: {"type" : "string", "index" : "not_analyzed"},
+                        isAdult: {"type" : "boolean", "index" : "not_analyzed"},
+                        isApproved: {"type" : "boolean", "index" : "not_analyzed"},
+                        image: {"type" : "object", 
+                            "properties" : {
+                                "url" : {"type" : "string", "index" : "not_analyzed"},
+                                "type" : {"type" : "string", "index" : "not_analyzed"}
+                            }
+                        },
+                        descriptions: {"type" : "string"},
+                        likes: {
+                            properties:{
+                                userId: {"type": "string", "index" : "not_analyzed"},
+                                username: {"type": "string", "index" : "not_analyzed"},
+                                time:  {"type": "date"}
+                            }
+                        },
+                        views: {"type": "integer"},
+                        downloads: {"type": "integer"},
+                        comments:{
+                            properties:{
+                                userId: {"type": "string", "index" : "not_analyzed"},
+                                comment:  {"type": "string"},
+                                createdAt: {"type": "date"}
+                            }
+                        },
+                        tags: {"type" : "string"},
+                        movie: {"type" : "string"},
+                        language: {"type" : "string"},
+                        actors: {"type" : "string"},
+                        characters: {"type" : "string"},
+                        event: {"type" : "string"},
+                        createdAt: {"type" : "date"},
+                        lastModified: {"type": "date"},
+                        titleSuggest: {
+                            type: "completion",
+                            analyzer: "simple",
+                            preserve_separators: true,
+                            preserve_position_increments: true,
+                            max_input_length: 50
+                        },
+                        tagSuggest: {
+                            type: "completion",
+                            analyzer: "simple",
+                            preserve_separators: true,
+                            preserve_position_increments: true,
+                            max_input_length: 50
+                        },
+                        actorSuggest: {
+                            type: "completion",
+                            analyzer: "simple",
+                            preserve_separators: true,
+                            preserve_position_increments: true,
+                            max_input_length: 50
+                        },
+                        characterSuggest: {
+                            type: "completion",
+                            analyzer: "simple",
+                            preserve_separators: true,
+                            preserve_position_increments: true,
+                            max_input_length: 50
+                        },
+                        eventSuggest: {
+                            type: "completion",
+                            analyzer: "simple",
+                            preserve_separators: true,
+                            preserve_position_increments: true,
+                            max_input_length: 50
+                        },
+                        movieSuggest: {
+                            type: "completion",
+                            analyzer: "simple",
+                            preserve_separators: true,
+                            preserve_position_increments: true,
+                            max_input_length: 50
                         }
-                    },
-                    descriptions: {"type" : "string"},
-                    likes: {
-                        properties:{
-                            userId: {"type": "string", "index" : "not_analyzed"},
-                            username: {"type": "string", "index" : "not_analyzed"},
-                            time:  {"type": "date"}
-                        }
-                    },
-                    views: {"type": "integer"},
-                    downloads: {"type": "integer"},
-                    comments:{
-                        properties:{
-                            userId: {"type": "string", "index" : "not_analyzed"},
-                            comment:  {"type": "string"},
-                            createdAt: {"type": "date"}
-                        }
-                    },
-                    tags: {"type" : "string"},
-                    movie: {"type" : "string"},
-                    language: {"type" : "string"},
-                    actors: {"type" : "string"},
-                    characters: {"type" : "string"},
-                    event: {"type" : "string"},
-                    createdAt: {"type" : "date"},
-                    lastModified: {"type": "date"},
-                    titleSuggest: {
-                        type: "completion",
-                        analyzer: "simple",
-                        payloads: true,
-                        preserve_separators: true,
-                        preserve_position_increments: true,
-                        max_input_length: 50
-                    },
-                    tagSuggest: {
-                        type: "completion",
-                        analyzer: "simple",
-                        payloads: true,
-                        preserve_separators: true,
-                        preserve_position_increments: true,
-                        max_input_length: 50
-                    },
-                    actorSuggest: {
-                        type: "completion",
-                        analyzer: "simple",
-                        payloads: true,
-                        preserve_separators: true,
-                        preserve_position_increments: true,
-                        max_input_length: 50
-                    },
-                    characterSuggest: {
-                        type: "completion",
-                        analyzer: "simple",
-                        payloads: true,
-                        preserve_separators: true,
-                        preserve_position_increments: true,
-                        max_input_length: 50
-                    },
-                    eventSuggest: {
-                        type: "completion",
-                        analyzer: "simple",
-                        payloads: true,
-                        preserve_separators: true,
-                        preserve_position_increments: true,
-                        max_input_length: 50
-                    },
-                    movieSuggest: {
-                        type: "completion",
-                        analyzer: "simple",
-                        payloads: true,
-                        preserve_separators: true,
-                        preserve_position_increments: true,
-                        max_input_length: 50
                     }
                 }
-            }
-            
-        }, function (err, resp, respcode) {
-                if (!err) {
-                    callback()
-                    return;
-                } else {
-                    console.error(err);
-                    callback(err);
-                    return;
-                }
-            });
+                
+            }, function (err, resp, respcode) {
+                    if (!err) {
+                        console.log('put mapping')
+                        callback()
+                        return;
+                    } else {
+                        console.error(err);
+                        callback(err);
+                        return;
+                    }
+                });
     }
     var init = function (callback) {
+        console.log('Initing ES indext')
         client.indices.exists({index:'trolls'}, function (existErr, existData) {
             if (existData) {
+                console.log('index exists', existErr, existData)
                 if (callback && typeof callback === 'function') {
                     callback();
                 }
                 return
             } else {
+                console.log('no index exists')
                 client.indices.create({index: 'trolls'}, function(createErr, createData) {
                     if (!createErr) {
-                        putMapping(function(err) {
-                            if (!err) {
-                            console.log('Putting index');
-                                if (callback && typeof callback === 'function') {
-                                    callback();
-                                }
+                    putMapping(function(err) {
+                        if (!err) {
+                        console.log('Putting index');
+                            if (callback && typeof callback === 'function') {
+                                callback();
                             }
-                        })
-                    }
-                })
+                        } else {
+                            console.log('error in putting index', err);
+                        }
+                    })                        
+
+                } else {
+                    console.log('Error creating index', createErr)
+                }
+                    
+            })
             }
         });
     };
@@ -160,58 +214,22 @@ var elastic = function () {
                 createdAt: doc.createdAt,
                 lastModified: doc.lastModified,
                 titleSuggest: {
-                    input: doc.title.split(" "),
-                    output: doc.title,
-                    payload:{
-                        user: doc.userId,
-                        image:  doc.image,
-                        movie: doc.movie
-                    }
+                    input: doc.title.split(" ")                    
                 },
                 tagSuggest: {
-                    input: doc.tags,
-                    output: doc.tags,
-                    payload:{
-                        user: doc.userId,
-                        image:  doc.image,
-                        movie: doc.movie
-                    }
+                    input: doc.tags
                 },
                 actorSuggest: {
-                    input: doc.actors,
-                    output: doc.actors,
-                    payload:{
-                        user: doc.userId,
-                        image:  doc.image,
-                        movie: doc.movie
-                    }
+                    input: doc.actors
                 },
                 characterSuggest: {
-                    input: doc.characters,
-                    output: doc.characters,
-                    payload:{
-                        user: doc.userId,
-                        image:  doc.image,
-                        movie: doc.movie
-                    }
+                    input: doc.characters
                 },
                 eventSuggest: {
-                    input: doc.event.split(" "),
-                    output: doc.event,
-                    payload:{
-                        user: doc.userId,
-                        image:  doc.image,
-                        movie: doc.movie
-                    }
+                    input: doc.event.split(" ")
                 },
                 movieSuggest: {
-                    input: doc.movie.split(" "),
-                    output: doc.movie,
-                    payload:{
-                        user: doc.userId,
-                        image:  doc.image,
-                        movie: doc.language
-                    }
+                    input: doc.movie.split(" ")
                 }
             }
         client.create({
@@ -259,7 +277,8 @@ var elastic = function () {
         must_array = [],
         sort =[];
         body = {};
-        if (options.advanced && isAdvancedSearch()) {
+        
+        if (options.advanced && isAdvancedSearch(options.advanced)) {
             if (options.advanced.userId) {
                 must_array.push({ "match": { "user.id": options.userId }});
                 sort.push({"_score": {"order": "desc"}});
@@ -385,7 +404,8 @@ var elastic = function () {
         };
         if (Array.isArray(options.fields) && options.fields.length > 0) {
             options.fields.forEach(function(field) {
-                suggestObj.suggest[field]={text: options.query,
+                suggestObj.suggest[field]={
+                    "regex" : ".*"+options.query+".*",
                     completion : {
                         field: fieldMap[field]
                     } 
@@ -393,7 +413,8 @@ var elastic = function () {
             });            
         } else {
             Object.keys(fieldMap).forEach(function(field) {
-                suggestObj.suggest[field]={text: options.query,
+                suggestObj.suggest[field]={
+                    "regex" : ".*"+options.query+".*",
                     completion : {
                         field: fieldMap[field]
                     } 
@@ -406,16 +427,58 @@ var elastic = function () {
             type: 'post',
             body: suggestObj
         }, function (error, response) {
+            if (error) {
+                console.error(error);
+            }
             callback(error, response);
         });
     }
     var updateDoc = function (id, doc, callback) {
+        var body = {
+            user: doc.user,
+            title: doc.title,
+            type: doc.type,
+            isAdult : doc.isAdult,
+            image: doc.image,
+            descriptions: doc.descriptions,
+            tags: doc.tags,
+            movie: doc.movie,
+            language: doc.language,
+            actors: doc.actors,
+            likes: doc.likes || [],
+            downloads: doc.downloads || 0,
+            views : doc.views || 0,
+            characters: doc.characters,
+            comments: doc.comments,
+            event: doc.event,
+            isApproved: doc.isApproved,
+            createdAt: doc.createdAt,
+            lastModified: doc.lastModified,
+            titleSuggest: {
+                    input: doc.title.split(" ")                    
+                },
+                tagSuggest: {
+                    input: doc.tags
+                },
+                actorSuggest: {
+                    input: doc.actors
+                },
+                characterSuggest: {
+                    input: doc.characters
+                },
+                eventSuggest: {
+                    input: doc.event.split(" ")
+                },
+                movieSuggest: {
+                    input: doc.movie.split(" ")
+                }
+            }
         client.update({
             index: 'trolls',
             id: id,
             type: 'post',
             body: {
-                doc: doc
+                doc: body
             }
         }, function(err, data){
             if (callback && typeof callback === 'function') {

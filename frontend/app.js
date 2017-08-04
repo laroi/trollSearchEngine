@@ -29,7 +29,8 @@ var getSuggestion = function (field) {
                   success: function( data ) {
                     var c = []
                     $.map(data[field][0].options, function( item ) {
-                      c.push(item.text);
+                      var reg = new RegExp(request, 'gi');
+                      c.push(item.text.replace(reg, function(str) {return '<b>'+str+'</b>'}));
                     });
                     response(c);
                   }
@@ -51,7 +52,8 @@ var getBasicSuggestion = function () {
                 var c = []
                 Object.keys(data).forEach(function(field){
                     $.map(data[field][0].options, function( item ) {
-                      c.push({text: item.text, field: field});
+                      var reg = new RegExp(request, 'gi');
+                      c.push({text: item.text.replace(reg, function(str) {return '<b>'+str+'</b>'}), field: field});
                     });
                 })
                 /**/

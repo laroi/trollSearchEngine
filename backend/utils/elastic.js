@@ -212,25 +212,25 @@ var elastic = function () {
                 event: doc.event,
                 isApproved: doc.isApproved,
                 createdAt: doc.createdAt,
-                lastModified: doc.lastModified,
-                titleSuggest: {
-                    input: doc.title.split(" ")                    
-                },
-                tagSuggest: {
-                    input: doc.tags
-                },
-                actorSuggest: {
-                    input: doc.actors
-                },
-                characterSuggest: {
-                    input: doc.characters
-                },
-                eventSuggest: {
-                    input: doc.event.split(" ")
-                },
-                movieSuggest: {
-                    input: doc.movie.split(" ")
-                }
+                lastModified: doc.lastModified
+            }
+            if (doc.title) {
+                body.titleSuggest = {input: doc.title.split(" ")}
+            }
+            if (doc.event) {
+                body.eventSuggest = {input: doc.event.split(" ")}
+            }
+            if (doc.movie) {
+                body.movieSuggest = {input: doc.movie.split(" ")}
+            }
+            if (doc.tags.length > 0) {
+                body.tagSuggest = {input: doc.tags}
+            }
+            if (doc.actors.length > 0) {
+                body.actorSuggest = {input: doc.actors}
+            }
+            if (doc.characters.length > 0) {
+                body.characterSuggest = {input: doc.characters}
             }
         client.create({
             index: 'trolls',
@@ -453,26 +453,26 @@ var elastic = function () {
             event: doc.event,
             isApproved: doc.isApproved,
             createdAt: doc.createdAt,
-            lastModified: doc.lastModified,
-            titleSuggest: {
-                    input: doc.title.split(" ")                    
-                },
-                tagSuggest: {
-                    input: doc.tags
-                },
-                actorSuggest: {
-                    input: doc.actors
-                },
-                characterSuggest: {
-                    input: doc.characters
-                },
-                eventSuggest: {
-                    input: doc.event.split(" ")
-                },
-                movieSuggest: {
-                    input: doc.movie.split(" ")
-                }
-            }
+            lastModified: doc.lastModified
+        }
+        if (doc.title) {
+            body.titleSuggest = {input: doc.title.split(" ")}
+        }
+        if (doc.event) {
+            body.eventSuggest = {input: doc.event.split(" ")}
+        }
+        if (doc.movie) {
+            body.movieSuggest = {input: doc.movie.split(" ")}
+        }
+        if (doc.tags.length > 0) {
+            body.tagSuggest = {input: doc.tags}
+        }
+        if (doc.actors.length > 0) {
+            body.actorSuggest = {input: doc.actors}
+        }
+        if (doc.characters.length > 0) {
+            body.characterSuggest = {input: doc.characters}
+        }
         client.update({
             index: 'trolls',
             id: id,

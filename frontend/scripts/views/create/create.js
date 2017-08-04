@@ -9,9 +9,10 @@ define([
     var getSuggestion = function (field) {
         var url = '/api/suggestions?field='+field+'&query=';
             return function( request, response ) {
+                    var term = request.term ? request.term : request
                     $.ajax({
                       type: 'GET',
-                      url: url+(request.toLowerCase()),
+                      url: url+(term.toLowerCase()),
                       dataType: "json",
                       success: function( data ) {
                         var c = []
@@ -123,6 +124,12 @@ define([
                         $("#characters").tagit({allowSpaces: true});
                         characters.forEach(function(character) {
                             $("#characters").tagit("createTag", character);
+                        });
+                        $('#movie').typeahead({
+                            source: getSuggestion('movie'),
+                              updater: function(item) {
+                                return item;
+                              }
                         });
                         //Change or set title
                         if (post && post.title) {

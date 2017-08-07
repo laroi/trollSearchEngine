@@ -223,13 +223,13 @@ var elastic = function () {
             if (doc.movie) {
                 body.movieSuggest = {input: doc.movie.split(" ")}
             }
-            if (doc.tags.length > 0) {
+            if (doc.tags && Array.isArray(doc.tags) && doc.tags.length > 0) {
                 body.tagSuggest = {input: doc.tags}
             }
-            if (doc.actors.length > 0) {
+            if (doc.actors && Array.isArray(doc.actors) && doc.actors.length > 0) {
                 body.actorSuggest = {input: doc.actors}
             }
-            if (doc.characters.length > 0) {
+            if (doc.characters && Array.isArray(doc.characters) && doc.characters.length > 0) {
                 body.characterSuggest = {input: doc.characters}
             }
         client.create({
@@ -258,7 +258,7 @@ var elastic = function () {
             if (!error) {
                 console.log('Put document ' + response._id);
             } else {
-                console.error('Problem in putting doc', JSON.stringify(error))
+                console.error('Problem in putting doc', JSON.stringify(error),"\n body -> \n", JSON.stringify(body))
             }
             callback(error, response);
         });
@@ -278,9 +278,9 @@ var elastic = function () {
         sort =[];
         body = {};
         
-        if (options.advanced && isAdvancedSearch(options.advanced)) {
+        if (options.advanced && isAdvancedSearch(options.advanced)) {           
             if (options.advanced.userId) {
-                must_array.push({ "match": { "user.id": options.userId }});
+                must_array.push({ "match": { "user.id": options.advanced.userId }});
                 sort.push({"_score": {"order": "desc"}});
             }
             if (options.advanced.title) {
@@ -464,13 +464,13 @@ var elastic = function () {
         if (doc.movie) {
             body.movieSuggest = {input: doc.movie.split(" ")}
         }
-        if (doc.tags.length > 0) {
+        if (doc.tags && Array.isArray(doc.tags) && doc.tags.length > 0) {
             body.tagSuggest = {input: doc.tags}
         }
-        if (doc.actors.length > 0) {
+        if (doc.actors && Array.isArray(doc.actors) && doc.actors.length > 0) {
             body.actorSuggest = {input: doc.actors}
         }
-        if (doc.characters.length > 0) {
+        if (doc.characters && Array.isArray(doc.characters) && doc.characters.length > 0) {
             body.characterSuggest = {input: doc.characters}
         }
         client.update({

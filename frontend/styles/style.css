@@ -108,6 +108,11 @@
 .bottom-panel, .panel-body, .info-panel, .button-panel {
     overflow:hidden;
 }
+.button {
+    padding:6px 12px !important;
+    border: 1px solid black!important;
+    color:#FFF!important;
+}
 .highlight-cont{
     border:1px solid black;
     padding-left:18px;
@@ -151,6 +156,13 @@ background-image: url("../image/cancel.png");
 background-repeat: no-repeat;
 }
 .page-cont{
+    min-height: 494px;
     margin-right:5px;
     margin-left:5px;
+}
+.paginate {
+    text-align:center;
+}
+.total_count {
+    margin:0 0 5px 20px;
 }

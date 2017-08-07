@@ -8,6 +8,7 @@ define(['controllers/requestController', 'controllers/storeController', 'models/
                 postData.from = parseInt(postData.from, 10);
                 postData.limit = postData.limit || 10;
                 postData.limit = parseInt(postData.limit, 10);
+                limit = postData.limit;
                 var current = (postData.from  + postData.limit)/postData.limit,
                     stars = store.get('stars') || [];
                 if (!err) {

@@ -1,6 +1,6 @@
 var Post = require('../models/post.js');
 var elastic = require('../utils/elastic');
-const uploadPath = __dirname + '/../uploads/';
+const uploadPath = __dirname + '/../assets/uploads/';
 const waterkImg = __dirname + '/../assets/logo.png';
 var uuid = require('uuid');
 var fs = require('fs');
@@ -130,7 +130,7 @@ var routes = function () {
             from = req.body.from,
             order = req.body.order,
             isAdult = req.body.isAdult,
-            isFavorite =  req.body.isFavorite ? req.body.isFavorite.split(',') : [];
+            isFavorite =  req.body.isFavorite;
             opts = {};
             if (search) {
                 opts.search = search;
@@ -146,14 +146,14 @@ var routes = function () {
             if (group) {
                 opts.group = group;
             }
-            if (isFavorite.length > 0) {
-                opts.ids = isFavorite;
+            if (isFavorite !== undefined) {
+                opts.ids = isFavorite.split(',');
             }
             if (type) {
                 opts.type = type;
             }
             if (userId) {
-                opts.userId = userId;
+                opts.advanced.userId = userId;
             }
             if (isAdult) {
                 opts.isAdult = isAdult;

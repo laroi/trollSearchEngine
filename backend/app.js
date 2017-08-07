@@ -80,7 +80,8 @@ if (!Array.prototype.find) {
     return undefined;
   };
 }
-app.use('/images', express.static(__dirname + '/uploads'));
+app.use('/images', express.static(__dirname + '/assets/uploads'));
+app.use('/images/profile', express.static(__dirname + '/assets/profile'));
 app.post('/login', route.login);
 app.post('/token', route.verifyFaceToken);
 app.post('/user', route.addUser);

@@ -2,9 +2,17 @@ define(['./requestController', './storeController'], function (request, store) {
 
     var enableFeatures = function(){
          $('#create').show();
+         $('#facebook_login').hide();
+         $('.isFavorite').prop("disabled", false)
+         $('.isMine').prop("disabled", false)
+         
     }
     var disableFeatures = function(){
         $('#create').hide();
+        $('#facebook_login').show();
+        $('.isFavorite').prop("disabled", true)
+        $('.isMine').prop("disabled", true)
+        
     }
     var regNewUser = function(userId, token, callback) {
         var url = 'https://graph.facebook.com/me?fields=id,name,picture,email,gender&access_token=' + token;

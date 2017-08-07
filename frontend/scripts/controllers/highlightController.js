@@ -15,9 +15,9 @@ define(['./storeController'], function (store) {
             var updateVal = "";
             if (type === 'filters') {
                 if (val && typeof val !== 'boolean') {
-                    if (key === 'userId') {
-                        val = store.get('username');
-                    }
+                    //if (key === 'userId') {
+                        //val = store.get('username');
+                    //}
                     updateVal = dispalyTitles[key] + ' : ' + val;                    
                 } else {
                     updateVal = dispalyTitles[key];

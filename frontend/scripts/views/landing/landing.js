@@ -201,7 +201,7 @@ define([
                         $(e.target).removeClass('starred');
                     }
                 } else {
-                    console.error('Error in updating star', err);
+                    toastr.error('Could not perform the action, verify you are logged in.', 'FTM Says')
                 }
             });
         }
@@ -219,6 +219,7 @@ define([
                     $(e.target).next().empty().html(data.likes);
                 } else {
                     console.error(err);
+                    toastr.error('Could not perform the action, verify you are logged in.', 'FTM Says')
                 }
             };
             if ($(e.target).hasClass('faved')) {
@@ -231,7 +232,7 @@ define([
         var processUserClick = function (e) {
             var postId = $(e.target).parent().parent().parent().parent().attr('id');
             var poster = postCollection.getPostById(postId).user.id;
-            var storage = store.get('filters');
+            var storage = store.get('filters') || {};
             storage.userId = poster;
             store.set('filters', storage);
             url.navigate();
@@ -277,7 +278,7 @@ define([
                     postData.isAdult = query.isAdult
                 }
                 if (query.isFavorite) {
-                    postData.isFavorite = (store.get('stars') || []).join(',')
+                    postData.isFavorite = (store.get('stars') || []).join(',') || ''
                 }
                 if (query.userId) {
                     postData.userId = query.userId

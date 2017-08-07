@@ -63,6 +63,9 @@ var getBasicSuggestion = function () {
             });
           }
 };
+var afterSelect  = function (element) {
+    return function(item) { var item = item.text || item; element.val(item.replace(/<b>/g, '').replace(/<\/b>/g, '')).change(); }
+}
 if (!Array.prototype.find) {
   Array.prototype.find = function (callback, thisArg) {
     "use strict";
@@ -101,13 +104,14 @@ $(document).ready(function(){
             return text.text + ' ' + getBadge(text.field);
         },
         highlighter: Object,
-            afterSelect: function(item) { $('#basic-search').val(item.text).change(); }
+        afterSelect: afterSelect($('#basic-search'))
     });
     $('#se_title').typeahead({
         source: getSuggestion('title'),
           updater: function(item) {
             return item;
-          }
+          },
+          afterSelect: afterSelect($('#se_title'))
     });
     $('#search-drop').click(function(event){
         if ($(event.target).parent().parent().hasClass('typeahead') || $(event.target).parent().hasClass('typeahead')) {
@@ -118,31 +122,36 @@ $(document).ready(function(){
         source: getSuggestion('tag'),
           updater: function(item) {
             return item;
-          }
+          },
+          afterSelect: afterSelect($('#se_tag'))
     });
     $('#se_movie').typeahead({
         source: getSuggestion('movie'),
           updater: function(item) {
             return item;
-          }
+          },
+          afterSelect: afterSelect($('#se_movie'))
     });
     $('#se_actor').typeahead({
         source: getSuggestion('actor'),
           updater: function(item) {
             return item;
-          }
+          },
+          afterSelect: afterSelect($('#se_actor'))
     });
     $('#se_character').typeahead({
         source: getSuggestion('character'),
           updater: function(item) {
             return item;
-          }
+          },
+          afterSelect: afterSelect($('#se_character'))
     });
     $('#se_event').typeahead({
         source: getSuggestion('event'),
           updater: function(item) {
             return item;
-          }
+          },
+          afterSelect: afterSelect($('#se_event'))
     });
 
     

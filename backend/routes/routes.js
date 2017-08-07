@@ -6,6 +6,8 @@ var mailer = require('../utils/mailer');
 var bcrypt = require('bcrypt');
 var request = require('request');
 var facebook_app_access = "";
+var fs = require('fs');
+const profImageUploadPath = __dirname + '/../assets/profile/thumb/';
 var generateToken = function () {
     var text = "";
     var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -90,28 +92,43 @@ var routes = function () {
         var userObj = {
             fbId : req.body.fbId,
             name : req.body.name,
-            picture : req.body.picture,
             email : req.body.email,
             phone : req.body.phone,
             gender : req.body.gender
         };
         var options = { upsert: true, new: true, setDefaultsOnInsert: true };
-        User.findOneAndUpdate({email: userObj.email}, userObj, options, function(err, user) {
-            if (!err) {
-                createAccesstoken(undefined, req.body.email, req.body.accessToken, function(accessErr, data) {
-                    if(!accessErr) {
-                        console.log('user created ', data);
-                        res.status(200).send({user: user, token: data});
-                    } else {
-                        console.error(JSON.stringify(accessErr))
-                        res.status(500).send();
-                    }
-                });
-            } else {
-                console.error(JSON.stringify(err))
-                res.status(500).send();
-            }
-        });
+        var downloadImage = function(uri, filename, callback){
+          request.head(uri, function(err, res, body){
+            console.log('content-type:', res.headers['content-type']);
+            console.log('content-length:', res.headers['content-length']);
+            console.log(filename);
+            request(uri)
+            .on('error', function(err) { console.error('error in uploda', err)})
+            .pipe(fs.createWriteStream(filename))
+            .on('close', callback)            
+          });
+        };
+        downloadImage(req.body.picture, profImageUploadPath+req.body.fbId+'.jpg', function(err, data){
+                console.log('prof image creations', err, data)        
+            userObj.picture = '/images/profile/thumb/'+req.body.fbId+'.jpg';
+            User.findOneAndUpdate({email: userObj.email}, userObj, options, function(err, user) {
+
+                if (!err) {
+                    createAccesstoken(undefined, req.body.email, req.body.accessToken, function(accessErr, data) {
+                        if(!accessErr) {
+                            console.log('user created ', JSON.stringify(data));
+                            res.status(200).send({user: user, token: data});
+                        } else {
+                            console.error(JSON.stringify(accessErr))
+                            res.status(500).send();
+                        }
+                    });
+                } else {
+                    console.error(JSON.stringify(err))
+                    res.status(500).send();
+                }
+            });
+        })
     };
     login = function (req, res) {
             var email,

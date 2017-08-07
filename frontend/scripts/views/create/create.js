@@ -67,11 +67,11 @@ define([
                                         type:$("#isClean").is(":checked")?'clean':'default',
                                         isAdult: $("#isAdult").is(":checked")?true:false,
                                         description:'',
-                                        tags:$("#tags").val().split(','),
+                                        tags:$("#tags").val().trim() ? $("#tags").val().trim().split(','):[],
                                         movie: $("#movie").val().trim(),
                                         language:$("#language").val().trim(),
-                                        actors:$("#actors").val().split(','),
-                                        characters:$("#characters").val().split(','),
+                                        actors:$("#actors").val().trim() ? $("#actors").val().trim().split(','): [],
+                                        characters:$("#characters").val().trim()? $("#characters").val().trim().split(',') : [],
                                         event:$("#event").val().trim(),
                                         createdAt: date.toISOString(),
 				                        lastModified: date.toISOString()
@@ -93,10 +93,10 @@ define([
                                     
                                     if (!err) {
                                         $('#create-new-form').modal( 'hide' ).data( 'bs.modal', null );
-                                        toastr.success('Successfully uploaded!', 'Miracle Max Says')
+                                        toastr.success('Your post is submitted for verification!', 'FTM Says')
                                     } else {
                                         console.error(err);
-                                        toastr.error('Uploading failed.', 'Miracle Max Says')
+                                        toastr.error('Uploading failed.', 'FTM Says')
                                     }
                                     
                                 });

@@ -29,7 +29,7 @@ var routes = function () {
         model.findById(doc_id, function(docErr, docData) {
             access.findOne({token: token}, function(err, data) {
                 if (!err && data) {
-                    if (data.user = docData.user.id) {
+                    if (data.user = docData.user.id || data.type === 'admin') {
                         console.log('ownership verified');
                         callback();
                     } else {

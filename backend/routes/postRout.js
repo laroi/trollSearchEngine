@@ -128,6 +128,7 @@ var routes = function () {
             search = req.body.search,
             event = req.body.event,
             from = req.body.from,
+            unApproved = req.body.isApproved,
             order = req.body.order,
             isAdult = req.body.isAdult,
             isFavorite =  req.body.isFavorite;
@@ -157,6 +158,9 @@ var routes = function () {
             }
             if (isAdult) {
                 opts.isAdult = isAdult;
+            }
+            if (req.isAdmin && unApproved) {
+                opts.unApproved = unApproved;
             }
             opts.from = from;
             opts.order = order;

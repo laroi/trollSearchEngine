@@ -166,3 +166,6 @@ background-repeat: no-repeat;
 .total_count {
     margin:0 0 5px 20px;
 }
+.filter-drop {
+    padding-left:10px!important;
+}

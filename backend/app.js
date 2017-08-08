@@ -9,7 +9,7 @@ var app = express();
 var access = require('./models/accessToken')
 var server = http.createServer(app);
 var multer  = require('multer');
-
+var logger = require('./utils/logger');
 const path = require('path');
 
 /*var storage = multer.diskStorage({
@@ -45,27 +45,49 @@ mongoose.connect('mongodb://localhost:27017/trolls');
 //app.post('/thread', api.post);
 //app.get('/thread/:title/:format', api.show);
 //app.get('/thread', api.list);
-function isAuthenticated(req, res, next) {
-    if (req.query.accessToken || req.headers['authorization']) {
-        var tok = req.query.accessToken || req.headers['authorization'];
-        access.findOne({token: req.query.accessToken}, function(err, data) {
-            if (!err) {
-                console.log('authenticated');
-                next();
-                return;
-            } else {
-                console.log('access token not found');
-                res.status(401).send({err:'unauthorized'});
-                //next();
-                return;
-            }
-        });
-    } else {
-        console.log('access token not provided');
-        res.status(403).send({err:'forbidden'});
-        //next();
+
+whiteListedUsers = [];
+blackListedUsers = [];
+var getIp = function (req) {
+    return req.headers['x-forwarded-for'] || req.connection.remoteAddress || req.socket.remoteAddress || req.connection.socket.remoteAddress;
+} 
+var isAuthenticated = function (admin) {
+
+    return function(req, res, next) {        
+        logger.log(1, 'auth', 'trying to authenticate for  ' + req.originalUrl + ' with token ', 'app.js', getIp(req), undefined)
+        if (req.query.accessToken || req.headers['authorization']) {
+            var tok = req.query.accessToken || req.headers['authorization'];
+            access.findOne({token: tok}, function (err, data) {
+                if (!err && data && blackListedUsers.indexOf(data.user) < 0) {
+                    if (admin && type === 'admin') {
+                        if (data.type === 'admin') {
+                            req.admin = true;
+                            logger.log(1, 'auth admin', 'Admin authenticated admin ' + data.user + ' with token ' + tok, 'app.js', getIp(req), undefined)                                   
+                            next();
+                        } else {
+                            logger.log(3, 'auth admin', 'could not authenticate user ' + data.user + ' as admin with token' + tok, 'app.js', getIp(req), undefined)
+                            res.status(401).send({err:'unauthorized'});
+                        }
+                    } else {
+                        logger.log(1, 'auth', 'User authenticated admin ' + data.user + ' with token ' + tok, 'app.js', getIp(req), undefined)   
+                        next()
+                    }
+                    return;
+                } else {
+                    logger.log(3, 'auth', 'could not authenticate user ' + (data ? data.user : '')+ ' with token' + tok, 'app.js', getIp(req), err)
+                    res.status(401).send({err:'unauthorized'});
+                    //next();
+                    return;
+                }
+            });
+        } else {
+            logger.log(3, 'auth', 'could not authenticate user, no token provided ', 'app.js', getIp(req), undefined)
+            res.status(403).send({err:'forbidden'});
+            //next();
+        }
     }
 }
+
 if (!Array.prototype.find) {
   Array.prototype.find = function (callback, thisArg) {
     "use strict";
@@ -85,19 +107,19 @@ app.use('/images/profile', express.static(__dirname + '/assets/profile'));
 app.post('/login', route.login);
 app.post('/token', route.verifyFaceToken);
 app.post('/user', route.addUser);
-app.put('/user', isAuthenticated, route.updatePassword);
-app.put('/user/:id', isAuthenticated, route.updateUser);
-app.get('/user/:id', isAuthenticated, route.getUserDetail);
+app.put('/user', isAuthenticated(false), route.updatePassword);
+app.put('/user/:id', isAuthenticated(false), route.updateUser);
+app.get('/user/:id', isAuthenticated(false), route.getUserDetail);
 app.get('/groups', route.listGroups);
 app.get('/contexts', route.listContexts);
 app.get('/test', postRoute.test)
 app.post('/posts', postRoute.getPosts);
 app.get('/post/:id', postRoute.getPost);
-app.put('/post/:id', isAuthenticated, postRoute.updatePost);
-app.put('/post/:id/comment', isAuthenticated, postRoute.updateComment);
-app.put('/post/:id/like', isAuthenticated, postRoute.updateLike);
-app.put('/post/:id/unlike', isAuthenticated, postRoute.unLike);
-app.post('/post', postRoute.post)
+app.put('/post/:id', isAuthenticated(false), postRoute.updatePost);
+app.put('/post/:id/comment', isAuthenticated(false), postRoute.updateComment);
+app.put('/post/:id/like', isAuthenticated(false), postRoute.updateLike);
+app.put('/post/:id/unlike', isAuthenticated(false), postRoute.unLike);
+app.post('/post', isAuthenticated(false), postRoute.post)
 app.get('/image/:id', postRoute.downloadImage);
 app.get('/suggestions', postRoute.autoSuggestion);
 app.listen(3000);

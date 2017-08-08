@@ -346,11 +346,11 @@ var elastic = function () {
         if (options.type) {
             must_array.push({ "match": { "type": options.type }});
         }
-        if (options.isApproved) {
-            must_array.push({ "match": { "isApproved": options.isApproved }});
-        } /*else {
+        if (options.unApproved) {
+            must_array.push({ "match": { "isApproved": false }});
+        } else {
             must_array.push({ "match": { "isApproved": true }});
-        }*/
+        }
         body = {
             aggs : {
                 posts:{

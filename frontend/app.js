@@ -158,7 +158,8 @@ $(document).ready(function(){
     user.init();
 window.fbAsyncInit = function() {
     FB.init({
-      appId      : '307608722910374',
+      //appId      : '307608189577094', //Prod
+      appId        : '307608722910374', //test
       cookie     : true,
       xfbml      : true,
       version    : 'v2.8'

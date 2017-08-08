@@ -33,6 +33,12 @@ define([
             accum += '<li class="' + classNameNext + '"><span class="page-next page-link" aria-label="Next"><span aria-hidden="true">&raquo;</span><span class="sr-only">Next</span></span></li>'
             return accum;
         });
+        Handlebars.registerHelper('editable', function(isOwner) {
+            if (isOwner && store.get('userType') === 'admin') {
+                return '<div class="pan-btn edit"></div>';
+            }
+            return '';
+        })
         var editPost = function(e) {
             var id = $(e.target).parent().parent().parent().attr('id');
             var post = postCollection.getPostById(id);
@@ -106,6 +112,7 @@ define([
                 isAdult = $('.isAdult').is(':checked'),
                 isFavorite = $('.isFavorite').is(':checked'),
                 isMine = $('.isMine').is(':checked'),
+                isApproved = $('.isApproved').is(':checked'),
                 filtObj = {};
                 if (f_group && f_group !== "0") {
                     filtObj.group = f_group;
@@ -120,7 +127,10 @@ define([
                     filtObj.isFavorite = isFavorite;
                 }
                 if (isMine) {
-                    filtObj.userId = store.get('userId');
+                    filtObj.userId = gstore.get('userId');
+                }
+                if (store.get('userType' === 'admin') && isApproved) {
+                    filtObj.isApproved = false;
                 }
                 store.set('filters', filtObj);                    
                 $('.dropdown.open').removeClass('open');

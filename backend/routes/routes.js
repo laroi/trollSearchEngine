@@ -5,9 +5,13 @@ var accessToken = require('../models/accessToken.js');
 var mailer = require('../utils/mailer');
 var bcrypt = require('bcrypt');
 var request = require('request');
+var logger = require('../utils/logger');
 var facebook_app_access = "";
 var fs = require('fs');
 const profImageUploadPath = __dirname + '/../assets/profile/thumb/';
+var getIp = function (req) {
+    return req.headers['x-forwarded-for'] || req.connection.remoteAddress || req.socket.remoteAddress || req.connection.socket.remoteAddress;
+} 
 var generateToken = function () {
     var text = "";
     var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -17,13 +21,13 @@ var generateToken = function () {
 
     return text;
 }
-var createAccesstoken = function (timeToLive, user, token, callback) {
-    var ttl = 60, token;
+var createAccesstoken = function (timeToLive, user, email, type, token, callback) {
+    var ttl = 60;
     if (timeToLive) {
         ttl = timeToLive
     }
     //token = generateToken()
-    var access = {token: token, user: user, ttl: ttl};
+    var access = {token: token, user: user, ttl: ttl ,email:email, type: type};
     var options = { upsert: true, new: true, setDefaultsOnInsert: true };
     accessToken.findOneAndUpdate({user: user}, access, options, function(err, data) {
         callback(err, data);
@@ -94,9 +98,11 @@ var routes = function () {
             name : req.body.name,
             email : req.body.email,
             phone : req.body.phone,
-            gender : req.body.gender
+            gender : req.body.gender,
+            type: 'user'
         };
         var options = { upsert: true, new: true, setDefaultsOnInsert: true };
+        var updMatch = {};
         var downloadImage = function(uri, filename, callback){
           request.head(uri, function(err, res, body){
             console.log('content-type:', res.headers['content-type']);
@@ -111,18 +117,26 @@ var routes = function () {
         downloadImage(req.body.picture, profImageUploadPath+req.body.fbId+'.jpg', function(err, data){
                 console.log('prof image creations', err, data)        
             userObj.picture = '/images/profile/thumb/'+req.body.fbId+'.jpg';
-            User.findOneAndUpdate({email: userObj.email}, userObj, options, function(err, user) {
-
+            if (userObj.email) {
+                updMatch = {email: userObj.email}
+            } else {
+                updMatch = {fbId: userObj.fbId}
+            }
+            User.findOneAndUpdate(updMatch, userObj, options, function(err, user) {
                 if (!err) {
-                    createAccesstoken(undefined, req.body.email, req.body.accessToken, function(accessErr, data) {
-                        if(!accessErr) {
-                            console.log('user created ', JSON.stringify(data));
-                            res.status(200).send({user: user, token: data});
-                        } else {
-                            console.error(JSON.stringify(accessErr))
-                            res.status(500).send();
-                        }
-                    });
+                    if (userObj.email) { 
+                        createAccesstoken(undefined, user._id, req.body.email, user.type, req.body.accessToken, function(accessErr, data) {
+                            if(!accessErr) {
+                                console.log('user created ', JSON.stringify(data));
+                                res.status(200).send({user: user, token: data});
+                            } else {
+                                console.error(JSON.stringify(accessErr))
+                                res.status(500).send();
+                            }                            
+                        });
+                    } else {
+                        res.status(400).send();
+                    }
                 } else {
                     console.error(JSON.stringify(err))
                     res.status(500).send();
@@ -190,31 +204,36 @@ var routes = function () {
         }
         var authResp = req.body.authResponse;
         var url = 'https://graph.facebook.com/debug_token?input_token='+authResp.accessToken + '&access_token='+facebook_app_access;
-        console.log(url);
+        logger.log(1, 'verify fb token', 'Verifying FB token ', 'route.js', getIp(req), url)
         request.get(url, function(checkErr, checkData) {
             if (!checkErr) {
                 var body = checkData.body
                 body = JSON.parse(body);
                 if (body.data && body.data.is_valid && authResp.userID===body.data.user_id) {
+                    logger.log(1, 'verify fb token', 'Got user verified from FB ', 'route.js', getIp(req), undefined)
                     User.findOne({fbId: authResp.userID}, function(userErr, userData){
-                        if (!userErr && userData) {
-                            createAccesstoken(undefined, userData._id, authResp.accessToken, function(err, data) {
+                        if (!userErr && userData && userData.email) {
+                            logger.log(1, 'verify fb token', 'Found user in db ', 'route.js', getIp(req), userData)
+                            createAccesstoken(undefined, userData._id, userData.email, userData.type, authResp.accessToken, function(err, data) {
                                 if(!err) {
+                                    logger.log(1, 'verify fb token', 'Access token created after verification ', 'route.js', getIp(req), data)
                                     res.status(200).send({user: '/user/' + userData._id});
                                 } else {
+                                    logger.log(3, 'verify fb token', 'Could not create access token ', 'route.js', getIp(req), err)
                                     res.status(500).send();
                                 }
                             }) ;    
                         } else {
+                            logger.log(3, 'verify fb token', 'Error in fiding user in DB ', 'route.js', getIp(req), {err: checkErr, data: userData})
                             res.status(404).send();
                         }
                     });
                 } else {
-                    console.error(body);
+                    logger.log(3, 'verify fb token', 'Facebook validation negative', 'route.js', getIp(req), body)
                     res.status(401).send();
                 }
             } else {
-                console.error(checkErr);
+                logger.log(3, 'verify fb token', 'Facebook validation failed', 'route.js', getIp(req), checkErr)
                 res.status(500).send();
             }
         });

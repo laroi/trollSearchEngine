@@ -4,15 +4,26 @@ define(['./requestController', './storeController'], function (request, store) {
          $('#create').show();
          $('#facebook_login').hide();
          $('.isFavorite').prop("disabled", false)
-         $('.isMine').prop("disabled", false)
-         
+         $('.isMine').prop("disabled", false) 
+         if (store.get('userType') === 'admin') {
+            enableAdminFeatures();
+         } else {
+            disableAdminFeatures();
+         }                
     }
     var disableFeatures = function(){
         $('#create').hide();
         $('#facebook_login').show();
         $('.isFavorite').prop("disabled", true)
-        $('.isMine').prop("disabled", true)
-        
+        $('.isMine').prop("disabled", true);
+        disableAdminFeatures();           
+    }
+    var disableAdminFeatures = function () {
+        $( ".isApproved" ).closest( "li" ).hide();
+    }
+    
+    var enableAdminFeatures = function () {
+        $( ".isApproved" ).closest( "li" ).show();
     }
     var regNewUser = function(userId, token, callback) {
         var url = 'https://graph.facebook.com/me?fields=id,name,picture,email,gender&access_token=' + token;
@@ -49,9 +60,10 @@ define(['./requestController', './storeController'], function (request, store) {
                             store.set('stars', regData.user.stars);
                             store.set('picture', regData.user.picture);
                             store.set('email', regData.user.email);
+                            store.set('userType', regData.user.type);
                             store.set('userId', regData.user._id);
                         }
-                        callback(regErr, regData);
+                        callback(regErr, regData.user);
                     })
                 } else {
                     callback(err);
@@ -67,6 +79,7 @@ define(['./requestController', './storeController'], function (request, store) {
                             store.set('email', userData.email);
                             store.set('stars', userData.stars);
                             store.set('picture', userData.picture);
+                            store.set('userType', userData.type);
                             callback(userErr, userData);
                         } else {
                             callback(userErr);

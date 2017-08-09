@@ -7,6 +7,7 @@ define(['./storeController'], function (store) {
         isPlain: 'Plain Memes',
         isAdult: 'Adult Memes',
         isFavorite: 'Favorite Memes',
+        isApproved: 'Approval Pending',
         userId: 'User'
     };
     getHighlight = function(type, key, val) {

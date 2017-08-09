@@ -59,9 +59,9 @@ var isAuthenticated = function (admin) {
             var tok = req.query.accessToken || req.headers['authorization'];
             access.findOne({token: tok}, function (err, data) {
                 if (!err && data && blackListedUsers.indexOf(data.user) < 0) {
-                    if (admin && type === 'admin') {
+                    if (admin) {
                         if (data.type === 'admin') {
-                            req.admin = true;
+                            req.isAdmin = true;
                             logger.log(1, 'auth admin', 'Admin authenticated admin ' + data.user + ' with token ' + tok, 'app.js', getIp(req), undefined)                                   
                             next();
                         } else {
@@ -69,6 +69,7 @@ var isAuthenticated = function (admin) {
                             res.status(401).send({err:'unauthorized'});
                         }
                     } else {
+                        req.isAdmin = data.type === 'admin' ? true : false;
                         logger.log(1, 'auth', 'User authenticated admin ' + data.user + ' with token ' + tok, 'app.js', getIp(req), undefined)   
                         next()
                     }
@@ -87,7 +88,27 @@ var isAuthenticated = function (admin) {
         }
     }
 }
-
+var listAuth = function (req, res, next) {
+    console.log(req.body.isApproved)
+    if ((req.query.accessToken || req.headers['authorization']) && (req.body.isApproved === "false")) {
+    var tok = req.query.accessToken || req.headers['authorization'];
+        access.findOne({token: tok}, function (err, data) {
+            if (!err && data && blackListedUsers.indexOf(data.user) < 0) {
+                    if (data.type === 'admin') {
+                        req.isAdmin = true;
+                        logger.log(1, 'auth admin', 'Admin authenticated admin ' + data.user + ' with token ' + tok, 'app.js', getIp(req), undefined)                                   
+                        next();
+                    } else {
+                        logger.log(3, 'auth admin', 'could not authenticate user ' + data.user + ' as admin with token' + tok, 'app.js', getIp(req), undefined)
+                        req.body.isFavorite = false;
+                        next();
+                    }
+                }
+        })
+    } else {
+        next();
+    }
+}
 if (!Array.prototype.find) {
   Array.prototype.find = function (callback, thisArg) {
     "use strict";
@@ -113,7 +134,7 @@ app.get('/user/:id', isAuthenticated(false), route.getUserDetail);
 app.get('/groups', route.listGroups);
 app.get('/contexts', route.listContexts);
 app.get('/test', postRoute.test)
-app.post('/posts', postRoute.getPosts);
+app.post('/posts', listAuth, postRoute.getPosts);
 app.get('/post/:id', postRoute.getPost);
 app.put('/post/:id', isAuthenticated(false), postRoute.updatePost);
 app.put('/post/:id/comment', isAuthenticated(false), postRoute.updateComment);

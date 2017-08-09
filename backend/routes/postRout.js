@@ -86,6 +86,7 @@ var routes = function () {
                     obj.event = event;
                     obj.createdAt = createdAt;
                     obj.lastModified = lastModified;
+                    obj.isApproved = false;
                     postObj = new Post(obj);
                     postObj.save(function(saveErr, saveData) {
                         if (!saveErr) {
@@ -233,6 +234,11 @@ var routes = function () {
                         }
                         if (doc.event) {
                             updateObj.event = doc.event
+                        }
+                        if (doc.isApproved && req.isAdmin) {
+                            updateObj.isApproved = true;
+                        } else {
+                            updateObj.isApproved = false;
                         }
                         Post.update({_id: id}, {$set: updateObj}, function(err, numAffected) {
                             console.log('updated db')

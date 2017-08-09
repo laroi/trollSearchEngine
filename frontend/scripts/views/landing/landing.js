@@ -34,7 +34,7 @@ define([
             return accum;
         });
         Handlebars.registerHelper('editable', function(isOwner) {
-            if (isOwner && store.get('userType') === 'admin') {
+            if (isOwner || store.get('userType') === 'admin') {
                 return '<div class="pan-btn edit"></div>';
             }
             return '';
@@ -129,7 +129,7 @@ define([
                 if (isMine) {
                     filtObj.userId = gstore.get('userId');
                 }
-                if (store.get('userType' === 'admin') && isApproved) {
+                if (store.get('userType') === 'admin' && isApproved) {
                     filtObj.isApproved = false;
                 }
                 store.set('filters', filtObj);                    
@@ -286,6 +286,9 @@ define([
                 }
                 if (query.isAdult) {
                     postData.isAdult = query.isAdult
+                }
+                if (query.isApproved && store.get('userType') === 'admin') {
+                    postData.isApproved = query.isApproved
                 }
                 if (query.isFavorite) {
                     postData.isFavorite = (store.get('stars') || []).join(',') || ''

@@ -30,6 +30,7 @@ define(['controllers/requestController', 'controllers/storeController', 'models/
 				        movie: post._source.movie,
 				        language: post._source.language,
 				        actors: post._source.actors,
+				        isApproved : post._source.isApproved,
 				        characters: post._source.characters,
 				        event: post._source.event
 				    });

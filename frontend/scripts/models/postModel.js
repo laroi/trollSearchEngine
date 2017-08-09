@@ -28,6 +28,7 @@ define(['controllers/requestController', 'controllers/storeController'], functio
 				actors:this.actors,
 				characters:this.characters,
 				event: this.event,
+				isApproved: this.isApproved,
 				createdAt: date.toISOString(),
 				lastModified: date.toISOString()
             }
@@ -52,6 +53,7 @@ define(['controllers/requestController', 'controllers/storeController'], functio
 				event: inPost.event || '',
 				lastModified: inPost.lastModified,
 				createdAt: inPost.createdAt,
+				isApproved: inPost.isApproved,
 				isOwner: false,
                 save: save,
                 like: like,

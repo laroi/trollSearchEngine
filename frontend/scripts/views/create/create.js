@@ -6,6 +6,12 @@ define([
      var source   = $(html).html(),
         template = Handlebars.compile(source),
         render;
+    Handlebars.registerHelper('approvable', function(isApproved) {
+        if (isApproved == false && store.get('userType') === 'admin') {
+            return '<button type="button" id="approve-meme" class="btn btn-primary">Approve</button>';
+        }
+        return '';
+    })
     var getSuggestion = function (field) {
         var url = '/api/suggestions?field='+field+'&query=';
             return function( request, response ) {
@@ -37,13 +43,13 @@ define([
                 //TODO: cache all the contexts to avoid firing up api on each create
                 request.get('/api/contexts', function(contErr, contData){
                     if (!contErr) {
-                        var html = template({post: post, contexts: contData});
+                        var html = template({post: post, contexts: contData, isAdmin: store.get('userType') === 'admin' ? true : false});
                         $('#createModel').empty().append(html);
                         $.material.init();
                         $('#create-new-form').modal({show: false}); 
                         var imageData = '';
                         // Private function to upload memes
-                        var uploadMeme = function () {
+                        var uploadMeme = function (e) {
                             var validate = function(){
                                 var isValidate = true;
                                 if ($('#title').val() == '') {
@@ -75,6 +81,11 @@ define([
                                         event:$("#event").val().trim(),
                                         createdAt: date.toISOString(),
 				                        lastModified: date.toISOString()
+                                    }
+                                    if ($(e.target).attr('id') === 'approve-meme') {
+                                        if (store.get('userType') === 'admin') {
+                                            postData.isApproved = true;
+                                        }
                                     }
                                     if (post && post._id) {
                                         url += '/'+ post._id;
@@ -158,6 +169,7 @@ define([
                             }
                         });
                         $('#create-meme').on('click', uploadMeme)
+                        $('#approve-meme').on('click', uploadMeme)
                         //$('#create-new-form').modal( 'hide' ).data( 'bs.modal', null );
                         $('#create-new-form').on('hidden.bs.modal', function(e)
                         { 

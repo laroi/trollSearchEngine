@@ -105,6 +105,7 @@
         </div>
       </div> <!--model body-->
       <div class="modal-footer">
+        {{#approvable post.isApproved}}{{/approvable}}
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
         <button type="button" id="create-meme" class="btn btn-primary">Create</button>
       </div>

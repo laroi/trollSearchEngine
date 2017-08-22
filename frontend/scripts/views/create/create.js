@@ -40,7 +40,7 @@ define([
                 post ? actors = post.actors : actors = [];
                 post ? characters = post.characters : characters = [];
                 
-                //TODO: cache all the contexts to avoid firing up api on each create
+                //TODO: cache all the txts to avoid firing up api on each create
                 request.get('/api/contexts', function(contErr, contData){
                     if (!contErr) {
                         var html = template({post: post, contexts: contData, isAdmin: store.get('userType') === 'admin' ? true : false});
@@ -76,6 +76,7 @@ define([
                                         tags:$("#tags").val().trim() ? $("#tags").val().trim().split(','):[],
                                         movie: $("#movie").val().trim(),
                                         language:$("#language").val().trim(),
+                                        context:$("#context").val().trim(),
                                         actors:$("#actors").val().trim() ? $("#actors").val().trim().split(','): [],
                                         characters:$("#characters").val().trim()? $("#characters").val().trim().split(',') : [],
                                         event:$("#event").val().trim(),
@@ -118,6 +119,12 @@ define([
                         // DOM manipulations
                         $('#create-new-form').modal('show'); 
                         $("#tags").tagit({allowSpaces: true});
+                        if (post&& post.language) {
+                            $('#language option[value="'+post.language.toLowerCase()+'"]').attr('selected', 'selected')
+                        }
+                        if (post && post.context) {
+                            $('#context option[value="'+post.context+'"]').attr('selected', 'selected')
+                        }
                         tags.forEach(function(tag) {
                             $("#tags").tagit("createTag", tag);
                         });

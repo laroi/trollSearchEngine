@@ -32,7 +32,8 @@ define(['controllers/requestController', 'controllers/storeController', 'models/
 				        actors: post._source.actors,
 				        isApproved : post._source.isApproved,
 				        characters: post._source.characters,
-				        event: post._source.event
+				        event: post._source.event,
+				        context : post._source.context
 				    });
 				    if (postObj.type === 'clean') {
 				        postObj.isClean = true;

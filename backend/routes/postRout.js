@@ -60,6 +60,7 @@ var routes = function () {
             event = req.body.event,
             createdAt = req.body.createdAt,
             lastModified = req.body.lastModified,
+            context = req.body.context,
             obj = {},
             postObj;
         if (req.body.image && req.body.user.id && req.body.type) {
@@ -86,6 +87,7 @@ var routes = function () {
                     obj.event = event;
                     obj.createdAt = createdAt;
                     obj.lastModified = lastModified;
+                    obj.context = context;
                     obj.isApproved = false;
                     postObj = new Post(obj);
                     postObj.save(function(saveErr, saveData) {
@@ -235,6 +237,9 @@ var routes = function () {
                         if (doc.event) {
                             updateObj.event = doc.event
                         }
+                        if (doc.context) {
+                            updateObj.context = doc.context
+                        }
                         if (doc.isApproved && req.isAdmin) {
                             updateObj.isApproved = true;
                         } else {
@@ -334,6 +339,7 @@ var routes = function () {
         if (searchTerm) {
             elastic.getSuggestions({fields: field, query: searchTerm}, function(err, data) {
                 if (!err) {
+                    console.log('data', JSON.stringify(data));
                     res.status(200).send(data.suggest)
                 } else {
                     res.status(500).send(err)          

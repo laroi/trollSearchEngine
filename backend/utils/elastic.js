@@ -210,6 +210,7 @@ var elastic = function () {
                 characters: doc.characters,
                 comments: doc.comments,
                 event: doc.event,
+                context : doc.context,
                 isApproved: doc.isApproved,
                 createdAt: doc.createdAt,
                 lastModified: doc.lastModified
@@ -450,6 +451,7 @@ var elastic = function () {
             views : doc.views || 0,
             characters: doc.characters,
             comments: doc.comments,
+            context : doc.context,
             event: doc.event,
             isApproved: doc.isApproved,
             createdAt: doc.createdAt,

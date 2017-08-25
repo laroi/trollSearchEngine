@@ -6,7 +6,9 @@ var uuid = require('uuid');
 var fs = require('fs');
 var path = require('path');
 var gm = require('gm');
-var access = require('../models/accessToken')
+var ObjectID = require('mongodb').ObjectID;
+var access = require('../models/accessToken');
+var logger = require('../utils/logger');
 var saveFile = function(fileLoc, image, callback){
     if (image && fileLoc) {
         fs.writeFile(fileLoc, image.image, 'base64', function(fileErr) {
@@ -20,17 +22,20 @@ var saveFile = function(fileLoc, image, callback){
         callback();
     }
 }
+var getIp = function (req) {
+    return req.headers['x-forwarded-for'] || req.connection.remoteAddress || req.socket.remoteAddress || req.connection.socket.remoteAddress;
+}
 var routes = function () {
     elastic.init();
     var test = function (req, res) {        
         res.status(200).send();
     },
-    isOwner = function (model, doc_id, id, token, callback) {       
+    isOwner = function (model, doc_id, token, callback) {
         model.findById(doc_id, function(docErr, docData) {
             access.findOne({token: token}, function(err, data) {
                 if (!err && data) {
                     if (data.user = docData.user.id || data.type === 'admin') {
-                        console.log('ownership verified');
+                        console.log('ownership verified ', data.type);
                         callback();
                     } else {
                         console.log('failed to verify ownership');
@@ -39,11 +44,11 @@ var routes = function () {
                     }
                 } else {
                     console.log('token not found');
-                    callback(err)
+                    callback(err || 'token not found');
                     //callback();
                 }
             });
-        })
+        });        
     },
     post = function(req, res) {
         var _id = req.body._id || undefined,
@@ -197,7 +202,7 @@ var routes = function () {
     },
     updatePost = function (req, res) {
         var tok = req.query.accessToken || req.headers['authorization'];
-        isOwner(Post, req.body._id, req.body.user.id, tok, function (err) {
+        isOwner(Post, req.body._id, tok, function (err) {
             if (!err) {
                 var updateObj = {},
                 doc = req.body,
@@ -418,7 +423,41 @@ var routes = function () {
                 res.status(500).send({err: lkErr})
             }            
         });
-    };
+    }
+    
+    deletePost = function (req, res) {
+        var postId = req.params.id;
+        if (postId) {
+            logger.log(1, 'delete post', 'Deleting post  ' + postId , 'postRoute.js', getIp(req), undefined);
+            var tok = req.query.accessToken || req.headers['authorization'];
+            isOwner( Post, postId, tok, function (err) {
+                if (!err) {
+                    Post.remove({_id: new ObjectID(postId)}, function(err, data){
+                        if (!err) {
+                            elastic.deletDoc(postId, function (delErr, delInfo) {
+                                if (!delErr) {
+                                    logger.log(1, 'delete post', 'Deleted post  ' + postId , 'postRoute.js', getIp(req), data)
+                                    res.status(204).send();
+                                } else {
+                                    logger.log(3, 'delete post', 'could not deleted post  ' + postId + ' from elastic search', 'postRoute.js', getIp(req), delErr);
+                                    res.status(500).send();
+                                }
+                            })
+                        } else {
+                            logger.log(3, 'delete post', 'could not deleted post  ' + postId + ' from database', 'postRoute.js', getIp(req), err);
+                            res.status(500).send();
+                        }            
+                    });
+                } else {
+                    logger.log(3, 'delete post', 'could not authenticate user to deleted post  ' + postId , 'postRoute.js', getIp(req), err);
+                    res.status(403).send();
+                }
+            });
+        } else {
+            logger.log(3, 'delete post', 'Delete post called without post id', 'postRoute.js', getIp(req), err);
+            res.status(400).send()
+        }
+    }
     
     return { 
         test: test,
@@ -430,7 +469,8 @@ var routes = function () {
         autoSuggestion: autoSuggestion,
         updateLike: updateLike,
         unLike: unLike,
-        updateComment: updateComment
+        updateComment: updateComment,
+        deletePost: deletePost
     }
 }
 

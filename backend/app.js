@@ -53,13 +53,12 @@ var getIp = function (req) {
 } 
 var isAuthenticated = function (admin) {
 
-    return function(req, res, next) {        
+    return function(req, res, next) {      
         logger.log(1, 'auth', 'trying to authenticate for  ' + req.originalUrl + ' with token ', 'app.js', getIp(req), undefined)
         if (req.query.accessToken || req.headers['authorization']) {
             var tok = req.query.accessToken || req.headers['authorization'];
             access.findOne({token: tok}, function (err, data) {
                 if (!err && data && blackListedUsers.indexOf(data.user) < 0) {
-                    if (admin) {
                         if (data.type === 'admin') {
                             req.isAdmin = true;
                             logger.log(1, 'auth admin', 'Admin authenticated admin ' + data.user + ' with token ' + tok, 'app.js', getIp(req), undefined)                                   
@@ -67,12 +66,7 @@ var isAuthenticated = function (admin) {
                         } else {
                             logger.log(3, 'auth admin', 'could not authenticate user ' + data.user + ' as admin with token' + tok, 'app.js', getIp(req), undefined)
                             res.status(401).send({err:'unauthorized'});
-                        }
-                    } else {
-                        req.isAdmin = data.type === 'admin' ? true : false;
-                        logger.log(1, 'auth', 'User authenticated admin ' + data.user + ' with token ' + tok, 'app.js', getIp(req), undefined)   
-                        next()
-                    }
+                        }                    
                     return;
                 } else {
                     logger.log(3, 'auth', 'could not authenticate user ' + (data ? data.user : '')+ ' with token' + tok, 'app.js', getIp(req), err)
@@ -88,8 +82,10 @@ var isAuthenticated = function (admin) {
         }
     }
 }
+
+// This auth for list api to filter out non admins
 var listAuth = function (req, res, next) {
-    console.log(req.body.isApproved)
+    // checking token and see if request to list unapproved posts, if not, pass directly
     if ((req.query.accessToken || req.headers['authorization']) && (req.body.isApproved === "false")) {
     var tok = req.query.accessToken || req.headers['authorization'];
         access.findOne({token: tok}, function (err, data) {
@@ -136,6 +132,7 @@ app.get('/contexts', route.listContexts);
 app.get('/test', postRoute.test)
 app.post('/posts', listAuth, postRoute.getPosts);
 app.get('/post/:id', postRoute.getPost);
+app.delete('/post/:id', isAuthenticated(), postRoute.deletePost);
 app.put('/post/:id', isAuthenticated(false), postRoute.updatePost);
 app.put('/post/:id/comment', isAuthenticated(false), postRoute.updateComment);
 app.put('/post/:id/like', isAuthenticated(false), postRoute.updateLike);

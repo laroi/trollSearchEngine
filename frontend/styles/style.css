@@ -72,6 +72,9 @@
 .edit {
     background-image: url('../image/edit.png');
 }
+.delete {
+    background-image: url('../image/delete.png');
+}
 .use {
     background-image: url('../image/use.png');
 }
@@ -86,6 +89,9 @@
 }
 .edit:hover {
     background-image: url('../image/edit_hvr.png');
+}
+.delete:hover {
+    background-image: url('../image/delete_hvr.png');
 }
 .use:hover {
     background-image: url('../image/use_hvr.png');

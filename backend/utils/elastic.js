@@ -216,13 +216,13 @@ var elastic = function () {
                 lastModified: doc.lastModified
             }
             if (doc.title) {
-                body.titleSuggest = {input: doc.title.split(" ")}
+                body.titleSuggest = {input: doc.title}
             }
             if (doc.event) {
-                body.eventSuggest = {input: doc.event.split(" ")}
+                body.eventSuggest = {input: doc.event}
             }
             if (doc.movie) {
-                body.movieSuggest = {input: doc.movie.split(" ")}
+                body.movieSuggest = {input: doc.movie}
             }
             if (doc.tags && Array.isArray(doc.tags) && doc.tags.length > 0) {
                 body.tagSuggest = {input: doc.tags}
@@ -458,13 +458,13 @@ var elastic = function () {
             lastModified: doc.lastModified
         }
         if (doc.title) {
-            body.titleSuggest = {input: doc.title.split(" ")}
+            body.titleSuggest = {input: doc.title}
         }
         if (doc.event) {
-            body.eventSuggest = {input: doc.event.split(" ")}
+            body.eventSuggest = {input: doc.event}
         }
         if (doc.movie) {
-            body.movieSuggest = {input: doc.movie.split(" ")}
+            body.movieSuggest = {input: doc.movie}
         }
         if (doc.tags && Array.isArray(doc.tags) && doc.tags.length > 0) {
             body.tagSuggest = {input: doc.tags}
@@ -488,12 +488,22 @@ var elastic = function () {
             }
         });
     }
+    var deletDoc = function (id, callback) {
+        client.delete({
+          index: 'trolls',
+          type: 'post',
+          id: id,
+        }, function (error, response) {
+           callback(error, response)
+        });
+    }
     return {
         init: init,
         putDoc: putDoc,
         getDocs: getDocs,
         updateDoc: updateDoc,
-        getSuggestions: getSuggestions
+        getSuggestions: getSuggestions,
+        deletDoc: deletDoc
     }
 }
 

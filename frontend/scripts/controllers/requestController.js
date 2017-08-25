@@ -3,11 +3,30 @@ define(['../config/config', './storeController'], function (config, store) {
         get,
         post,
         put,
+        del,
         getErrMsg;
     get = function (url, callback) {
         $.ajax({
             url: url, 
             method: 'GET',
+            dataType: 'JSON',
+            beforeSend: function (xhr){
+                if (store.get('accessKey')) {
+                    xhr.setRequestHeader('Authorization', store.get('accessKey'));
+                }
+            },
+            success: function (data){
+                callback(undefined, data);
+            },
+            error: function(xhr, status, err) {
+                callback(getErrMsg(xhr.responseText));
+            }
+        }); 
+    };
+    del = function (url, callback) {
+        $.ajax({
+            url: url, 
+            method: 'DELETE',
             dataType: 'JSON',
             beforeSend: function (xhr){
                 if (store.get('accessKey')) {
@@ -132,6 +151,7 @@ define(['../config/config', './storeController'], function (config, store) {
         get: get,
         post: post,
         put: put,
+        del:del,
         postImage: postImage,
         getImage: getImage,
         putImage: putImage

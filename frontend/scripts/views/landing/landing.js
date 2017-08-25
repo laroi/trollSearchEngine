@@ -35,7 +35,7 @@ define([
         });
         Handlebars.registerHelper('editable', function(isOwner) {
             if (isOwner || store.get('userType') === 'admin') {
-                return '<div class="pan-btn edit"></div>';
+                return '<div class="pan-btn edit"></div><div class="pan-btn delete"></div>';
             }
             return '';
         })
@@ -43,6 +43,16 @@ define([
             var id = $(e.target).parent().parent().parent().attr('id');
             var post = postCollection.getPostById(id);
             create.render(undefined, post);                
+        }
+        var deletePost = function (e) {
+            var id = $(e.target).parent().parent().parent().attr('id');
+            var url = '/api/post/'+id;
+            request.del(url, function (err, data) {
+                if (!err) {
+                   toastr.success('Post removed!', 'FTM Says')
+                   $('#'+id).remove();
+                }
+            })
         }
         var search = function() {
             var search_term = $('#basic-search').val().trim();
@@ -308,6 +318,7 @@ define([
                     
                     updateUi();
                     $('.edit').on('click', editPost);
+                    $('.delete').on('click', deletePost);                    
                     $('.btn-basic-search').off().on('click', search)
                     $('.page-nav').on('click', paginate)
                     $('.btn-apply-filter').on('click', applyFilter);

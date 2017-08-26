@@ -161,7 +161,7 @@ var elastic = function () {
                 });
     }
     var init = function (callback) {
-        console.log('Initing ES indext')
+        console.log('Initing ES index');
         client.indices.exists({index:'trolls'}, function (existErr, existData) {
             if (existData) {
                 console.log('index exists', existErr, existData)

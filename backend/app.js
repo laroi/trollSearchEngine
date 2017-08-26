@@ -6,7 +6,8 @@ var methodOverride = require('method-override');
 var route = require('./routes/routes');
 var postRoute = require('./routes/postRout');
 var app = express();
-var access = require('./models/accessToken')
+var access = require('./models/accessToken');
+var contexts = require('./models/contexts');
 var server = http.createServer(app);
 var multer  = require('multer');
 var logger = require('./utils/logger');
@@ -50,7 +51,24 @@ whiteListedUsers = [];
 blackListedUsers = [];
 var getIp = function (req) {
     return req.headers['x-forwarded-for'] || req.connection.remoteAddress || req.socket.remoteAddress || req.connection.socket.remoteAddress;
-} 
+}
+var addDefaultContexts = function () {
+    var context = { "_id" : "contexts", "contexts" : [  "pucham",  "shokam",  "shock",  "pling",  "kalipp", "thug life" ] };
+    contexts.count({ "_id" : "contexts"}, function(err, cnt) {
+        if (!err && cnt <1) {
+            contexts.findOneAndUpdate({ "_id" : "contexts"}, context, {upsert: true}, function (err, data) {
+                if (!err) {
+                    logger.log(1, 'add context', 'added default context ', 'app.js', 'server', undefined);
+                } else {
+                    logger.log(3, 'add context', 'error in adding default context ', 'app.js', 'server', err);
+                }
+            })
+        } else {
+            logger.log(1, 'add context', 'context already exists', 'app.js', 'server', undefined);
+        }
+    })
+
+}();
 var isAuthenticated = function (admin) {
 
     return function(req, res, next) {      

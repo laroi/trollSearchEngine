@@ -48,6 +48,9 @@ var verifytoken = function (token, callback) {
     });
 }
 var init = function () {
+    //production
+    //var appTokenUrl = 'https://graph.facebook.com/oauth/access_token?client_id=307608189577094&client_secret=abbe305279c252a30352d4c2591a5360&grant_type=client_credentials';
+    //dev
     var appTokenUrl = 'https://graph.facebook.com/oauth/access_token?client_id=307608722910374&client_secret=6dec5610c25fa4cc814aa30c130d0a39&grant_type=client_credentials';
     request.get(appTokenUrl, function(err, data) {
         if (!err) {

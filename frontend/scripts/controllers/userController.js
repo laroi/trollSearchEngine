@@ -133,7 +133,7 @@ define(['./requestController', './storeController'], function (request, store) {
                                 });
                             }
                         
-                        });
+                        }, {scope: 'email,user_likes'});
                       }
                 });
 

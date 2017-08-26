@@ -63,7 +63,7 @@ define(['./requestController', './storeController'], function (request, store) {
                             store.set('userType', regData.user.type);
                             store.set('userId', regData.user._id);
                         }
-                        callback(regErr, regData.user);
+                        callback(regErr, regData ? regData.user : undefined);
                     })
                 } else {
                     callback(err);

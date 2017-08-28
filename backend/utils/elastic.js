@@ -67,7 +67,7 @@ var elastic = function () {
                                 "image" : {"type" : "string", "index" : "not_analyzed"}
                             }
                         },
-                        title: {"type" : "string"},
+                        title: {"type" : "string", "fields": {"raw": {"type": "string","index": "not_analyzed"}}},
                         context: {"type" : "string"},
                         type: {"type" : "string", "index" : "not_analyzed"},
                         isAdult: {"type" : "boolean", "index" : "not_analyzed"},
@@ -96,7 +96,7 @@ var elastic = function () {
                             }
                         },
                         tags: {"type" : "string"},
-                        movie: {"type" : "string"},
+                        movie: {"type" : "string", "fields": {"raw": {"type": "string","index": "not_analyzed"}}},
                         language: {"type" : "string"},
                         actors: {"type" : "string"},
                         characters: {"type" : "string"},
@@ -107,7 +107,7 @@ var elastic = function () {
                             type: "completion",
                             analyzer: "simple",
                             preserve_separators: true,
-                            preserve_position_increments: true,
+                            preserve_position_increments: false,
                             max_input_length: 50
                         },
                         tagSuggest: {
@@ -414,12 +414,21 @@ var elastic = function () {
             });            
         } else {
             Object.keys(fieldMap).forEach(function(field) {
-                suggestObj.suggest[field]={
-                    "regex" : ".*"+options.query+".*",
-                    completion : {
-                        field: fieldMap[field]
-                    } 
-                  }
+                /*if (field === 'title' || field === 'movie' ||field === 'event' ) {
+                    suggestObj.suggest[field]={
+                        "prefix" : options.query,
+                        completion : {
+                            field: fieldMap[field]
+                        } 
+                      }
+                } else { */
+                    suggestObj.suggest[field]={
+                        "regex" : ".*"+options.query+".*",
+                        completion : {
+                            field: fieldMap[field]
+                        } 
+                      }
+                //}
             });         
         }
         console.log('\n' + JSON.stringify(suggestObj) + '\n')
@@ -431,6 +440,7 @@ var elastic = function () {
             if (error) {
                 console.error(error);
             }
+            console.log('response \n' + JSON.stringify(response) + '\n')
             callback(error, response);
         });
     }

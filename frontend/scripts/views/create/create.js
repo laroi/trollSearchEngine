@@ -25,6 +25,9 @@ define([
                         $.map(data[field][0].options, function( item ) {
                           c.push(item.text);
                         });
+                        c = c.filter(function(elem, index, self) {
+                          return index === self.indexOf(elem);
+                        });
                         response(c);
                       }
                   });
@@ -75,8 +78,8 @@ define([
                                         description:'',
                                         tags:$("#tags").val().trim() ? $("#tags").val().trim().split(','):[],
                                         movie: $("#movie").val().trim(),
-                                        language:$("#language").val().trim(),
-                                        context:$("#context").val().trim(),
+                                        language:$("#language").val().trim() === 'Select' ? '' : $("#language").val().trim(),
+                                        context:$("#context").val().trim() === 'Select' ? '' : $("#context").val().trim(),
                                         actors:$("#actors").val().trim() ? $("#actors").val().trim().split(','): [],
                                         characters:$("#characters").val().trim()? $("#characters").val().trim().split(',') : [],
                                         event:$("#event").val().trim(),
@@ -142,6 +145,14 @@ define([
                         $("#characters").tagit({allowSpaces: true});
                         characters.forEach(function(character) {
                             $("#characters").tagit("createTag", character);
+                        });
+                        $("#actors").tagit({
+                            allowSpaces: true,
+                            autocomplete: {
+                               delay: 0,
+                               minLength: 1,
+                               source :  getSuggestion('character')
+                            }
                         });
                         $('#movie').typeahead({
                             source: getSuggestion('movie'),

@@ -32,6 +32,9 @@ var getSuggestion = function (field) {
                       var reg = new RegExp(request, 'gi');
                       c.push(item.text.replace(reg, function(str) {return '<b>'+str+'</b>'}));
                     });
+                    c = c.filter(function(elem, index, self) {
+                      return index === self.indexOf(elem);
+                    });
                     response(c);
                   }
               });
@@ -57,7 +60,9 @@ var getBasicSuggestion = function () {
                     });
                 })
                 /**/
-                console.log(c);
+                c = c.filter(function(elem, index, self) {
+                  return index === self.indexOf(elem);
+                });
                 response(c);
               }
             });

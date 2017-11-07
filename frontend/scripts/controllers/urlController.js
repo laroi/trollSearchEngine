@@ -45,10 +45,12 @@ define(['./storeController'], function (store) {
                     hash += "=";
                     hash +=  store.get('stars').join(',') || ""
                 } else {*/
+                if (key !== 'username') {
                     hash += "&"
                     hash += key
                     hash += "=";
                     hash += filters[key];
+                    }
                 //}
             });
         }

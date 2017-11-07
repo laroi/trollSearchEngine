@@ -47,10 +47,18 @@
                       </div>
                   </div>
                 </div>
-                <div class="form-group">
-                    <div class="form-group label-floating">
-                        <label for="event" class="control-label">Event</label>
-                        <input type="text" class="form-control" id="event" value="{{post.event}}">
+                <div class="form-group row">
+                    <div class="col-md-6">
+                        <div class="form-group label-floating">
+                            <label for="event-title" class="control-label">Event Title</label>
+                            <input type="text" class="form-control" id="event-title" value="{{post.event.title}}">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group label-floating">
+                            <label for="event-link" class="control-label">Event Link</label>
+                            <input type="text" class="form-control" id="event-link" value="{{post.event.link}}">
+                        </div>
                     </div>
                 </div>
             </div>

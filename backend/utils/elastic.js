@@ -343,7 +343,10 @@ var elastic = function () {
         }
         if (options.isAdult) {
             must_array.push({ "match": { "isAdult": options.isAdult }});
-        }            
+        }
+        if (options.context) {
+            must_array.push({ "match": { "context": options.context }});
+        }              
         if (options.type) {
             must_array.push({ "match": { "type": options.type }});
         }

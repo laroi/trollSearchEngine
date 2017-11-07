@@ -1,3 +1,5 @@
+
+//TODO : Make filter array different from display array
 define(['./storeController'], function (store) {
     var highlight,
     getHighlight,
@@ -15,10 +17,7 @@ define(['./storeController'], function (store) {
         if (key) {
             var updateVal = "";
             if (type === 'filters') {
-                if (val && typeof val !== 'boolean') {
-                    //if (key === 'userId') {
-                        //val = store.get('username');
-                    //}
+                if (val && typeof val !== 'boolean') {                    
                     updateVal = dispalyTitles[key] + ' : ' + val;                    
                 } else {
                     updateVal = dispalyTitles[key];
@@ -51,7 +50,15 @@ define(['./storeController'], function (store) {
             }
             console.log(filterKeys)
             filterKeys.forEach(function(key) {
-                html +=  getHighlight('filters', key, filters[key]);
+                if (key!== 'username') {
+                var val;
+                if (key === 'userId') {
+                    val = filters['username'] || filters[key];
+                } else {
+                    val = filters[key]
+                }
+                html +=  getHighlight('filters', key, val);
+                }
             });
             $('#high-lighter').empty().html(html);
     };

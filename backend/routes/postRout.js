@@ -139,6 +139,7 @@ var routes = function () {
             unApproved = req.body.isApproved,
             order = req.body.order,
             isAdult = req.body.isAdult,
+            context = req.body.context,
             isFavorite =  req.body.isFavorite;
             opts = {};
             if (search) {
@@ -166,6 +167,9 @@ var routes = function () {
             }
             if (isAdult) {
                 opts.isAdult = isAdult;
+            }
+            if (context) {
+                opts.context = context;
             }
             if (req.isAdmin && unApproved) {
                 opts.unApproved = unApproved;

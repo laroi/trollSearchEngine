@@ -6,8 +6,9 @@ define([
 '../../controllers/highlightController',
 '../../collections/postCollection',
  'text!./landing.html',
+  'text!../components/head_context.html',
  '../create/create'
-], function (request, store, url, user, highlight, postCollection, html, create) {
+], function (request, store, url, user, highlight, postCollection, html, contextHtml, create) {
      var source   = $(html).html(),
         template = Handlebars.compile(source),
         render;
@@ -118,6 +119,7 @@ define([
         };
         var applyFilter = function (e) {
             var f_group = $('.grp-list').val(),
+                f_context=$('.context-list').val(),
                 isPlain = $('.isPlain').is(':checked'),
                 isAdult = $('.isAdult').is(':checked'),
                 isFavorite = $('.isFavorite').is(':checked'),
@@ -138,6 +140,10 @@ define([
                 }
                 if (isMine) {
                     filtObj.userId = gstore.get('userId');
+                    filtObj.username = gstore.get('username');
+                }
+                if (f_context && f_context !== "0") {
+                    filtObj.context = f_context;
                 }
                 if (store.get('userType') === 'admin' && isApproved) {
                     filtObj.isApproved = false;
@@ -251,11 +257,23 @@ define([
         };
         var processUserClick = function (e) {
             var postId = $(e.target).parent().parent().parent().parent().attr('id');
-            var poster = postCollection.getPostById(postId).user.id;
+            var poster = postCollection.getPostById(postId).user;
             var storage = store.get('filters') || {};
-            storage.userId = poster;
+            storage.userId = poster.id;
+            storage.username = poster.name;
             store.set('filters', storage);
             url.navigate();
+        }
+        var loadContext = function () {
+            request.get('/api/contexts', function(contErr, contData){
+                if (!contErr) {
+                    var contTemp = Handlebars.compile($(contextHtml).html()),
+                    html = contTemp({contexts: contData});
+                    $('.context-list').empty().append(html);
+                } else {
+                    console.log("could not load context");
+                }
+            });
         }
         var landingView = function () {
             var render;
@@ -291,6 +309,9 @@ define([
                 if (query.group) {
                     postData.group = query.group
                 }
+                if (query.context) {
+                    postData.context = query.context
+                }
                 if (query.isPlain) {
                     postData.isPlain = query.isPlain
                 }
@@ -315,7 +336,7 @@ define([
                           itemSelector: '.elem-cont'    
                         });
                     })
-                    
+                    loadContext();
                     updateUi();
                     $('.edit').on('click', editPost);
                     $('.delete').on('click', deletePost);                    

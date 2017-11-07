@@ -2,10 +2,10 @@
     float:left;
     margin-left:10px;
 }
-.group-lists {
+.group-lists, .context-lists {
     float:left
 }
-.group-list {
+.group-list, .context-list {
     margin-left:10px!important;
     color:rgba(0,0,0, 0.26)!important;
 }

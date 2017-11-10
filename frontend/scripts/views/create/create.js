@@ -146,7 +146,7 @@ define([
                         characters.forEach(function(character) {
                             $("#characters").tagit("createTag", character);
                         });
-                        $("#actors").tagit({
+                        $("#characters").tagit({
                             allowSpaces: true,
                             autocomplete: {
                                delay: 0,

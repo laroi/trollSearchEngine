@@ -117,7 +117,12 @@ var putMapping = function () {
                     language: {"type" : "string"},
                     actors: {"type" : "string"},
                     characters: {"type" : "string"},
-                    event: {"type" : "string"},
+                    event: {
+                        properties:{
+                            title: {"type" : "string"},
+                            link: {"type" : "string"}
+                            }
+                    },
                     createdAt: {"type" : "date"},
                     lastModified: {"type": "date"},
                     titleSuggest: {

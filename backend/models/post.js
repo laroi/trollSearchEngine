@@ -24,7 +24,7 @@ var post = new Schema({
     language: {type: String},
     actors:[String],
     characters:[String],
-    event: {type: String},
+    event: {type: Object},
     comments:[String],
     dates: {createdAt: {type: Date}, lastUpdated:{type: Date, default: Date.now}}
 });

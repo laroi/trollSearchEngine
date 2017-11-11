@@ -100,7 +100,12 @@ var elastic = function () {
                         language: {"type" : "string"},
                         actors: {"type" : "string"},
                         characters: {"type" : "string"},
-                        event: {"type" : "string"},
+                        event: {
+                            properties:{
+                                title: {"type" : "string"},
+                                link: {"type" : "string"}
+                                }
+                        },
                         createdAt: {"type" : "date"},
                         lastModified: {"type": "date"},
                         titleSuggest: {
@@ -218,8 +223,8 @@ var elastic = function () {
             if (doc.title) {
                 body.titleSuggest = {input: doc.title}
             }
-            if (doc.event) {
-                body.eventSuggest = {input: doc.event}
+            if (doc.event && doc.event.title) {
+                body.eventSuggest = {input: doc.event.title}
             }
             if (doc.movie) {
                 body.movieSuggest = {input: doc.movie}
@@ -309,7 +314,7 @@ var elastic = function () {
                 sort.push({"_score": {"order": "desc"}});
             }
             if (options.advanced.event) {
-                must_array.push({ "match": { "event": options.advanced.event }});
+                must_array.push({ "match": { "event.title": options.advanced.event }});
                 sort.push({"_score": {"order": "desc"}});
             }
         } else if (options.search){
@@ -319,7 +324,7 @@ var elastic = function () {
             should_array.push({ "match": { "movie": options.search }});
             should_array.push({ "match": { "actors": options.search }});
             should_array.push({ "match": { "characters": options.search }});
-            should_array.push({ "match": { "event": options.search }});
+            should_array.push({ "match": { "event.title": options.search }});
             sort.push({
                 "_score": {
                    "order": "desc"
@@ -474,7 +479,7 @@ var elastic = function () {
             body.titleSuggest = {input: doc.title}
         }
         if (doc.event) {
-            body.eventSuggest = {input: doc.event}
+            body.eventSuggest = {input: doc.event.title}
         }
         if (doc.movie) {
             body.movieSuggest = {input: doc.movie}
@@ -488,6 +493,7 @@ var elastic = function () {
         if (doc.characters && Array.isArray(doc.characters) && doc.characters.length > 0) {
             body.characterSuggest = {input: doc.characters}
         }
+        console.log("es body\n", body)
         client.update({
             index: 'trolls',
             id: id,

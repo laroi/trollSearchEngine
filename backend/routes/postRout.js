@@ -62,7 +62,7 @@ var routes = function () {
             language = req.body.language,
             characters = req.body.characters,
             actors = req.body.actors,
-            event = req.body.event,
+            event = {title : req.body.event.title, link: req.body.event.link},
             createdAt = req.body.createdAt,
             lastModified = req.body.lastModified,
             context = req.body.context,
@@ -243,8 +243,15 @@ var routes = function () {
                         if (doc.characters) {
                             updateObj.characters = doc.characters
                         }
-                        if (doc.event) {
-                            updateObj.event = doc.event
+                        if (doc.event && doc.event.title) {
+                            updateObj.event = {} 
+                            updateObj['event']['title'] = doc.event.title
+                        }
+                        if (doc.event && doc.event.link) {
+                            if (!updateObj.event) {
+                               updateObj.event = {} 
+                            }
+                            updateObj['event']['link'] = doc.event.link
                         }
                         if (doc.context) {
                             updateObj.context = doc.context
@@ -255,7 +262,7 @@ var routes = function () {
                             updateObj.isApproved = false;
                         }
                         Post.update({_id: id}, {$set: updateObj}, function(err, numAffected) {
-                            console.log('updated db')
+                            console.log('updated db with ', updateObj)
                             if (!err) {
                                 console.log('Updated post ' + id + ' in database');
                                 elastic.updateDoc(id, updateObj, function(err, data) {

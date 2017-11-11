@@ -82,7 +82,10 @@ define([
                                         context:$("#context").val().trim() === 'Select' ? '' : $("#context").val().trim(),
                                         actors:$("#actors").val().trim() ? $("#actors").val().trim().split(','): [],
                                         characters:$("#characters").val().trim()? $("#characters").val().trim().split(',') : [],
-                                        event:$("#event").val().trim(),
+                                        event :{
+                                            title:$("#event-title").val().trim(),
+                                            link :$("#event-link").val().trim(),
+                                        },
                                         createdAt: date.toISOString(),
 				                        lastModified: date.toISOString()
                                     }
@@ -142,10 +145,8 @@ define([
                         actors.forEach(function(actor) {
                             $("#actors").tagit("createTag", actor);
                         });
-                        $("#characters").tagit({allowSpaces: true});
-                        characters.forEach(function(character) {
-                            $("#characters").tagit("createTag", character);
-                        });
+                        //$("#characters").tagit({allowSpaces: true});
+
                         $("#characters").tagit({
                             allowSpaces: true,
                             autocomplete: {
@@ -153,6 +154,9 @@ define([
                                minLength: 1,
                                source :  getSuggestion('character')
                             }
+                        });
+                        characters.forEach(function(character) {
+                            $("#characters").tagit("createTag", character);
                         });
                         $('#movie').typeahead({
                             source: getSuggestion('movie'),

@@ -68,6 +68,22 @@ var routes = function () {
             context = req.body.context,
             obj = {},
             postObj;
+            var saveThumb = function (fileName, callback) {
+               gm(uploadPath).
+              .setFormat('jpg')      
+              .resize('150')
+              .gravity('Center')
+              .write(uploadPath+'thumb/'+fileName, function (err) {
+                if (!err) {
+                     console.log('Created thumbile for filename')
+                      callback()       
+                } else {
+                    console.error('could not resize', err);
+                    callback(err)  
+                }
+              });
+                
+            }
         if (req.body.image && req.body.user.id && req.body.type) {
             var filename = uuid.v1();
             var fileLoc = uploadPath + filename;
@@ -78,40 +94,47 @@ var routes = function () {
             .setFormat('jpg')            
             .write(fileLoc + '.jpg', function(err){
                 if (!err) {
-                    obj.user= user;
-                    obj.title = title;
-                    obj.type = type;
-                    obj.isAdult = isAdult;
-                    obj.description = description;
-                    obj.tags = tags;
-                    obj.movie = movie;
-                    obj.image = {url: '/images/'+filename + '.jpg', type: 'jpg'};
-                    obj.language = language;
-                    obj.actors = actors;
-                    obj.characters = characters;
-                    obj.event = event;
-                    obj.createdAt = createdAt;
-                    obj.lastModified = lastModified;
-                    obj.context = context;
-                    obj.isApproved = false;
-                    postObj = new Post(obj);
-                    postObj.save(function(saveErr, saveData) {
-                        if (!saveErr) {
-                            console.log('Saved Post ' + saveData.id)
-                            obj.id = saveData.id
-                            elastic.putDoc(obj, function(err, data) {
-                                if(!err) {
-                                    res.status(201).send(saveData);
+                    saveThumb(filename, function(thumbErr) {
+                        if (!thumbErr) {
+                            obj.user= user;
+                            obj.title = title;
+                            obj.type = type;
+                            obj.isAdult = isAdult;
+                            obj.description = description;
+                            obj.tags = tags;
+                            obj.movie = movie;
+                            obj.image = {url: '/images/'+filename + '.jpg', thumb: '/images/thumb/'+filename + '.jpg', type: 'jpg'};
+                            obj.language = language;
+                            obj.actors = actors;
+                            obj.characters = characters;
+                            obj.event = event;
+                            obj.createdAt = createdAt;
+                            obj.lastModified = lastModified;
+                            obj.context = context;
+                            obj.isApproved = false;
+                            postObj = new Post(obj);
+                            postObj.save(function(saveErr, saveData) {
+                                if (!saveErr) {
+                                    console.log('Saved Post ' + saveData.id)
+                                    obj.id = saveData.id
+                                    elastic.putDoc(obj, function(err, data) {
+                                        if(!err) {
+                                            res.status(201).send(saveData);
+                                        } else {
+                                            console.error(JSON.stringify(err))
+                                            res.status(500).send({err: 'Could not save post'});
+                                        }
+                                    });                
                                 } else {
-                                    console.error(JSON.stringify(err))
+                                    console.error(JSON.stringify(saveErr))
                                     res.status(500).send({err: 'Could not save post'});
                                 }
-                            });                
+                            });
                         } else {
-                            console.error(JSON.stringify(saveErr))
+                            console.error('Problem in creating thumbnail');
                             res.status(500).send({err: 'Could not save post'});
                         }
-                    });
+                    })
                 } else {
                     console.error(err);
                     res.status(500).send({err: 'Could not save post'});

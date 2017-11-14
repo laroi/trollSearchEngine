@@ -69,7 +69,7 @@ var routes = function () {
             obj = {},
             postObj;
             var saveThumb = function (fileName, callback) {
-               gm(uploadPath).
+               gm(uploadPath)
               .setFormat('jpg')      
               .resize('150')
               .gravity('Center')

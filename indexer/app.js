@@ -27,7 +27,7 @@ var toB = new TransformToBulk(function getIndexTypeId (doc) {
     if (doc.title) {
         doc.titleSuggest = {input: doc.title}
     }
-    if (doc.event) {
+    if (doc.event && doc.event.title) {
         doc.eventSuggest = {input: doc.event.title}
     }
     if (doc.movie) {

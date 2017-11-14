@@ -42,6 +42,7 @@ define(['controllers/requestController', 'controllers/storeController'], functio
                 isAdult: inPost.isAdult || '',
 				description: inPost.description || '',
 				imageUrl: inPost.imageUrl || '',
+				thumbUrl: inPost.thumbUrl || '',
 				tags: inPost.tags || [],
 				group: inPost.group || '',
 				movie: inPost.movie || '',

@@ -25,6 +25,7 @@ define(['controllers/requestController', 'controllers/storeController', 'models/
                         downloads: post._source.downloads,
                         isAdult: post._source.isAdult,
                         imageUrl: post._source.image.url,
+                        thumbUrl: post._source.image.thumb,
 				        description: post._source.description,
 				        tags: post._source.tags,
 				        movie: post._source.movie,

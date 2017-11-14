@@ -75,6 +75,7 @@ var elastic = function () {
                         image: {"type" : "object", 
                             "properties" : {
                                 "url" : {"type" : "string", "index" : "not_analyzed"},
+                                "thumb" : {"type" : "string", "index" : "not_analyzed"},
                                 "type" : {"type" : "string", "index" : "not_analyzed"}
                             }
                         },

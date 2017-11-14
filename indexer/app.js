@@ -28,7 +28,7 @@ var toB = new TransformToBulk(function getIndexTypeId (doc) {
         doc.titleSuggest = {input: doc.title}
     }
     if (doc.event) {
-        doc.eventSuggest = {input: doc.event}
+        doc.eventSuggest = {input: doc.event.title}
     }
     if (doc.movie) {
         doc.movieSuggest = {input: doc.movie}
@@ -92,8 +92,8 @@ var putMapping = function () {
                     image: {"type" : "object", 
                         "properties" : {
                             "url" : {"type" : "string", "index" : "not_analyzed"},
-                            "thumb" : {"type" : "string", "index" : "not_analyzed"},
-                            "type" : {"type" : "string", "index" : "not_analyzed"}
+                            "type" : {"type" : "string", "index" : "not_analyzed"},
+                            "thumb" : {"type" : "string", "index" : "not_analyzed"}
                         }
                     },
                     descriptions: {"type" : "string"},

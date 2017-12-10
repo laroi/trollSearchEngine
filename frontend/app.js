@@ -61,7 +61,7 @@ var getBasicSuggestion = function () {
                 })
                 /**/
                 c = c.filter(function(elem, index, self) {
-                  return index === self.indexOf(elem);
+                  return index === self.indexOf(elem.text);
                 });
                 response(c);
               }

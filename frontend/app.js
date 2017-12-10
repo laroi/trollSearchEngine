@@ -60,9 +60,10 @@ var getBasicSuggestion = function () {
                     });
                 })
                 /**/
-                c = c.filter(function(elem, index, self) {
-                  return index === self.indexOf(elem.text);
-                });
+               c = c.filter(function(obj, pos, arr) {
+                        return arr.map(function(mapObj) { (mapObj['text']).indexOf(obj['text']) === pos})
+                    });
+                
                 response(c);
               }
             });

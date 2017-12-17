@@ -3,7 +3,7 @@
     <div class='total_count'> {{posts.total}} memes found </div>
     <div class="row page-cont">
     {{#each posts.posts}}
-    <div class="elem-cont col-xs-12 col-sm-4 col-md-3 col-lg-2">
+    <div class="elem-cont">
           {{#unless this.isApproved}}<div class="notify-badge">U</div> {{/unless}}
           <div class="panel panel-default">
             <div id={{this._id}} class="panel-body">
@@ -12,26 +12,30 @@
                 </div>
                 <div class="bottom-panel">
                     <div class="button-panel">
-                        {{#if this.isStarred}}
-                            <div class="pan-btn star-btn starred"></div>
-                        {{else}}
-                            <div class="pan-btn star-btn star"></div>
-                        {{/if}}
-                        <div class="pan-btn-cont">
-                            <a href="/api/image/{{this._id}}" > <div class="pan-btn download"></div></a>
-                            <div class='pan-count down-count'>{{this.downloads}}</div>
+                        <div class="row2">
+                            {{#editable this.isOwner}}{{/editable}}
+                            <!--<div class="pan-btn use"></div>-->
                         </div>
-                        <div class="pan-btn-cont">
-                            {{#if this.isLiked}}
-                                <div class="pan-btn fav faved"></div>
+                        <div class="row1">
+                            <div class="pan-btn user"><img class="user-img" src={{this.user.image}}></div>
+                            {{#if this.isStarred}}
+                                <div class="pan-btn star-btn starred"></div>
                             {{else}}
-                                <div class="pan-btn fav favorite"></div>            
+                                <div class="pan-btn star-btn star"></div>
                             {{/if}}
-                            <div class='pan-count fav-count'>{{this.likes.length}}</div>
-                        </div>          
-                        {{#editable this.isOwner}}{{/editable}}
-                        <!--<div class="pan-btn use"></div>-->
-                        <div class="pan-btn user"><img class="user-img" src={{this.user.image}}></div>
+                            <div class="pan-btn-cont">
+                                <a href="/api/image/{{this._id}}" > <div class="pan-btn download"></div></a>
+                                <div class='pan-count down-count'>{{this.downloads}}</div>
+                            </div>
+                            <div class="pan-btn-cont">
+                                {{#if this.isLiked}}
+                                    <div class="pan-btn fav faved"></div>
+                                {{else}}
+                                    <div class="pan-btn fav favorite"></div>            
+                                {{/if}}
+                                <div class='pan-count fav-count'>{{this.likes.length}}</div>
+                            </div> 
+                        </div>
                     </div>
                 </div>
             </div>

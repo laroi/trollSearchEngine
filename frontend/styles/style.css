@@ -186,3 +186,12 @@ background-repeat: no-repeat;
     padding:5px 10px;
     font-size:10px;
 }
+.elem-cont {
+    margin-left:10px;
+    width:150px;
+}
+.button-panel>.row1, .button-panel>.row2 {
+ overflow:hidden;
+ }
+  
+}

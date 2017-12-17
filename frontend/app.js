@@ -61,9 +61,9 @@ var getBasicSuggestion = function () {
                 })
                 /**/
                c = c.filter(function(obj, pos, arr) {
-                        return arr.map(function(mapObj) { (mapObj['text']).indexOf(obj['text']) === pos})
-                    });
-                
+                        return arr.map(function(mapObj) {return mapObj['text']}).indexOf(obj['text']) === pos;
+                        
+                        })
                 response(c);
               }
             });

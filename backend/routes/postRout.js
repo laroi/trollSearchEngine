@@ -69,7 +69,7 @@ var routes = function () {
             obj = {},
             postObj;
             var saveThumb = function (fileName, callback) {
-               gm(uploadPath)
+               gm(uploadPath+fileName)
               .setFormat('jpg')      
               .resize('150')
               .gravity('Center')
@@ -78,7 +78,7 @@ var routes = function () {
                      console.log('Created thumbile for filename')
                       callback()       
                 } else {
-                    console.error('could not resize', err);
+                    console.error('could not resize '+ uploadPath+fileName, err);
                     callback(err)  
                 }
               });
@@ -94,7 +94,7 @@ var routes = function () {
             .setFormat('jpg')            
             .write(fileLoc + '.jpg', function(err){
                 if (!err) {
-                    saveThumb(filename, function(thumbErr) {
+                    saveThumb(filename+'.jpg', function(thumbErr) {
                         if (!thumbErr) {
                             obj.user= user;
                             obj.title = title;

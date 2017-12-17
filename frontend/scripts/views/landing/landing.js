@@ -41,7 +41,7 @@ define([
             return '';
         })
         var editPost = function(e) {
-            var id = $(e.target).parent().parent().parent().attr('id');
+            var id = $(e.target).parent().parent().parent().parent().attr('id');
             var post = postCollection.getPostById(id);
             create.render(undefined, post);                
         }
@@ -194,18 +194,21 @@ define([
                 url.navigate();
         }
         var processStar = function (e) {
-            var postId = $(e.target).parent().parent().parent().attr('id'),
+            var postId = $(e.target).parent().parent().parent().parent().attr('id'),
                 unStar,
                 updatedStar,
+                prevStars,
+                stars,
                 star;
             star = function (postId) {
-                var stars = store.get('stars') || [];
+                
+                prevStars = stars = store.get('stars') || [];
                 stars.push(postId);
                 store.set('stars', stars);
                 return stars;
             }
             unStar = function (postId) {
-                var stars = store.get('stars') || [];
+                prevStars = stars = store.get('stars') || [];
                 if (stars.indexOf(postId) > -1) {
                     stars.splice(stars.indexOf(postId), 1);
                 }
@@ -227,12 +230,13 @@ define([
                         $(e.target).removeClass('starred');
                     }
                 } else {
+                    store.set('stars', prevStars);
                     toastr.error('Could not perform the action, verify you are logged in.', 'FTM Says')
                 }
             });
         }
         var processLike = function (e) {
-            var postId = $(e.target).parent().parent().parent().parent().attr('id');
+            var postId = $(e.target).parent().parent().parent().parent().parent().attr('id');
             var processCallback = function (err, data) {
                 if (!err) {
                     if ($(e.target).hasClass('faved')) {
@@ -256,7 +260,7 @@ define([
             
         };
         var processUserClick = function (e) {
-            var postId = $(e.target).parent().parent().parent().parent().attr('id');
+            var postId = $(e.target).parent().parent().parent().parent().parent().attr('id');
             var poster = postCollection.getPostById(postId).user;
             var storage = store.get('filters') || {};
             storage.userId = poster.id;

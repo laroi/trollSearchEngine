@@ -1,127 +1,105 @@
 <script id="entry-template" type="text/x-handlebars-template">
-    <div class="navbar navbar-default">
-      <div class="container-fluid">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="navbar-warning-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand col-xs-2">FAM</a>
-          
-          
-          
-		<div class="col-md-4">
-            <div class="input-group" id="adv-search">
-                <input type="text" class="form-control" id="basic-search" placeholder="Search for snippets" />
-                <div class="input-group-btn">
-                    <div class="btn-group" role="group">
-                        <div class="dropdown dropdown-lg">
-                            <button type="button" class="btn btn-default search-btn dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="caret"></span></button>
-                            <div class="dropdown-menu dropdown-menu-right" role="menu">
-                                <form class="form-horizontal drop-form" role="form">
-                                  
-                                </form>
-                            </div>
-                        </div>
-                        <button type="button" class="btn btn-basic-search  search-btn btn-primary"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
-                    </div>
-                </div>
+<div class="navbar navbar-default">
+   <div class="container-fluid">
+      <div class="navbar-header">
+         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="navbar-warning-collapse">
+         <span class="icon-bar"></span>
+         <span class="icon-bar"></span>
+         <span class="icon-bar"></span>
+         </button>
+         <a class="navbar-brand col-xs-2">FAM</a>
+         <div class="input-group" id="adv-search">
+            <input type="text" class="form-control" id="basic-search" placeholder="Search for snippets" />
+            <div class="input-group-btn">
+               <div class="btn-group" role="group">
+                  <div class="dropdown dropdown-lg">
+                     <button type="button" class="btn btn-default search-btn dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="caret"></span></button>
+                     <div class="dropdown-menu dropdown-menu-right" role="menu">
+                        <form class="form-horizontal drop-form" role="form">
+                        </form>
+                     </div>
+                  </div>
+                  <button type="button" class="btn btn-basic-search  search-btn btn-primary"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+               </div>
             </div>
-          </div>
-        </div>
-
-
-
-
-
-
-
-
-
-          <div class="navbar-collapse collapse navbar-warning-collapse col-md-4">
-        <div class="navbar-form  navbar-left">   
-           <div class="dropdown">
-              <span data-target="#" class="dropdown-toggle" data-toggle="dropdown">Filters
-                <b class="caret"></b></span>
-              <div class="dropdown-menu filter-drop ">
-                <ul class="filter-drop">
-                    <li>
+         </div>
+      </div>
+      <div class="navbar-collapse collapse navbar-warning-collapse filt-boot">
+         <div class="navbar-form  navbar-left">
+            <div class="dropdown">
+               <span data-target="#" class="dropdown-toggle" data-toggle="dropdown">Filters
+               <b class="caret"></b></span>
+               <div class="dropdown-menu filter-drop ">
+                  <ul class="filter-drop">
+                     <li>
                         <div class="form-group group-lists">
-                            <label for="s1">Group</label>
-                            <select class="grp-list form-control group-list">
+                           <label for="s1">Group</label>
+                           <select class="grp-list form-control group-list">
                               <option value="0">Select</option>
                               <option value="icu">ICU</option>
                               <option value="tm">TM</option>
                               <option value="mnt">MNT</option>
-                            </select>
-                      </div>
-                    </li>
+                           </select>
+                        </div>
+                     </li>
                      <li>
                         <div class="form-group context-lists">
-                            <label for="s1">Context</label>
-                            <select class="cntxt-list form-control context-list">
-                              
-
-                            </select>
-                      </div>
-                    </li>
-                    <li>
-                        <div class="togglebutton">
-                            <label>
-                                 <input class='isPlain fi-input' type="checkbox"> Plain Memes
-                            </label>
+                           <label for="s1">Context</label>
+                           <select class="cntxt-list form-control context-list">
+                           </select>
                         </div>
-                    </li>
-                    <li>
+                     </li>
+                     <li>
                         <div class="togglebutton">
-                            <label>
-                                 <input class='isAdult fi-input' type="checkbox"> Adult
-                            </label>
+                           <label>
+                           <input class='isPlain fi-input' type="checkbox"> Plain Memes
+                           </label>
                         </div>
-                    </li>
-                    <li>
+                     </li>
+                     <li>
                         <div class="togglebutton">
-                            <label>
-                                 <input class='isFavorite fi-input' type="checkbox"> Favorites
-                            </label>
+                           <label>
+                           <input class='isAdult fi-input' type="checkbox"> Adult
+                           </label>
                         </div>
-                    </li>
-                    <li>
+                     </li>
+                     <li>
                         <div class="togglebutton">
-                            <label>
-                                 <input class='isMine fi-input' type="checkbox"> My Memes
-                            </label>
+                           <label>
+                           <input class='isFavorite fi-input' type="checkbox"> Favorites
+                           </label>
                         </div>
-                    </li>
-                    <li>
+                     </li>
+                     <li>
                         <div class="togglebutton">
-                            <label>
-                                 <input class='isApproved fi-input' type="checkbox"> Approvals
-                            </label>
+                           <label>
+                           <input class='isMine fi-input' type="checkbox"> My Memes
+                           </label>
                         </div>
-                    </li>
-                   <li>
-                       <div class="btn btn-primary btn-apply-filter">Apply</div>
-                    </li>
-                </ul>
-              </div>
+                     </li>
+                     <li>
+                        <div class="togglebutton">
+                           <label>
+                           <input class='isApproved fi-input' type="checkbox"> Approvals
+                           </label>
+                        </div>
+                     </li>
+                     <li>
+                        <div class="btn btn-primary btn-apply-filter">Apply</div>
+                     </li>
+                  </ul>
+               </div>
             </div>
-         </div> 
          </div>
-          
-
-
-        <div class="navbar-collapse collapse navbar-warning-collapse col-md-4">
-      <ul class="nav navbar-nav navbar-right">
-        <li><button id="facebook_login" type="button" class="btn button btn-default">FB Login</button></li>
-        <li><button id="create" type="button" class="btn button btn-default">Upload</button></li>
-      </ul>
-        </div>
-                </div>
       </div>
+      <div class="navbar-collapse collapse navbar-warning-collapse log-boot">
+         <ul class="nav navbar-nav navbar-right">
+            <li><button id="facebook_login" type="button" class="btn button btn-default">FB Login</button></li>
+            <li><button id="create" type="button" class="btn button btn-default">Upload</button></li>
+         </ul>
       </div>
-    </div>
-    <div id="high-lighter"> </div>
-    <div id="post-contents"> </div>
+   </div>
+</div>
+<div id="high-lighter"> </div>
+<div id="post-contents"> </div>
 </script>

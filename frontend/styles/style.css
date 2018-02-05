@@ -190,6 +190,16 @@ background-repeat: no-repeat;
     margin-left:10px;
     width:150px;
 }
+@media screen and (min-width:768px) {
+    .navbar-header {
+        width:50%;
+    }
+}
+@media screen and (max-width:320px) {
+    .navbar-header {
+        width:31%;
+    }
+}
 .button-panel>.row1, .button-panel>.row2 {
  overflow:hidden;
  }

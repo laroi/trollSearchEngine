@@ -55,11 +55,27 @@
 .se_input {
     color:black!important;
 }
-@media screen and (min-width: 768px) {
-    #adv-search {
-        width: 300px;
+
+@media only screen and  (min-width:768px) and (max-width:1269px)
+{
+#adv-search {
+        width: 440px;
         margin: 0 auto;
     }
+        .nav-head-boot {
+        width: 515px;
+        float: left;
+    }
+}
+@media only screen and  (min-width:480px) and (max-width:768px)
+{
+    #adv-search {
+        width: 348px;
+        margin: 0 auto;
+    }
+}
+    
+@media screen and (min-width: 768px) {
     .filt-boot, .log-boot {
         width:115px;
         float:left;    
@@ -82,6 +98,10 @@
 @media screen and (max-width:480px) {
     .dropdown.dropdown-lg .dropdown-menu-right {
         min-width: 250px;
+    }
+    #adv-search {
+        width: 150px;
+        margin: 0 auto;
     }
 }
 @media screen and (max-width:320px) {

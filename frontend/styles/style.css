@@ -1,3 +1,4 @@
+* { padding: 0; margin: 0;}
 .right-cont {
     float:right;
     margin-right:50px;
@@ -22,6 +23,9 @@
 }
 #create {
     display: none;
+        margin-top: 15px;
+    float: left;
+    cursor:pointer;
 }
 .info-panel {
     float:left;
@@ -190,15 +194,14 @@ background-repeat: no-repeat;
     margin-left:10px;
     width:150px;
 }
-@media screen and (min-width:768px) {
-    .navbar-header {
-        width:50%;
-    }
+.user-drop > ul {
+    padding-left:3px;
 }
-@media screen and (max-width:320px) {
-    .navbar-header {
-        width:31%;
-    }
+.user-drop > ul> li {
+    color:black;
+    cursor: pointer;
+    padding:5px 0px 5px 10px!important;
+    border-bottom:solid 1px grey;
 }
 .button-panel>.row1, .button-panel>.row2 {
  overflow:hidden;

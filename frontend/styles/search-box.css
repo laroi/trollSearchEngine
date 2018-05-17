@@ -8,6 +8,10 @@
 #basic-search {
     width:100%;
 }
+.filt-boot {
+    padding-top:15px;
+    float:left;
+}
 .dropdown {
     position: relative;
     display: inline-block;
@@ -55,58 +59,162 @@
 .se_input {
     color:black!important;
 }
-
-@media only screen and  (min-width:768px) and (max-width:1269px)
-{
 #adv-search {
-        width: 440px;
+        width: 400px;
         margin: 0 auto;
-    }
-        .nav-head-boot {
-        width: 515px;
         float: left;
     }
+.user-boot{
+    float:left;
+    padding-top: 15px;
+
 }
-@media only screen and  (min-width:480px) and (max-width:768px)
+@media only screen and (min-width:1269px)
 {
-    #adv-search {
-        width: 348px;
+#adv-search {
+        width: 325px;
         margin: 0 auto;
+        float: left;
     }
-}
-    
-@media screen and (min-width: 768px) {
-    .filt-boot, .log-boot {
-        width:115px;
-        float:left;    
+    .nav-head-boot {
+        width:75%;
+    }
+    .filt-boot, .user-boot, #create {
+        width:75px;
+        float:left;
+    }
+        .search-drop {
+        left:-265px;
+    }
+    .filter-drop {
+        left:-100px;
+    }
+    .user-drop {
+        left:-82px;
     }
     .dropdown.dropdown-lg .dropdown-menu-right {
-        min-width: 500px;
+        min-width: 324px;
+    }
+}
+@media only screen and (max-width:1269px)
+{
+#adv-search {
+        width: 325px;
+        margin: 0 auto;
+        float: left;
+    }
+    .nav-head-boot {
+        width:75%;
+    }
+    .filt-boot, .user-boot, #create {
+        width:75px;
+        float:left;
+    }
+    .search-drop {
+        left:-265px;
+    }
+    .filter-drop {
+        left:-100px;
+    }
+    .user-drop {
+        left:-82px;
+    }
+    .dropdown.dropdown-lg .dropdown-menu-right {
+        min-width: 324px;
+    }
+    
+}
+@media screen and (max-width: 990px) {
+    .filt-boot, .user-boot, #create {
+     float:left;
+        width:25px;
+    }
+} 
+@media screen and (max-width: 768px) {
+    .filt-boot, .user-boot, #create {
+        width:25px;
+        float:left;
+    }
+    #adv-search {
+        width: 250px;
+        margin: 0 auto;
+    }
+    .dropdown.dropdown-lg .dropdown-menu-right {
+        min-width: 290px;
     }
     .se_input {
         width: 70%!important;
     }
-
+    .nav-head-boot {
+        width:90%;
+    }
     .dropdown-menu {
         width:70%;
     }
     .dropdown-item {
         width:100%;
     }
+    .search-drop {
+        left:-245px;
+    }
+    .filter-drop {
+        left:-100px;
+    }
+    .user-drop {
+        left:-82px;
+    }
+
 }
 
 @media screen and (max-width:480px) {
+    .navbar-brand {
+        padding-left:10px !important;
+    }
+    #adv-search {
+        width: 232px;
+        margin: 0 auto;
+        float:left;
+        padding-left:15px;
+    }
+    .nav-head-boot {
+        width:100%;
+    }
+    .dropdown.dropdown-lg .dropdown-menu-right {
+        min-width: 250px;
+    }
+    .filt-boot, .user-boot, #create {
+     float:left;
+        width:25px;
+    }
+    .search-drop {
+        left:-146px;
+    }
+    .filter-drop {
+        left:-100px;
+    }
+    .user-drop {
+        left:-82px;
+    }
+}
+@media screen and (max-width:399px) {
+    #adv-search {
+        width: 165px;
+        margin: 0 auto;
+        float:left;
+        padding-left:15px;
+    }
+}
+@media screen and (max-width:320px) {
+    .navbar-brand {
+        padding-left:5px !important;
+    }
     .dropdown.dropdown-lg .dropdown-menu-right {
         min-width: 250px;
     }
     #adv-search {
-        width: 150px;
+        width: 165px;
         margin: 0 auto;
-    }
-}
-@media screen and (max-width:320px) {
-    .dropdown.dropdown-lg .dropdown-menu-right {
-        min-width: 250px;
+        float:left;
     }
     .se_input {
         width: 70%!important;
@@ -114,6 +222,19 @@
     .dropdown-item {
         left:-25!important;
         width:70%!important;
+    }
+    .filt-boot, .user-boot, #create {
+        float:left;
+        width:25px;
+    }
+    .search-drop {
+        left:-135px;
+    }
+    .filter-drop {
+        left:-100px;
+    }
+    .user-drop {
+        left:-82px;
     }
 }
 

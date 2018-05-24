@@ -12,6 +12,9 @@
     padding-top:15px;
     float:left;
 }
+.user-name {
+    padding-right:3px;
+}
 .dropdown {
     position: relative;
     display: inline-block;
@@ -80,7 +83,7 @@
         width:75%;
     }
     .filt-boot, .user-boot, #create {
-        width:75px;
+        width:100px;
         float:left;
     }
         .search-drop {
@@ -107,7 +110,7 @@
         width:75%;
     }
     .filt-boot, .user-boot, #create {
-        width:75px;
+        width:100px;
         float:left;
     }
     .search-drop {

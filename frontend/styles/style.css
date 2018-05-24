@@ -6,6 +6,9 @@
 #head-container{
     padding-top:10px;
 }
+.logut {
+    display:none;
+}
 .check-content {
     padding-left:18%!important;
 }

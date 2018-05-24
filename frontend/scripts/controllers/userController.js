@@ -9,13 +9,20 @@ define(['./requestController', './storeController'], function (request, store) {
             enableAdminFeatures();
          } else {
             disableAdminFeatures();
-         }                
+         }
+         $('.fb_login').hide();
+         $('.logut').show();
+         $('.user-photo').attr('src', store.get('picture'));
+         $('.user-name').text(store.get('username'))        
     }
     var disableFeatures = function(){
         $('#create').hide();
-        $('#facebook_login').show();
+        $('.fb_login').show();
         $('.isFavorite').prop("disabled", true)
         $('.isMine').prop("disabled", true);
+        $('.logut').hide();
+        $('.user-name').text('You')     
+        $('.user-photo').attr('src', store.get('/image/user.png'));
         disableAdminFeatures();           
     }
     var disableAdminFeatures = function () {

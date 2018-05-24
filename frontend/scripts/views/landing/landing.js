@@ -139,8 +139,8 @@ define([
                     filtObj.isFavorite = isFavorite;
                 }
                 if (isMine) {
-                    filtObj.userId = gstore.get('userId');
-                    filtObj.username = gstore.get('username');
+                    filtObj.userId = store.get('userId');
+                    filtObj.username = store.get('username');
                 }
                 if (f_context && f_context !== "0") {
                     filtObj.context = f_context;

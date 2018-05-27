@@ -53,7 +53,7 @@ define(['controllers/requestController', 'controllers/storeController', 'models/
                 callback(err, {posts:posts, total: data.hits.total, current: current, limit: postData.limit});
             });
         }
-        getPostById = function(id) {
+        getPostById = function(id, callback) {
             var retPost;
             for(var i = 0; i < posts.length; i += 1) {
                 if (posts[i]._id === id) {
@@ -61,7 +61,52 @@ define(['controllers/requestController', 'controllers/storeController', 'models/
                     break;
                 }
             }
-            return retPost;
+            if (retPost) {
+                callback(undefined, retPost);
+            } else {
+                request.get('/api/post/'+id, function (err, post) {
+                    if (!err) {
+                        post = post[0];
+                        var postObj = new PostModel({
+                        _id : post._id,
+                        user: post.user,
+                       	title: post.title,
+                        type: post.type,
+                        views: post.views,
+                        likes: post.likes,
+                        downloads: post.downloads,
+                        isAdult: post.isAdult,
+                        imageUrl: post.image.url,
+                        thumbUrl: post.image.thumb,
+				        description: post.description,
+				        tags: post.tags,
+				        movie: post.movie,
+				        language: post.language,
+				        actors: post.actors,
+				        isApproved : post.isApproved,
+				        characters: post.characters,
+				        event: post.event,
+				        context : post.context
+				    });
+				    if (postObj.type === 'clean') {
+				        postObj.isClean = true;
+				    }
+				    if (store.get('userId') === post.user.id) {
+				       postObj.isOwner = true; 
+				    }
+			        stars = store.get('stars') || [];
+				    postObj.isLiked = post.likes.find(function(like){return like.userId === store.get('userId')})
+				    postObj.isLiked = postObj.isLiked && postObj.isLiked.userId ? true : false;
+				    if (stars.indexOf(post._id) > -1) {
+				        postObj.isStarred = true;
+				    }
+                        callback(undefined, postObj)
+                    } else {
+                        callback(err, undefined);
+                        console.error(err);
+                    }
+                })
+            }
          }
         return  {
            getAllPosts: getAllPosts,

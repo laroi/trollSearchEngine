@@ -59,7 +59,7 @@ define([
             var search_term = $('#basic-search').val().trim();
             if (search_term) {
                 store.set('search_term', {basic_search:search_term}) 
-                url.navigate();
+                url.navigate('landing');
             }
         }
         var advancedSearch = function(e) {
@@ -91,7 +91,7 @@ define([
             if (Object.keys(advSearchTerm).length > 0) {
                 store.set('search_term', advSearchTerm);
                 $('.dropdown.open').removeClass('open');
-                url.navigate();
+                url.navigate('landing');
             }
         }
         var paginate = function(e){
@@ -99,14 +99,14 @@ define([
             //var limit = store.get('limit');
             var limit = store.get('limit');
             store.set('from', (((current - 1) * limit)));
-            url.navigate();
+            url.navigate('landing');
         };
         var navNext = function(e){
             if (!$(e.target).closest('.page-item').hasClass('disabled')) {
                 var from = store.get('from');
                 var limit = store.get('limit');
                 store.set('from', ((from + 1) * limit));
-                url.navigate();
+                url.navigate('landing');
             }
         };
         var navPrev = function(e){
@@ -114,7 +114,7 @@ define([
                 var from = store.get('from');
                 var limit = store.get('limit');
                 store.set('from', ((from - 1) * limit));
-                url.navigate();
+                url.navigate('landing');
             }
         };
         var applyFilter = function (e) {
@@ -150,7 +150,7 @@ define([
                 }
                 store.set('filters', filtObj);                    
                 $('.dropdown.open').removeClass('open');
-                url.navigate();
+                url.navigate('landing');
         };
         var updateUi = function (type, key) {
             var mapping = {
@@ -191,7 +191,7 @@ define([
                 var storage = store.get(type);
                 delete storage[key];
                 store.set(type, storage);
-                url.navigate();
+                url.navigate('landing');
         }
         var processStar = function (e) {
             var postId = $(e.target).parent().parent().parent().parent().attr('id'),
@@ -266,7 +266,7 @@ define([
             storage.userId = poster.id;
             storage.username = poster.name;
             store.set('filters', storage);
-            url.navigate();
+            url.navigate('landing');
         }
         var loadContext = function () {
             request.get('/api/contexts', function(contErr, contData){
@@ -279,6 +279,11 @@ define([
                 }
             });
         }
+        var thumbClick = function (e) {
+            var postId = $(this).parent().attr('id')
+            store.set('postId', postId);
+            url.navigate('detail'); 
+        };
         var landingView = function () {
             var render;
             store.set('limit', 10);
@@ -352,9 +357,10 @@ define([
                     $('.hl-close').on('click', cancelFilter);
                     $('.star-btn').on('click', processStar);
                     $('.fav').on('click', processLike);
-                    $('.user-img').on('click', processUserClick)
-                    $('.page-prev').on('click', navPrev)
-                    $('.page-next').on('click', navNext)
+                    $('.user-img').on('click', processUserClick);
+                    $('.page-prev').on('click', navPrev);
+                    $('.page-next').on('click', navNext);
+                    $('.thumbImgCont').on('click', thumbClick);
                 });              
             }
             return {

@@ -72,8 +72,19 @@
     padding-top: 15px;
 
 }
+
+.postImage {
+    max-height:100%;
+    max-width:100%;
+}
+
 @media only screen and (min-width:1269px)
 {
+.container {
+max-width: 75%;
+    margin: 0 auto;
+    height:100%;
+}
 #adv-search {
         width: 325px;
         margin: 0 auto;

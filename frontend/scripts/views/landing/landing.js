@@ -42,8 +42,9 @@ define([
         })
         var editPost = function(e) {
             var id = $(e.target).parent().parent().parent().parent().attr('id');
-            var post = postCollection.getPostById(id);
-            create.render(undefined, post);                
+            postCollection.getPostById(id, function (err, post) {
+                create.render(undefined, post);                
+            });
         }
         var deletePost = function (e) {
             var id = $(e.target).parent().parent().parent().attr('id');

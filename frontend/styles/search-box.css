@@ -256,7 +256,7 @@ max-width: 75%;
     float:left;
 }
 .filter-drop {
-    width: 200px;
+    min-width: 225px;
 }
 .form-group {
     margin-top:0!important;

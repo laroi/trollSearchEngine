@@ -7,8 +7,9 @@ define([
 '../../collections/postCollection',
  'text!./landing.html',
   'text!../components/head_context.html',
+  'text!../components/head_lang.html',
  '../create/create'
-], function (request, store, url, user, highlight, postCollection, html, contextHtml, create) {
+], function (request, store, url, user, highlight, postCollection, html, contextHtml, langHtml, create) {
      var source   = $(html).html(),
         template = Handlebars.compile(source),
         render;
@@ -280,6 +281,18 @@ define([
                 }
             });
         }
+        var loadLangs= () => {
+            request.get('/api/langs', function (langErr, langData) {
+                if (!langErr) {
+                    var contTemp = Handlebars.compile($(langHtml).html()),
+                    html = contTemp({langs: langData});
+                    $('.language-list').empty().append(html);
+                } else {
+                    console.log("could not load context");
+                }
+
+            })
+        }
         var thumbClick = function (e) {
             var postId = $(this).parent().attr('id')
             store.set('postId', postId);
@@ -347,6 +360,7 @@ define([
                         });
                     })
                     loadContext();
+                    loadLangs();
                     updateUi();
                     $('.edit').on('click', editPost);
                     $('.delete').on('click', deletePost);                    

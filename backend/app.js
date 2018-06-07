@@ -147,6 +147,7 @@ app.put('/user/:id', isAuthenticated(false), route.updateUser);
 app.get('/user/:id', isAuthenticated(false), route.getUserDetail);
 app.get('/groups', route.listGroups);
 app.get('/contexts', route.listContexts);
+app.get('/langs', route.listLanguages);
 app.get('/test', postRoute.test)
 app.post('/posts', listAuth, postRoute.getPosts);
 app.get('/post/:id', postRoute.getPost);

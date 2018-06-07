@@ -1,5 +1,6 @@
 var User = require('../models/user.js');
 var Contexts = require('../models/contexts.js');
+var langs = require('../models/langs.js');
 var Group = require('../models/group.js');
 var accessToken = require('../models/accessToken.js');
 var mailer = require('../utils/mailer');
@@ -315,6 +316,24 @@ var routes = function () {
             }
         });
     };
+    listLanguages = function (req, res) {
+        console.log('[list languages]');
+        langs.findById('langs', function(langErr, langData) {
+            if (!langErr && langData) {
+                console.log('[list groups] listed ', langData.langs.length, ' langs');
+                res.status(200).send(langData.langs);
+            } else {
+                if (langErr) {
+                    console.error('[list langs]', langErr);
+                    res.status(500).send({err: langErr});
+                } else {
+                    console.error('[list langs] not found');
+                    res.status(404).send({err: 'not found'});
+                }                
+            }
+        });
+    };
+
     addContext = function (req, res) {
         var contexts = req. body.contexts;
         console.log('[add contexts]')     
@@ -328,7 +347,20 @@ var routes = function () {
             }
         });
     };
-    return {
+    addLanguage = function (req, res) {
+        var langs = req. body.langs;
+        console.log('[add language]')
+        langs.updateById('languages', {langs: langs}, function (updErr, updData) {
+            if (!updErr) {
+                console.log('[add groups] total ', langs.length, ' contexts');
+                res.status(240).send();
+            } else {
+                console.error('update context', updErr);
+                res.status(500).send({err: updErr});
+            }
+        });
+    };
+   return {
         register: register,
         login: login,
         updatePassword: updatePassword,
@@ -339,7 +371,9 @@ var routes = function () {
         updateUser: updateUser,
         listContexts: listContexts,
         listGroups: listGroups,
-        addContext: addContext
+        addContext: addContext,
+        listLanguages: listLanguages
+
     }
 }
 

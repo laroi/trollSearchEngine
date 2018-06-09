@@ -141,6 +141,7 @@ app.use('/images', express.static(__dirname + '/assets/uploads'));
 app.use('/images/profile', express.static(__dirname + '/assets/profile'));
 app.post('/login', route.login);
 app.post('/token', route.verifyFaceToken);
+app.delete('/token/:token', route.deleteToken);
 app.post('/user', route.addUser);
 app.put('/user', isAuthenticated(false), route.updatePassword);
 app.put('/user/:id', isAuthenticated(false), route.updateUser);

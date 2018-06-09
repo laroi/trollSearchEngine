@@ -5,7 +5,8 @@ define(['./storeController'], function (store) {
     getHighlight,
     dispalyTitles = {
         'basic_search': 'Search',
-        group: 'Group',
+        context: 'Context',
+        lang: 'Language',
         isPlain: 'Plain Memes',
         isAdult: 'Adult Memes',
         isFavorite: 'Favorite Memes',

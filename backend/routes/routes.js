@@ -201,6 +201,18 @@ var routes = function () {
             }
         });
     };
+    deleteToken = (req, res) => {
+        let token = req.params.token
+        accessToken.remove({token: token}, function(err, data) {
+            if (!err) {
+                console.log('[LOGOUT] ', token);
+                res.status(204).send();
+            } else {
+                console.err('[LOGOUT] ', token, err);
+                res.status(500).send();
+            }
+        })
+    }
     verifyFaceToken = function(req, res) {
         if (!req.body.authResponse) {
             res.status(400).send();
@@ -371,6 +383,7 @@ var routes = function () {
         updateUser: updateUser,
         listContexts: listContexts,
         listGroups: listGroups,
+        deleteToken: deleteToken,
         addContext: addContext,
         listLanguages: listLanguages
 

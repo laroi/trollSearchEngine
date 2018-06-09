@@ -5,11 +5,12 @@ define([
 '../../controllers/userController',
 '../../controllers/highlightController',
 '../../collections/postCollection',
+'../../collections/userCollection',
  'text!./landing.html',
   'text!../components/head_context.html',
   'text!../components/head_lang.html',
  '../create/create'
-], function (request, store, url, user, highlight, postCollection, html, contextHtml, langHtml, create) {
+], function (request, store, url, user, highlight, postCollection, userCollection, html, contextHtml, langHtml, create) {
      var source   = $(html).html(),
         template = Handlebars.compile(source),
         render;
@@ -120,7 +121,7 @@ define([
             }
         };
         var applyFilter = function (e) {
-            var f_group = $('.grp-list').val(),
+            var f_lang = $('.language-list').val(),
                 f_context=$('.context-list').val(),
                 isPlain = $('.isPlain').is(':checked'),
                 isAdult = $('.isAdult').is(':checked'),
@@ -128,8 +129,8 @@ define([
                 isMine = $('.isMine').is(':checked'),
                 isApproved = $('.isApproved').is(':checked'),
                 filtObj = {};
-                if (f_group && f_group !== "0") {
-                    filtObj.group = f_group;
+                if (f_lang && f_lang !== "0") {
+                    filtObj.lang = f_lang;
                 }
                 if (isPlain) {
                     filtObj.isPlain = isPlain;
@@ -261,17 +262,30 @@ define([
             }
             
         };
+        let logout = (e) => {
+            let accessKey = store.get('accessKey')
+            request.del('/api/token/'+accessKey, function(err, data) {
+                if (!err) {
+                    localStorage.clear();
+                    url.navigate('landing', true);
+                } else {
+                    console.error(err);
+                }
+            })
+        }
         var processUserClick = function (e) {
             var postId = $(e.target).parent().parent().parent().parent().parent().attr('id');
-            var poster = postCollection.getPostById(postId).user;
-            var storage = store.get('filters') || {};
-            storage.userId = poster.id;
-            storage.username = poster.name;
-            store.set('filters', storage);
-            url.navigate('landing');
+            postCollection.getPostById(postId, function(err, post) {
+                var poster = post.user;
+                var storage = store.get('filters') || {};
+                storage.userId = poster.id;
+                storage.username = poster.name;
+                store.set('filters', storage);
+                url.navigate('landing');
+            });
         }
         var loadContext = function () {
-            request.get('/api/contexts', function(contErr, contData){
+            userCollection.getContext((contErr, contData) => {
                 if (!contErr) {
                     var contTemp = Handlebars.compile($(contextHtml).html()),
                     html = contTemp({contexts: contData});
@@ -282,7 +296,7 @@ define([
             });
         }
         var loadLangs= () => {
-            request.get('/api/langs', function (langErr, langData) {
+            userCollection.getLang((langErr, langData)=> {
                 if (!langErr) {
                     var contTemp = Handlebars.compile($(langHtml).html()),
                     html = contTemp({langs: langData});
@@ -290,7 +304,6 @@ define([
                 } else {
                     console.log("could not load context");
                 }
-
             })
         }
         var thumbClick = function (e) {
@@ -350,6 +363,9 @@ define([
                 if (query.userId) {
                     postData.userId = query.userId
                 }
+                if (query.lang) {
+                    postData.language = query.lang;
+                }
                 postCollection.getAllPosts(postData, function(err, posts) {
                     var html = template({posts: posts});
                     $('#post-contents').empty().append(html);
@@ -376,6 +392,7 @@ define([
                     $('.page-prev').on('click', navPrev);
                     $('.page-next').on('click', navNext);
                     $('.thumbImgCont').on('click', thumbClick);
+                    $('#logout').on('click', logout);
                 });              
             }
             return {

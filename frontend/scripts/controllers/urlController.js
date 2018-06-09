@@ -1,8 +1,10 @@
 define(['./storeController'], function (store) {
     var navigate;
-    navigate = function (page) {
+    navigate = function (page, isForce) {
         var hash = '#';
+        isForce = isForce || false
         if (page === 'landing') {
+            store.set('postId', undefined);
             hash += '?from=';
             hash += store.get('from') || 0;
             var search_term = store.get('search_term'),
@@ -62,8 +64,8 @@ define(['./storeController'], function (store) {
         }
         if (window.location.hash !== hash) {
             window.location.hash = hash
-        } else { // Its  a refresh
-            //window.location.reload();
+        } else if (isForce){ // Its  a refresh
+            window.location.reload()
         }
     };
     return {

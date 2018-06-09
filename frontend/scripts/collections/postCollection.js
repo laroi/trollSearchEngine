@@ -1,57 +1,149 @@
 define(['controllers/requestController', 'controllers/storeController', 'models/postModel'], function (request, store, PostModel) {
     //Do setup work here
     var post = function() {
-        var posts = [];
+        var posts = [],
+            current,
+            total,
+            limit;
+        let cachedVals = {};
+        let checkIfCached  = (postData) => {
+            isCached = true;
+            if (postData.from !== cachedVals.from) {
+                isCached = false;
+                console.log(postData.from, cachedVals.from, " from Cache busted")
+            }
+            if (postData.search !== cachedVals.search) {
+                isCached = false;
+                console.log(postData.search, cachedVals.search, " search Cache busted")
+            }
+            if (postData.title !== cachedVals.title) {
+                isCached = false;
+                console.log(postData.title, cachedVals.title, " title Cache busted")
+            }
+            if (postData.tag !== cachedVals.tag) {
+                isCached = false;
+                console.log(postData.tag, cachedVals.tag, " tag Cache busted")
+            }
+            if (postData.actor !== cachedVals.actor) {
+                isCached = false;
+                console.log(postData.actor, cachedVals.actor, " actor Cache busted")
+            }
+            if (postData.movie !== cachedVals.movie) {
+                isCached = false;
+                console.log(postData.movie, cachedVals.movie, " movie Cache busted")
+            }
+            if (postData.character !== cachedVals.character) {
+                isCached = false;
+                console.log(postData.character, cachedVals.character, " character Cache busted")
+            }
+            if (postData.event !== cachedVals.event) {
+                isCached = false;
+                console.log(postData.event, cachedVals.event, " event Cache busted")
+            }
+            if (postData.context !== cachedVals.context) {
+                isCached = false;
+                console.log(postData.context, cachedVals.context, " context Cache busted")
+            }
+            if (postData.isPlain !== cachedVals.isPlain) {
+                isCached = false;
+                console.log(postData.isPlain, cachedVals.isPlain, " isPlain Cache busted")
+            }
+            if (postData.isAdult !== cachedVals.isAdult) {
+                isCached = false;
+                console.log(postData.isAdult, cachedVals.isAdult, " isAdult Cache busted")
+            }
+            if (postData.isApproved !== cachedVals.isApproved) {
+                isCached = false;
+                console.log(postData.isApproved, cachedVals.isApproved, " isApproved Cache busted")
+            }
+            if (postData.isFavorite !== cachedVals.isFavorite) {
+                isCached = false;
+                console.log(postData.isFavorite, cachedVals.isFavorite, " isFavorite Cache busted")
+            }
+            if (postData.userId !== cachedVals.userId) {
+                isCached = false;
+                console.log(postData.userId, cachedVals.userId, " userId Cache busted")
+            }
+            if (postData.language !== cachedVals.language) {
+                isCached = false;
+                console.log(postData.language, cachedVals.language, " language Cache busted")
+            }
+            return isCached;
+        }
+        let updateCache =(postData) => {        
+            cachedVals.from = postData.from || undefined; 
+                cachedVals.search = postData.search || undefined;
+                cachedVals.title = postData.title || undefined;
+                cachedVals.tag = postData.tag || undefined;
+                cachedVals.actor = postData.actor || undefined;
+                cachedVals.movie = postData.movie || undefined;
+                cachedVals.character = postData.character || undefined;
+                cachedVals.event = postData.event || undefined;
+                cachedVals.context = postData.context || undefined;
+                cachedVals.isPlain = postData.isPlain || undefined;
+                cachedVals.isAdult = postData.isAdult || undefined;
+                cachedVals.isApproved = postData.isApproved || undefined;
+                cachedVals.isFavorite = postData.isFavorite || undefined;
+                cachedVals.userId = postData.userId || undefined;
+                cachedVals.language = postData.language || undefined;
+        }
         getAllPosts = function (postData, callback) {
-            request.post('/api/posts', postData, function (err, status, data) {
-                postData.from = postData.from || 0;
-                postData.from = parseInt(postData.from, 10);
-                postData.limit = postData.limit || 10;
-                postData.limit = parseInt(postData.limit, 10);
-                limit = postData.limit;
-                var current = (postData.from  + postData.limit)/postData.limit,
-                    stars = store.get('stars') || [];
-                if (!err) {
-                    posts = [];
-                }
-                data.hits.hits.forEach(function (post) {
-                    var postObj = new PostModel({
-                        _id : post._id,
-                        user: post._source.user,
-                       	title: post._source.title,
-                        type: post._source.type,
-                        views: post._source.views,
-                        likes: post._source.likes,
-                        downloads: post._source.downloads,
-                        isAdult: post._source.isAdult,
-                        imageUrl: post._source.image.url,
-                        thumbUrl: post._source.image.thumb,
-				        description: post._source.description,
-				        tags: post._source.tags,
-				        movie: post._source.movie,
-				        language: post._source.language,
-				        actors: post._source.actors,
-				        isApproved : post._source.isApproved,
-				        characters: post._source.characters,
-				        event: post._source.event,
-				        context : post._source.context
-				    });
-				    if (postObj.type === 'clean') {
-				        postObj.isClean = true;
-				    }
-				    if (store.get('userId') === post._source.user.id) {
-				       postObj.isOwner = true; 
-				    }
-				    postObj.isLiked = post._source.likes.find(function(like){return like.userId === store.get('userId')})
-				    postObj.isLiked = postObj.isLiked && postObj.isLiked.userId ? true : false;
-				    if (stars.indexOf(post._id) > -1) {
-				        postObj.isStarred = true;
-				    }
-				    posts.push(postObj)
+            if (!checkIfCached(postData)) {
+                updateCache(postData);
+                request.post('/api/posts', postData, function (err, status, data) {
+                    postData.from = postData.from || 0;
+                    postData.from = parseInt(postData.from, 10);
+                    postData.limit = postData.limit || 10;
+                    postData.limit = parseInt(postData.limit, 10);
+                    limit = postData.limit;
+                    current = (postData.from  + postData.limit)/postData.limit;
+                    var stars = store.get('stars') || [];
+                    if (!err) {
+                        posts = [];
+                    }
+                    data.hits.hits.forEach(function (post) {
+                        var postObj = new PostModel({
+                            _id : post._id,
+                            user: post._source.user,
+                           	title: post._source.title,
+                            type: post._source.type,
+                            views: post._source.views,
+                            likes: post._source.likes,
+                            downloads: post._source.downloads,
+                            isAdult: post._source.isAdult,
+                            imageUrl: post._source.image.url,
+                            thumbUrl: post._source.image.thumb,
+				            description: post._source.description,
+				            tags: post._source.tags,
+				            movie: post._source.movie,
+				            language: post._source.language,
+				            actors: post._source.actors,
+				            isApproved : post._source.isApproved,
+				            characters: post._source.characters,
+				            event: post._source.event,
+				            context : post._source.context
+				        });
+				        if (postObj.type === 'clean') {
+				            postObj.isClean = true;
+				        }
+				        if (store.get('userId') === post._source.user.id) {
+				           postObj.isOwner = true; 
+				        }
+				        postObj.isLiked = post._source.likes.find(function(like){return like.userId === store.get('userId')})
+				        postObj.isLiked = postObj.isLiked && postObj.isLiked.userId ? true : false;
+				        if (stars.indexOf(post._id) > -1) {
+				            postObj.isStarred = true;
+				        }
+				        posts.push(postObj)
+                    });
+                    limit = postData.limit;
+                    total = data.hits.total
+                    console.log('current', current, 'limit', postData.limit, 'total', data.hits.total);
+                    callback(err, {posts:posts, total: total, current: current, limit: limit});
                 });
-                console.log('current', current, 'limit', postData.limit, 'total', data.hits.total);
-                callback(err, {posts:posts, total: data.hits.total, current: current, limit: postData.limit});
-            });
+            } else {
+                callback(undefined, {posts:posts, total: total, current: current, limit: limit});
+            }
         }
         getPostById = function(id, callback) {
             var retPost;

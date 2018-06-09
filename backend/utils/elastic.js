@@ -352,7 +352,10 @@ var elastic = function () {
         }
         if (options.context) {
             must_array.push({ "match": { "context": options.context }});
-        }              
+        }
+        if (options.language) {
+            must_array.push({ "match": { "language": options.language }});
+        }               
         if (options.type) {
             must_array.push({ "match": { "type": options.type }});
         }

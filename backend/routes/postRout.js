@@ -194,6 +194,9 @@ var routes = function () {
             if (context) {
                 opts.context = context;
             }
+            if (language) {
+                opts.language = language;
+            }
             if (req.isAdmin && unApproved) {
                 opts.unApproved = unApproved;
             }

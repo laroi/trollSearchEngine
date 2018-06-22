@@ -9,8 +9,9 @@ define([
  'text!./landing.html',
   'text!../components/head_context.html',
   'text!../components/head_lang.html',
- '../create/create'
-], function (request, store, url, user, highlight, postCollection, userCollection, html, contextHtml, langHtml, create) {
+ '../create/create',
+  '../request/request'
+], function (request, store, url, user, highlight, postCollection, userCollection, html, contextHtml, langHtml, create, request) {
      var source   = $(html).html(),
         template = Handlebars.compile(source),
         render;
@@ -311,6 +312,9 @@ define([
             store.set('postId', postId);
             url.navigate('detail'); 
         };
+        var showRequest = (e) => {
+            request.render();
+        }
         var landingView = function () {
             var render;
             store.set('limit', 10);
@@ -393,6 +397,7 @@ define([
                     $('.page-next').on('click', navNext);
                     $('.thumbImgCont').on('click', thumbClick);
                     $('#logout').on('click', logout);
+                    $('#request').on('click', showRequest);
                 });              
             }
             return {

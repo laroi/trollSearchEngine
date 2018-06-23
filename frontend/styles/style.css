@@ -246,3 +246,7 @@ background-repeat: no-repeat;
   .row2>div:last-child {  
     border-bottom:0;
   }
+  .typeahead>li>a:hover {
+    color: white!important;
+    background-color:#009688!important;
+  }

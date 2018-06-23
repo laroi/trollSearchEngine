@@ -4,22 +4,18 @@ define([
 '../../controllers/urlController',
 '../../controllers/userController',
 '../../collections/postCollection',
+ '../create/create',
  'text!./detail.html',
   'text!../components/head_context.html'
-], function (request, store, url, user, postCollection, html, contextHtml) {
+], function (request, store, url, user, postCollection, create, html, contextHtml) {
      var source   = $(html).html(),
         template = Handlebars.compile(source),
         render;
-        Handlebars.registerHelper('editable', function(isOwner) {
-            if (isOwner || store.get('userType') === 'admin') {
-                return '<div class="pan-btn edit"></div><div class="pan-btn delete"></div>';
-            }
-            return '';
-        })
         var editPost = function(e) {
             var id = $(e.target).parent().parent().parent().parent().attr('id');
-            var post = postCollection.getPostById(id);
-            create.render(undefined, post);                
+            postCollection.getPostById(id, (post) => {
+                create.render(undefined, post);    
+            });                        
         }
         var deletePost = function (e) {
             var id = $(e.target).parent().parent().parent().attr('id');

@@ -55,6 +55,14 @@
     background-position: top center;
     float:left;
 }
+.test:before {
+  content: '\2807';
+  font-size: 25px;
+  }
+  .test {
+    float:right;
+    margin-left:2px;
+  }
 .download{
     background-image: url('../image/download.png');
 }
@@ -76,12 +84,6 @@
 .starred:hover {
     background-image: url('../image/starred_hvr.png');
 }
-.edit {
-    background-image: url('../image/edit.png');
-}
-.delete {
-    background-image: url('../image/delete.png');
-}
 .use {
     background-image: url('../image/use.png');
 }
@@ -93,12 +95,6 @@
 }
 .faved:hover {
     background-image: url('../image/faved_hvr.png');
-}
-.edit:hover {
-    background-image: url('../image/edit_hvr.png');
-}
-.delete:hover {
-    background-image: url('../image/delete_hvr.png');
 }
 .use:hover {
     background-image: url('../image/use_hvr.png');
@@ -112,7 +108,7 @@
     margin-right:2px;
     margin-left:2px;
     height: 24px;
-    width: 24px;
+    width: 20px;
 }
 .bottom-panel {
     padding-top:5px;
@@ -157,7 +153,7 @@ background-repeat: no-repeat;
     width:16px;
 }
 .user:hover {
-    width:24px;
+    width:20px;
 }
 .hl-close {
 width:16px;
@@ -222,5 +218,7 @@ background-repeat: no-repeat;
 .button-panel>.row1, .button-panel>.row2 {
  overflow:hidden;
  }
-  
-}
+ 
+ .row2 {
+    display:none;
+ }

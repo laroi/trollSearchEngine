@@ -91,6 +91,10 @@ define(['controllers/requestController', 'controllers/storeController', 'models/
             if (!checkIfCached(postData)) {
                 updateCache(postData);
                 request.post('/api/posts', postData, function (err, status, data) {
+                    let hits = []
+                    if (data && data.hits ) {
+                        hits = data.hits.hits
+                    }
                     postData.from = postData.from || 0;
                     postData.from = parseInt(postData.from, 10);
                     postData.limit = postData.limit || 10;
@@ -101,7 +105,7 @@ define(['controllers/requestController', 'controllers/storeController', 'models/
                     if (!err) {
                         posts = [];
                     }
-                    data.hits.hits.forEach(function (post) {
+                    hits.forEach(function (post) {
                         var postObj = new PostModel({
                             _id : post._id,
                             user: post._source.user,
@@ -137,8 +141,8 @@ define(['controllers/requestController', 'controllers/storeController', 'models/
 				        posts.push(postObj)
                     });
                     limit = postData.limit;
-                    total = data.hits.total
-                    console.log('current', current, 'limit', postData.limit, 'total', data.hits.total);
+                    total = data.hits ? data.hits.total : 0; 
+                    console.log('current', current, 'limit', postData.limit, 'total', total);
                     callback(err, {posts:posts, total: total, current: current, limit: limit});
                 });
             } else {

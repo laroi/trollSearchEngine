@@ -11,7 +11,7 @@ define([
   'text!../components/head_lang.html',
  '../create/create',
   '../request/request'
-], function (request, store, url, user, highlight, postCollection, userCollection, html, contextHtml, langHtml, create, request) {
+], function (request, store, url, user, highlight, postCollection, userCollection, html, contextHtml, langHtml, create, requestView) {
      var source   = $(html).html(),
         template = Handlebars.compile(source),
         render;
@@ -39,7 +39,7 @@ define([
         });
         Handlebars.registerHelper('editable', function(isOwner) {
             if (isOwner || store.get('userType') === 'admin') {
-                return '<div class="pan-btn edit"></div><div class="pan-btn delete"></div>';
+                return '<div class="edit">Edit</div><div class="delete">Delete</div>';
             }
             return '';
         })
@@ -257,9 +257,13 @@ define([
                 }
             };
             if ($(e.target).hasClass('faved')) {
-                postCollection.getPostById(postId).unlike(store.get('userId'), processCallback)
-            } else if ($(e.target).hasClass('favorite')) {
-                postCollection.getPostById(postId).like(store.get('userId'), (store.get('username') || store.get('email')), processCallback)
+                postCollection.getPostById(postId, (err, post) => {
+                    post.unlike(store.get('userId'), processCallback)
+                })
+            } else if ($(e.target).hasClass('favorite')) {           
+                postCollection.getPostById(postId, (err, post) =>{
+                    post.like(store.get('userId'), (store.get('username') || store.get('email')), processCallback);
+                })
             }
             
         };
@@ -313,7 +317,15 @@ define([
             url.navigate('detail'); 
         };
         var showRequest = (e) => {
-            request.render();
+            requestView.render();
+        }
+        var showMore = (e) => {
+            let elem = $('.row2')
+            if (elem.css('display') === "none") {
+                elem.show();
+            } else {
+                elem.hide();
+            }
         }
         var landingView = function () {
             var render;
@@ -398,6 +410,7 @@ define([
                     $('.thumbImgCont').on('click', thumbClick);
                     $('#logout').on('click', logout);
                     $('#request').on('click', showRequest);
+                    $('.test').on('click', showMore);
                 });              
             }
             return {

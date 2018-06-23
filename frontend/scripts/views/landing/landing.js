@@ -43,14 +43,20 @@ define([
             }
             return '';
         })
+        Handlebars.registerHelper('ifeq', (isOwner, options) => {
+          if (isOwner || store.get('userType') === 'admin') {
+            return options.fn(this)
+          }
+          return options.inverse(this)
+        })
         var editPost = function(e) {
-            var id = $(e.target).parent().parent().parent().parent().attr('id');
+            var id = $(e.target).parent().parent().attr('id');
             postCollection.getPostById(id, function (err, post) {
                 create.render(undefined, post);                
             });
         }
         var deletePost = function (e) {
-            var id = $(e.target).parent().parent().parent().attr('id');
+            var id = $(e.target).parent().parent().attr('id');
             var url = '/api/post/'+id;
             request.del(url, function (err, data) {
                 if (!err) {
@@ -311,6 +317,12 @@ define([
                 }
             })
         }
+        var closeAllPops = (e) => {
+            // image content more popup
+            if (!$(e.target).hasClass('more')) {
+                 $('.row2').hide();
+            }            
+        }
         var thumbClick = function (e) {
             var postId = $(this).parent().attr('id')
             store.set('postId', postId);
@@ -410,7 +422,8 @@ define([
                     $('.thumbImgCont').on('click', thumbClick);
                     $('#logout').on('click', logout);
                     $('#request').on('click', showRequest);
-                    $('.test').on('click', showMore);
+                    $('.more').on('click', showMore);
+                    $('body').on('click', closeAllPops)
                 });              
             }
             return {

@@ -10,14 +10,15 @@
                 <div class="thumbImgCont">
                     <img class="thumbImg" src={{this.thumbUrl}}>
                 </div>
+                <div class="row2">
+                    {{#editable this.isOwner}}{{/editable}}
+                    <!--<div class="pan-btn use"></div>-->
+                </div>
                 <div class="bottom-panel">
                     <div class="button-panel">
-                        <div class="row2">
-                            {{#editable this.isOwner}}{{/editable}}
-                            <!--<div class="pan-btn use"></div>-->
-                        </div>
                         <div class="row1">
-                            <div class="pan-btn test"></div>
+                             {{#ifeq this.isOwner}}<div class="pan-btn more"></div> {{/ifeq}}
+                            
                             <div class="pan-btn user"><img class="user-img" src={{this.user.image}}></div>
                             {{#if this.isStarred}}
                                 <div class="pan-btn star-btn starred"></div>

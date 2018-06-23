@@ -55,11 +55,11 @@
     background-position: top center;
     float:left;
 }
-.test:before {
+.more:before {
   content: '\2807';
   font-size: 25px;
   }
-  .test {
+  .more {
     float:right;
     margin-left:2px;
   }
@@ -116,6 +116,9 @@
 }
 .bottom-panel, .panel-body, .info-panel, .button-panel {
     overflow:hidden;
+}
+.panel-body {
+    position:relative;
 }
 .button {
     padding:6px 12px !important;
@@ -202,6 +205,13 @@ background-repeat: no-repeat;
     padding:5px 0px 5px 10px!important;
     border-bottom:solid 1px grey;
 }
+.user-drop > ul> li:last-child {
+    border-bottom:0;
+    padding:0;
+}
+.user-drop > ul {
+    margin-bottom:0;
+}
 #detail-cont {
     display:none;
 }
@@ -221,4 +231,18 @@ background-repeat: no-repeat;
  
  .row2 {
     display:none;
+    position: absolute;
+    right: 10px;
+    bottom: 65px;
+    border: 1px solid black;
+    background-color:#009688;
  }
+  .row2>div {
+    cursor: pointer;
+    color:white;
+    padding: 0px 5px 0px 5px;
+    border-bottom:1px solid black;
+  }
+  .row2>div:last-child {  
+    border-bottom:0;
+  }

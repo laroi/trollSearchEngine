@@ -1,6 +1,8 @@
 var Post = require('../models/post.js');
+var Req = require('../models/request.js');
 var elastic = require('../utils/elastic');
 const uploadPath = __dirname + '/../assets/uploads/';
+const reqUploadPath  = __dirname + '/../assets/requests/';
 const waterkImg = __dirname + '/../assets/logo.png';
 var uuid = require('uuid');
 var fs = require('fs');
@@ -494,6 +496,67 @@ var routes = function () {
             logger.log(3, 'delete post', 'Delete post called without post id', 'postRoute.js', getIp(req), err);
             res.status(400).send()
         }
+    }   
+    requestMeme = (req, res) => {
+         var user = req.body.user,
+            description = req.body.description,            
+            movieName = req.body.movieName,
+            link = req.body.link || undefined,
+            obj = {},
+            postObj;
+        if (req.body.user.id) {
+            var filename = uuid.v1();
+            var fileLoc = reqUploadPath + filename;
+            if (req.body.image) {
+                var base64Data = req.body.image.image;
+                base64Data = base64Data.replace(/^data:image\/png;base64,/,'')
+                base64data = new Buffer(base64Data,'base64')
+                gm(base64data)
+                .setFormat('jpg')            
+                .write(fileLoc + '.jpg', function(err){
+                    if (!err) {
+                        obj.user= user;
+                        obj.link = link;
+                        obj.description = description;
+                        obj.movieName = movieName;
+                        obj.image = {url: '/images/'+filename + '.jpg', thumb: '/images/thumb/'+filename + '.jpg', type: 'jpg'};
+                        reqObj = new Req(obj);
+                        reqObj.save(function(saveErr, saveData) {
+                            if (!saveErr) {
+                                console.log('Saved Post ' + saveData.id)
+                                res.status(200).send();              
+                            } else {
+                                console.error(JSON.stringify(saveErr))
+                                res.status(500).send({err: 'Could not save post'});
+                            }
+                        });
+                    } else {
+                        console.error(err);
+                        res.status(500).send({err: 'Could not save post'});
+                    }
+                });
+            } else {
+                obj.user= user;
+                obj.link = link;
+                obj.description = description;
+                obj.movieName = movieName;
+                reqObj = new Req(obj);
+                reqObj.save(function(saveErr, saveData) {
+                    if (!saveErr) {
+                        console.log('Saved Post ' + saveData.id)
+                        res.status(200).send();              
+                    } else {
+                        console.error(JSON.stringify(saveErr))
+                        res.status(500).send({err: 'Could not save post'});
+                    }
+                });
+            }
+        } else {
+            console.error('Params not provided');
+            res.status(400).send({err: 'Bad Parameter'});
+            return;
+        }
+    
     }
     
     return { 
@@ -507,7 +570,8 @@ var routes = function () {
         updateLike: updateLike,
         unLike: unLike,
         updateComment: updateComment,
-        deletePost: deletePost
+        deletePost: deletePost,
+        requestMeme: requestMeme
     }
 }
 

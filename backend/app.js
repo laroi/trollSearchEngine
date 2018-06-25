@@ -157,6 +157,7 @@ app.put('/post/:id', isAuthenticated(false), postRoute.updatePost);
 app.put('/post/:id/comment', isAuthenticated(false), postRoute.updateComment);
 app.put('/post/:id/like', isAuthenticated(false), postRoute.updateLike);
 app.put('/post/:id/unlike', isAuthenticated(false), postRoute.unLike);
+app.post('/request', isAuthenticated(false), postRoute.requestMeme)
 app.post('/post', isAuthenticated(false), postRoute.post)
 app.get('/image/:id', postRoute.downloadImage);
 app.get('/suggestions', postRoute.autoSuggestion);

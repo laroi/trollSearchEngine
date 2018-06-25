@@ -207,22 +207,17 @@ define([
             var postId = $(e.target).parent().parent().parent().parent().attr('id'),
                 unStar,
                 updatedStar,
-                prevStars,
-                stars,
+                prevStars = stars = store.get('stars') || [],
                 star;
-            star = function (postId) {
                 
-                prevStars = stars = store.get('stars') || [];
+            star = function (postId) {
                 stars.push(postId);
-                store.set('stars', stars);
                 return stars;
             }
             unStar = function (postId) {
-                prevStars = stars = store.get('stars') || [];
                 if (stars.indexOf(postId) > -1) {
                     stars.splice(stars.indexOf(postId), 1);
                 }
-                store.set('stars', stars);
                 return stars;
             }
             if ($(e.target).hasClass('star')) {
@@ -239,8 +234,8 @@ define([
                         $(e.target).addClass('star');
                         $(e.target).removeClass('starred');
                     }
+                    store.set('stars', updatedStar);
                 } else {
-                    store.set('stars', prevStars);
                     toastr.error('Could not perform the action, verify you are logged in.', 'FTM Says')
                 }
             });
@@ -332,7 +327,8 @@ define([
             requestView.render();
         }
         var showMore = (e) => {
-            let elem = $('.row2')
+            $('.row2').hide();
+            let elem = $(e.target).parent().parent().parent().prev();
             if (elem.css('display') === "none") {
                 elem.show();
             } else {

@@ -141,7 +141,7 @@ define(['controllers/requestController', 'controllers/storeController', 'models/
 				        posts.push(postObj)
                     });
                     limit = postData.limit;
-                    total = data.hits ? data.hits.total : 0; 
+                    total = (data && data.hits) ? data.hits.total : 0; 
                     console.log('current', current, 'limit', postData.limit, 'total', total);
                     callback(err, {posts:posts, total: total, current: current, limit: limit});
                 });

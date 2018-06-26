@@ -9,9 +9,8 @@ define([
  'text!./landing.html',
   'text!../components/head_context.html',
   'text!../components/head_lang.html',
- '../create/create',
-  '../request/request'
-], function (request, store, url, user, highlight, postCollection, userCollection, html, contextHtml, langHtml, create, requestView) {
+ '../create/create'
+], function (request, store, url, user, highlight, postCollection, userCollection, html, contextHtml, langHtml, create) {
      var source   = $(html).html(),
         template = Handlebars.compile(source),
         render;
@@ -323,9 +322,7 @@ define([
             store.set('postId', postId);
             url.navigate('detail'); 
         };
-        var showRequest = (e) => {
-            requestView.render();
-        }
+
         var showMore = (e) => {
             $('.row2').hide();
             let elem = $(e.target).parent().parent().parent().prev();
@@ -417,7 +414,6 @@ define([
                     $('.page-next').on('click', navNext);
                     $('.thumbImgCont').on('click', thumbClick);
                     $('#logout').on('click', logout);
-                    $('#request').on('click', showRequest);
                     $('.more').on('click', showMore);
                     $('body').on('click', closeAllPops)
                 });              

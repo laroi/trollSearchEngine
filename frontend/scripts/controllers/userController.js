@@ -1,4 +1,4 @@
-define(['./requestController', './storeController'], function (request, store) {
+define(['./requestController', './storeController',   '../views/request/request'], function (request, store, requestView) {
 
     var enableFeatures = function(){
          $('#create').show();
@@ -10,6 +10,8 @@ define(['./requestController', './storeController'], function (request, store) {
          } else {
             disableAdminFeatures();
          }
+         $('#request').css('color', 'black');
+         $('#request').css('cursor', 'pointer');
          $('.fb_login').hide();
          $('.logut').show();
          $('.user-photo').attr('src', store.get('picture'));
@@ -23,7 +25,10 @@ define(['./requestController', './storeController'], function (request, store) {
         $('.logut').hide();
         $('.user-name').text('You')     
         $('.user-photo').attr('src', store.get('/image/user.png'));
-        disableAdminFeatures();           
+         $('#request').css('color', 'grey');
+         $('#request').css('cursor', 'not-allowed');
+         $('#request').off('click')
+        disableAdminFeatures();          
     }
     var disableAdminFeatures = function () {
         $( ".isApproved" ).closest( "li" ).hide();
@@ -110,9 +115,13 @@ define(['./requestController', './storeController'], function (request, store) {
         }
         return isLoggedIn;
     }
+    var showRequest = (e) => {
+        requestView.render();
+    }
     var init = function() {
         if (isUserLoggedIn()) {
             enableFeatures()
+            $('#request').on('click', showRequest);
         } else {
             disableFeatures();
             $('#facebook_login').on('click', function(){
@@ -121,6 +130,7 @@ define(['./requestController', './storeController'], function (request, store) {
                         setToken(response.authResponse, function(err, data){
                             if (!err && data) {
                                 enableFeatures();
+                                $('#request').on('click', showRequest);                                
                             } else {
                                 console.error('Some error happened ', err);
                                 toastr.error('Could not authenticate you', 'Torller Says')
@@ -133,6 +143,7 @@ define(['./requestController', './storeController'], function (request, store) {
                                setToken(response.authResponse, function(err, data){
                                     if (!err && data) {
                                         enableFeatures();
+                                        $('#request').on('click', showRequest);
                                     } else {                                    
                                         console.error('Some error happened ', err);
                                         toastr.error('Could not authenticate you', 'Troller Says')                                 

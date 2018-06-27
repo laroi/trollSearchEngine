@@ -22,11 +22,13 @@
         'views/detail/detail',
         'controllers/urlController',
         'controllers/userController',
+        'controllers/storeController',
         'text!views/components/mainHeader.html',
         'views/create/create',
+        'views/request/request',
         'text!views/components/search.html'
     ],
-    function (landingView, detailView, url, user, header, createNewView, search) {
+    function (landingView, detailView, url, user, store, header, createNewView, requestView, search) {
     var getSuggestion = function (field) {
         var url = '/api/suggestions?field='+field+'&query=';
             return function( request, response ) {
@@ -167,9 +169,97 @@
               },
               afterSelect: afterSelect($('#se_event'))
         });
-
+        var enableFeatures = function(){
+             $('#create').show();
+             $('#facebook_login').hide();
+             $('.isFavorite').prop("disabled", false)
+             $('.isMine').prop("disabled", false) 
+             if (store.get('userType') === 'admin') {
+                enableAdminFeatures();
+             } else {
+                disableAdminFeatures();
+             }
+             $('#request').css('color', 'black');
+             $('#request').css('cursor', 'pointer');
+             $('.fb_login').hide();
+             $('.logut').show();
+             $('.user-photo').attr('src', store.get('picture'));
+             $('.user-name').text(store.get('username'))
+             landingView.render({});       
+        }
+        var disableFeatures = function(){
+            $('#create').hide();
+            $('.fb_login').show();
+            $('.isFavorite').prop("disabled", true)
+            $('.isMine').prop("disabled", true);
+            $('.logut').hide();
+            $('.user-name').text('You')     
+            $('.user-photo').attr('src', store.get('/image/user.png'));
+             $('#request').css('color', 'grey');
+             $('#request').css('cursor', 'not-allowed');
+             $('#request').off('click')
+            disableAdminFeatures();
+            landingView.render({});         
+        }
+        var disableAdminFeatures = function () {
+            $( ".isApproved" ).closest( "li" ).hide();
+        }
         
-        user.init();
+        var enableAdminFeatures = function () {
+            $( ".isApproved" ).closest( "li" ).show();
+        }
+        var isUserLoggedIn = function() {
+            var acessKey = store.get('accessKey'),
+            isLoggedIn = false;
+            if (acessKey) {
+                isLoggedIn = true;
+            }
+            return isLoggedIn;
+        }
+        var showRequest = (e) => {
+            requestView.render();
+        }
+        var fblogin = function(e){
+            FB.getLoginStatus(function(response) {                 
+                  if (response.status === 'connected') {
+                    user.setToken(response.authResponse, function(err, data){
+                        if (!err && data) {
+                            enableFeatures();
+                            $('#request').on('click', showRequest);                                
+                        } else {
+                            console.error('Some error happened ', err);
+                            toastr.error('Could not authenticate you', 'Torller Says')
+                        }
+                    });
+                  } else {
+                    disableFeatures();
+                    FB.login(function(res) {
+                        if (res.status === 'connected') {
+                           user.setToken(response.authResponse, function(err, data){
+                                if (!err && data) {
+                                    enableFeatures();
+                                    $('#request').on('click', showRequest);
+                                } else {                                    
+                                    console.error('Some error happened ', err);
+                                    toastr.error('Could not authenticate you', 'Troller Says')                                 
+                                }
+                            });
+                        }
+                    
+                    }, {scope: 'email,user_likes'});
+                  }
+            });
+
+        }
+        var init = function() {
+            if (isUserLoggedIn()) {
+                enableFeatures()
+                $('#request').on('click', showRequest);
+            } else {
+                disableFeatures();
+                $('#facebook_login').on('click', fblogin);
+            }
+        }();
     window.fbAsyncInit = function() {
         FB.init({
           //appId      : '307608189577094', //Prod

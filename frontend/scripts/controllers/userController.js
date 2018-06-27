@@ -1,42 +1,6 @@
-define(['./requestController', './storeController',   '../views/request/request'], function (request, store, requestView) {
+define(['./requestController', './storeController'], function (request, store) {
 
-    var enableFeatures = function(){
-         $('#create').show();
-         $('#facebook_login').hide();
-         $('.isFavorite').prop("disabled", false)
-         $('.isMine').prop("disabled", false) 
-         if (store.get('userType') === 'admin') {
-            enableAdminFeatures();
-         } else {
-            disableAdminFeatures();
-         }
-         $('#request').css('color', 'black');
-         $('#request').css('cursor', 'pointer');
-         $('.fb_login').hide();
-         $('.logut').show();
-         $('.user-photo').attr('src', store.get('picture'));
-         $('.user-name').text(store.get('username'))        
-    }
-    var disableFeatures = function(){
-        $('#create').hide();
-        $('.fb_login').show();
-        $('.isFavorite').prop("disabled", true)
-        $('.isMine').prop("disabled", true);
-        $('.logut').hide();
-        $('.user-name').text('You')     
-        $('.user-photo').attr('src', store.get('/image/user.png'));
-         $('#request').css('color', 'grey');
-         $('#request').css('cursor', 'not-allowed');
-         $('#request').off('click')
-        disableAdminFeatures();          
-    }
-    var disableAdminFeatures = function () {
-        $( ".isApproved" ).closest( "li" ).hide();
-    }
-    
-    var enableAdminFeatures = function () {
-        $( ".isApproved" ).closest( "li" ).show();
-    }
+
     var regNewUser = function(userId, token, callback) {
         var url = 'https://graph.facebook.com/me?fields=id,name,picture,email,gender&access_token=' + token;
         request.get(url, function(err, data) {
@@ -107,59 +71,12 @@ define(['./requestController', './storeController',   '../views/request/request'
         callback('Could not authenticate');
       }
     };
-    var isUserLoggedIn = function() {
-        var acessKey = store.get('accessKey'),
-        isLoggedIn = false;
-        if (acessKey) {
-            isLoggedIn = true;
-        }
-        return isLoggedIn;
-    }
-    var showRequest = (e) => {
-        requestView.render();
-    }
-    var init = function() {
-        if (isUserLoggedIn()) {
-            enableFeatures()
-            $('#request').on('click', showRequest);
-        } else {
-            disableFeatures();
-            $('#facebook_login').on('click', function(){
-                FB.getLoginStatus(function(response) {                 
-                      if (response.status === 'connected') {
-                        setToken(response.authResponse, function(err, data){
-                            if (!err && data) {
-                                enableFeatures();
-                                $('#request').on('click', showRequest);                                
-                            } else {
-                                console.error('Some error happened ', err);
-                                toastr.error('Could not authenticate you', 'Torller Says')
-                            }
-                        });
-                      } else {
-                        disableFeatures();
-                        FB.login(function(res) {
-                            if (res.status === 'connected') {
-                               setToken(response.authResponse, function(err, data){
-                                    if (!err && data) {
-                                        enableFeatures();
-                                        $('#request').on('click', showRequest);
-                                    } else {                                    
-                                        console.error('Some error happened ', err);
-                                        toastr.error('Could not authenticate you', 'Troller Says')                                 
-                                    }
-                                });
-                            }
-                        
-                        }, {scope: 'email,user_likes'});
-                      }
-                });
 
-            });
-        }
-    }
+
+    
     return {
-        init: init,
+        setToken: setToken,
+        regNewUser: regNewUser,
         updateUser: updateUser
     }
 });

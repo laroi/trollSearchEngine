@@ -232,7 +232,23 @@ background-repeat: no-repeat;
 .button-panel>.row1, .button-panel>.row2 {
  overflow:hidden;
  }
- 
+ #about-us>.modal-dialog {
+    width: 70%;
+ }
+.about-us-model-body>p {
+    text-indent: 10mm;
+    margin-bottom: 20px;
+    line-height: 2;
+}
+.about-us-model-body>h2 {
+    text-align: center;
+}
+.about-us-model-body>ul {
+    margin-left: 80px;
+}
+.about-us-model-body>ul>li{
+    padding-left:2em;
+}
  .row2 {
     display:none;
     position: absolute;

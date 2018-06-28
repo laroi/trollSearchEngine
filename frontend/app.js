@@ -26,9 +26,10 @@
         'text!views/components/mainHeader.html',
         'views/create/create',
         'views/request/request',
+        'views/aboutus/aboutus',
         'text!views/components/search.html'
     ],
-    function (landingView, detailView, url, user, store, header, createNewView, requestView, search) {
+    function (landingView, detailView, url, user, store, header, createNewView, requestView, aboutView, search) {
     var getSuggestion = function (field) {
         var url = '/api/suggestions?field='+field+'&query=';
             return function( request, response ) {
@@ -251,6 +252,9 @@
             });
 
         }
+        let showAbout = (e) => {
+            aboutView.render();
+        }
         var init = function() {
             if (isUserLoggedIn()) {
                 enableFeatures()
@@ -259,6 +263,7 @@
                 disableFeatures();
                 $('#facebook_login').on('click', fblogin);
             }
+            $('#about_us').on('click', showAbout);
         }();
     window.fbAsyncInit = function() {
         FB.init({

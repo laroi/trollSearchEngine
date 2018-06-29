@@ -168,7 +168,7 @@ background-image: url("../image/cancel.png");
 background-repeat: no-repeat;
 }
 .page-cont{
-    min-height: 494px;
+    min-height: 70vh;
     margin-right:5px;
     margin-left:5px;
 }
@@ -247,7 +247,8 @@ background-repeat: no-repeat;
     margin-left: 80px;
 }
 .about-us-model-body>ul>li{
-    padding-left:2em;
+    padding-left:1em;
+    margin: 10px 0;
 }
  .row2 {
     display:none;

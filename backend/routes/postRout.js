@@ -221,6 +221,10 @@ var routes = function () {
                 if (!err) {
                     res.status(200).send(JSON.stringify(data));
                     Post.update({_id: id}, { $inc: {views:1}})
+                    data = data[0];
+                    if (!data.views) {
+                        data.views = 0;
+                    }
                     data.views = data.views+1;
                     elastic.updateDoc(id, data);
                 } else {
@@ -319,7 +323,7 @@ var routes = function () {
         }
     });
     },
-    downloadImage = function (req, res){
+    downloadImage = function (req, res){    
         postId = req.params.id;
         Post.findById(postId, function(err, post){
             if (!err) {
@@ -359,6 +363,9 @@ var routes = function () {
                         Post.update({_id: postId}, { $inc: {downloads:1}}, function(updErr, updData) {
                             console.log('Increment download mongo \n',updErr, updData)
                         });
+                        if (!post.downloads) {
+                            post.downloads = 0;
+                        }
                         post.downloads = post.downloads+1;
                         console.log(post.downloads);
                         elastic.updateDoc(postId, post, function(updErr, updData) {

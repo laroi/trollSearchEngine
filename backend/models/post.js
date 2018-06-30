@@ -9,8 +9,8 @@ var post = new Schema({
     type: {type: String, required: true},
     isAdult: {type: Boolean, required: true},
     likes: [],
-    views: {type: Number},
-    downloads: {type: Number},
+    views: {type: Number, default:0},
+    downloads: {type: Number, default:0},
     description: {type: String},
     isApproved: {type: Boolean, default: false},
     image: {

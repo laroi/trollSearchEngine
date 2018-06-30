@@ -30,6 +30,9 @@
         'text!views/components/search.html'
     ],
     function (landingView, detailView, url, user, store, header, createNewView, requestView, aboutView, search) {
+    String.prototype.capitalize = function() {
+        return this.charAt(0).toUpperCase() + this.slice(1);
+    }
     var getSuggestion = function (field) {
         var url = '/api/suggestions?field='+field+'&query=';
             return function( request, response ) {

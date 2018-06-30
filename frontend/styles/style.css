@@ -142,11 +142,40 @@ background-repeat: no-repeat;
 background-image: url("../image/search.png");
 background-repeat: no-repeat;
 }
+.modal-footer>.pan-btn-cont>.fav-count {
+    position: absolute;
+    bottom: -2px;
+    left: 0px;
+}
+.modal-footer>.pan-btn-cont>.down-count {
+    position: absolute;
+    bottom: -12px;
+    left: 0px;
+}
 .pan-count {
+    position: absolute;
+    bottom: 27px;
+    left: 51px;
     text-align:center;
+    font-size: 10px;
+    width:25px;
+
+}
+.down-count {
+    position: absolute;
+    bottom: -13px;
+    left: 0px;
+    height:23px
+}
+.fav-count {
+    position: absolute;
+    bottom: -4px;
+    left: 0px;
 }
 .pan-btn-cont {
     float:right;
+    position:relative;
+    height:27px;
 }
 .user-img {
     max-width: 100%;

@@ -1,6 +1,6 @@
 <script id="entry-template" type="text/x-handlebars-template">
 <option value="0">Select Language</option>
 {{#each langs}} 
-    <option value={{this}}>{{this}}</option>
+    <option value={{#tolower}}{{this}}{{/tolower}}>{{this}}</option>
 {{/each}}
 </script>

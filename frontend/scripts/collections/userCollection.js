@@ -6,6 +6,7 @@ define(['controllers/requestController', 'controllers/storeController', 'models/
             if (context.length < 1) {
                 request.get('/api/contexts', function (contErr, contData) {
                     if (!contErr) {
+                        contData = contData.map(_=> " "+_.capitalize()+ " ");
                         context = contData
                         callback(undefined, context);
                         return;
@@ -22,6 +23,7 @@ define(['controllers/requestController', 'controllers/storeController', 'models/
             if (lang.length < 1) {
                 request.get('/api/langs', function (langErr, langData) {
                     if (!langErr) {
+                        langData = langData.map(_=> " "+_.capitalize()+ " ");
                         lang = langData
                         callback(undefined, lang);
                         return;

@@ -14,6 +14,9 @@ define([
      var source   = $(html).html(),
         template = Handlebars.compile(source),
         render;
+        Handlebars.registerHelper('tolower', function(options) {
+            return options.fn(this).toLowerCase();
+        });
         Handlebars.registerHelper('pageLink', function(total, limit, current) {
             var accum = '',
             n = Math.ceil(total/limit),

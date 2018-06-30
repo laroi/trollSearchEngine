@@ -23,41 +23,41 @@
                         <input type="text" class="form-control" id="movie" value="{{post.movie}}">
                     </div>
                 </div>
-                <div class="form-group row">
-                  <div class="col-md-6">
+                <div class ="row">
+                <div class="form-group col-md-6">
                       <label for="language" class="col-md-4 control-label">Language</label>
                       <div class="col-md-8">
-                        <select id="language" class="form-control">
+                        <select id="language" class="language form-control">
                             <option>Select</option>  
                             {{#each langs}}
                               <option value="{{this}}">{{this}}</option>                        
                             {{/each}}
                         </select>
                       </div>
+                </div>
+                <div class="form-group col-md-6 ">
+                  <label for="context" class="col-md-4 control-label">Context</label>
+                  <div class="col-md-8">
+                    <select id="context" class="context form-control">
+                    <option>Select</option>  
+                    {{#each contexts}}
+                      <option value="{{this}}">{{this}}</option>                        
+                    {{/each}}
+                    </select>
                   </div>
-                  <div class="col-md-6">
-                      <label for="context" class="col-md-4 control-label">Context</label>
-                      <div class="col-md-8">
-                        <select id="context" class="form-control">
-                        <option>Select</option>  
-                        {{#each contexts}}
-                          <option value="{{this}}">{{this}}</option>                        
-                        {{/each}}
-                        </select>
-                      </div>
-                  </div>
+                 </div>
                 </div>
                 <div class="form-group row">
                     <div class="col-md-6">
                         <div class="form-group label-floating">
                             <label for="event-title" class="control-label">Event Title</label>
-                            <input type="text" class="form-control" id="event-title" value="{{post.event.title}}">
+                            <input type="text" class="form-control" id="event-title" disabled="disabled" value="{{post.event.title}}">
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group label-floating">
                             <label for="event-link" class="control-label">Event Link</label>
-                            <input type="text" class="form-control" id="event-link" value="{{post.event.link}}">
+                            <input type="text" class="form-control" id="event-link" disabled="disabled" value="{{post.event.link}}">
                         </div>
                     </div>
                 </div>

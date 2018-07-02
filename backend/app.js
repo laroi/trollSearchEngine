@@ -143,9 +143,11 @@ app.post('/login', route.login);
 app.post('/token', route.verifyFaceToken);
 app.delete('/token/:token', route.deleteToken);
 app.post('/user', route.addUser);
+app.get('/user/count', route.getUserCount);
 app.put('/user', isAuthenticated(false), route.updatePassword);
 app.put('/user/:id', isAuthenticated(false), route.updateUser);
 app.get('/user/:id', isAuthenticated(false), route.getUserDetail);
+app.post('/feedback', route.addFeedback);
 app.get('/groups', route.listGroups);
 app.get('/contexts', route.listContexts);
 app.get('/langs', route.listLanguages);
@@ -161,5 +163,5 @@ app.post('/request', isAuthenticated(false), postRoute.requestMeme)
 app.post('/post', isAuthenticated(false), postRoute.post)
 app.get('/image/:id', postRoute.downloadImage);
 app.get('/suggestions', postRoute.autoSuggestion);
-app.listen(4001);
-console.log("Express server listening on port 4001");
+app.listen(3000);
+console.log("Express server listening on port 3000");

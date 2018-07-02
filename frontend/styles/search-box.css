@@ -77,7 +77,9 @@
     max-height:100%;
     max-width:100%;
 }
-
+.feedback {
+    margin: 0 auto;
+} 
 @media only screen and (min-width:1269px)
 {
 .container {
@@ -108,6 +110,9 @@ max-width: 75%;
     }
     .dropdown.dropdown-lg .dropdown-menu-right {
         min-width: 324px;
+    }
+    .feedback {
+        width:60%;
     }
 }
 @media only screen and (max-width:1269px)

@@ -2,6 +2,7 @@ var User = require('../models/user.js');
 var Contexts = require('../models/contexts.js');
 var langs = require('../models/langs.js');
 var Group = require('../models/group.js');
+var feedback = require('../models/feedback.js');
 var accessToken = require('../models/accessToken.js');
 var mailer = require('../utils/mailer');
 var bcrypt = require('bcrypt');
@@ -12,7 +13,15 @@ var fs = require('fs');
 const profImageUploadPath = __dirname + '/../assets/profile/thumb/';
 var getIp = function (req) {
     return req.headers['x-forwarded-for'] || req.connection.remoteAddress || req.socket.remoteAddress || req.connection.socket.remoteAddress;
-} 
+}
+let validateEmail = (emailField) => {
+        var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+        if (reg.test(emailField) == false) 
+        {
+            return false;
+        }
+        return true;
+}
 var generateToken = function () {
     var text = "";
     var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -372,6 +381,38 @@ var routes = function () {
             }
         });
     };
+    let getUserCount = (req, res) => {
+        User.count({}).exec()
+        .then((count) => {
+            res.status(200).send({"count": count})        
+        })
+        .catch((err)=> {
+            console.error(err);
+            res.status(500).send({err:"Internal Server Error"})
+        })
+    };
+    let addFeedback = (req, res) => {
+        let email = req.body.email,
+            name = req.body.name,
+            phone = req.body.phone,
+            message = req.body.message;
+            msgCharLim = 1000;
+        if (email && name && message && message.length < msgCharLim && validateEmail(email)) {
+            let feed = new feedback({email:email, name:name, phone:phone, message:message})
+            feed.save()
+            .then((resp) => {
+                console.log('[feedback] saved ', resp)
+                res.status(204).send()
+            })
+            .catch((err) => {
+                console.error('[feedback] error in saving ', err);
+                res.status(500).send({err: 'Internal Server Error'})
+            })            
+        } else {
+            console.error("required params missing ", req.body);
+            res.status(400).send({err: 'bad request'})
+        }
+    }; 
    return {
         register: register,
         login: login,
@@ -385,7 +426,9 @@ var routes = function () {
         listGroups: listGroups,
         deleteToken: deleteToken,
         addContext: addContext,
-        listLanguages: listLanguages
+        listLanguages: listLanguages,
+        getUserCount: getUserCount,
+        addFeedback:addFeedback
 
     }
 }

@@ -40,8 +40,36 @@
                     <li>Create memes using plain meme - A full fledged meme generator</li>
                     <li>Meme replies - A meme should be replied only by another meme. All the replies will be displayed in order</li>
                 </ul>
+                <h2>Wanna say something?</h2>
+                <div class="feedback">
+                    <div class="form-group">
+                        <div class="form-group label-floating is-empty">
+                            <label for="feed-email" class="control-label">Email*</label>
+                            <input type="email" class="form-control" id="feed-email" value={{email}}>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-group label-floating is-empty">
+                            <label for="feed-name" class="control-label">Name*</label>
+                            <input type="text" class="form-control" id="feed-name" value={{name}}>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-group label-floating is-empty">
+                            <label for="feed-phone" class="control-label">Phone</label>
+                            <input type="tel" class="form-control" id="feed-phone" value="">
+                        </div>
+                    </div>
+                     <div class="form-group">
+                        <div class="form-group label-floating is-empty">
+                            <label for="feed-msg" class="control-label">Message*</label>
+                            <textarea type="text" class="form-control" id="feed-msg" value=""></textarea>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
+                <button type="button" id="btn-send-feedback" class="btn btn-primary">Send</button>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             </div>
         </div>

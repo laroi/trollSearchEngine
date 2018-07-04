@@ -189,6 +189,7 @@
              $('.logut').show();
              $('.user-photo').attr('src', store.get('picture'));
              $('.user-name').text(store.get('username'))
+             $('#about_us').parent().css('border-bottom', '1px solid black');
              landingView.render({});       
         }
         var disableFeatures = function(){
@@ -201,7 +202,8 @@
             $('.user-photo').attr('src', store.get('/image/user.png'));
              $('#request').css('color', 'grey');
              $('#request').css('cursor', 'not-allowed');
-             $('#request').off('click')
+             $('#request').off('click');
+             $('#about_us').parent().css('border-bottom', 'none');
             disableAdminFeatures();
             landingView.render({});         
         }

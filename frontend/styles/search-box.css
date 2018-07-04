@@ -14,6 +14,7 @@
 }
 .user-name {
     padding-right:3px;
+    cursor:pointer;
 }
 .dropdown {
     position: relative;
@@ -194,6 +195,9 @@ max-width: 75%;
     .navbar-brand {
         padding-left:10px !important;
     }
+    .elem-cont {
+        width:175px;
+    }
     #adv-search {
         width: 232px;
         margin: 0 auto;
@@ -276,6 +280,7 @@ max-width: 75%;
 
 .dropdown {
     float:left;
+    cursor:pointer;
 }
 .filter-drop {
     min-width: 225px;

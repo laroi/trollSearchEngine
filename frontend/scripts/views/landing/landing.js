@@ -27,11 +27,15 @@ define([
                classNamePrev += ' disabled';
             }
             accum += '<li class="' + classNamePrev + '"><span class="page-prev page-link" aria-label="Previous"><span aria-hidden="true">&laquo;</span><span class="sr-only">Previous</span></span></li>'
-            for(var i = 0; i < limit; ++i) {
-                accum += '<li class="page-item"><span class="page-nav page-link">' + (i+1) + '</a></li>';
+            for(var i = 1; i <= limit; ++i) {
+                accum += '<li class="page-item"><span class="page-nav ';
+                if (i === current) {
+                    accum += "current";
+                }
+                accum += ' page-link">' + i + '</span></li>';
             }
             if (limit>5){
-                accum += '<li class="page-item"><span class="page-nav page-link">' + n + '</a></li>';
+                accum += '<li class="page-item"><span class="page-nav page-link">' + n + '</span></li>';
             }
             if (current !== n-1) {
                 classNameNext += ' disabled';
@@ -391,34 +395,36 @@ define([
                     postData.language = query.lang;
                 }
                 postCollection.getAllPosts(postData, function(err, posts) {
-                    var html = template({posts: posts});
-                    $('#post-contents').empty().append(html);
-                    $('.page-cont').imagesLoaded(function () {
-                        $('.page-cont').masonry({
-                          // options
-                          itemSelector: '.elem-cont'    
-                        });
-                    })
-                    loadContext();
-                    loadLangs();
-                    updateUi();
-                    $('.edit').on('click', editPost);
-                    $('.delete').on('click', deletePost);                    
-                    $('.btn-basic-search').off().on('click', search)
-                    $('.page-nav').on('click', paginate)
-                    $('.btn-apply-filter').on('click', applyFilter);
-                    $('#advanced-search').off('click').on('click', advancedSearch);
-                    highlight.highlight();
-                    $('.hl-close').on('click', cancelFilter);
-                    $('.star-btn').on('click', processStar);
-                    $('.fav').on('click', processLike);
-                    $('.user-img').on('click', processUserClick);
-                    $('.page-prev').on('click', navPrev);
-                    $('.page-next').on('click', navNext);
-                    $('.thumbImgCont').on('click', thumbClick);
-                    $('#logout').on('click', logout);
-                    $('.more').on('click', showMore);
-                    $('body').on('click', closeAllPops)
+                    if (posts !== undefined) {
+                        var html = template({posts: posts});
+                        $('#post-contents').empty().append(html);
+                        $('.page-cont').imagesLoaded(function () {
+                            $('.page-cont').masonry({
+                              // options
+                              itemSelector: '.elem-cont'    
+                            });
+                        })
+                        loadContext();
+                        loadLangs();
+                        updateUi();
+                        $('.edit').on('click', editPost);
+                        $('.delete').on('click', deletePost);                    
+                        $('.btn-basic-search').off().on('click', search)
+                        $('.page-nav').on('click', paginate)
+                        $('.btn-apply-filter').on('click', applyFilter);
+                        $('#advanced-search').off('click').on('click', advancedSearch);
+                        highlight.highlight();
+                        $('.hl-close').on('click', cancelFilter);
+                        $('.star-btn').on('click', processStar);
+                        $('.fav').on('click', processLike);
+                        $('.user-img').on('click', processUserClick);
+                        $('.page-prev').on('click', navPrev);
+                        $('.page-next').on('click', navNext);
+                        $('.thumbImgCont').on('click', thumbClick);
+                        $('#logout').on('click', logout);
+                        $('.more').on('click', showMore);
+                        $('body').on('click', closeAllPops)
+                    }
                 });              
             }
             return {

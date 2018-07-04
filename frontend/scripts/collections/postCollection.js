@@ -146,7 +146,8 @@ define(['controllers/requestController', 'controllers/storeController', 'models/
                     callback(err, {posts:posts, total: total, current: current, limit: limit});
                 });
             } else {
-                callback(undefined, {posts:posts, total: total, current: current, limit: limit});
+                callback(undefined, undefined);
+                //callback(undefined, {posts:posts, total: total, current: current, limit: limit});
             }
         }
         getPostById = function(id, callback) {

@@ -34,7 +34,7 @@ define(['./storeController'], function (store) {
                 
             }
             
-            var html = "<span data-type='" + type + " 'data-key='" + key + "' class=' " + className + " highlight-cont'>"+updateVal+"<span class='hl-close'></span></span>";
+            var html = "<div data-type='" + type + " 'data-key='" + key + "' class=' " + className + " highlight-cont'><div style='float:left'>"+updateVal+"</div><div class='hl-close'></div></div>";
             return html;
         }
         return "";

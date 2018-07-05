@@ -254,6 +254,7 @@ background-position-y: 2px;
 .elem-cont {
     margin-left:10px;
     width:150px;
+    float:left;
 }
 .user-drop > ul {
     padding-left:3px;

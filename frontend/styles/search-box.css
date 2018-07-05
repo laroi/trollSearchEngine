@@ -198,6 +198,19 @@ max-width: 75%;
     .elem-cont {
         width:175px;
     }
+    .user-photo {
+        font-size:20px;
+    }
+    .filter-icon {
+        font-size:18px;
+    }
+    .search-caret {
+        margin-top: 15px; 
+    }
+    .search-icon {
+            font-size: 18px;
+        margin-top: 8px;
+    }
     #adv-search {
         width: 232px;
         margin: 0 auto;
@@ -241,6 +254,9 @@ max-width: 75%;
 @media screen and (max-width:320px) {
     .navbar-brand {
         padding-left:5px !important;
+    }
+    .user-photo {
+        font-size:20px;
     }
     .dropdown.dropdown-lg .dropdown-menu-right {
         min-width: 250px;

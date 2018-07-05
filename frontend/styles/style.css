@@ -55,56 +55,55 @@
     background-position: top center;
     float:left;
 }
-.more:before {
-  content: '\2807';
-  font-size: 25px;
-  }
+
   .more {
     float:right;
     margin-left:2px;
+    margin-top:3px;
   }
 .download{
-    background-image: url('../image/download.png');
-}
-.favorite {
-    background-image: url('../image/fav.png');
+
 }
 .faved {
-    background-image: url('../image/faved.png');
+    color:red!important;
 }
 .star {
-    background-image: url('../image/star.png');
+
 }
 .star:hover {
-    background-image: url('../image/star_hvr.png');
+    font-size:16px;
 }
 .starred {
-    background-image: url('../image/starred.png');
+    color:#a0a000!important;
 }
 .starred:hover {
-    background-image: url('../image/starred_hvr.png');
+    color:#a0a000!important;
+    font-size:16px;
 }
+
 .use {
     background-image: url('../image/use.png');
 }
 .download:hover{
-    background-image: url('../image/download_hvr.png');
+    font-size:16px;
 }
 .favorite:hover {
-    background-image: url('../image/fav_hvr.png');
+    font-size:16px;
 }
 .faved:hover {
-    background-image: url('../image/faved_hvr.png');
+    font-size:16px;
 }
 .use:hover {
     background-image: url('../image/use_hvr.png');
 }
 .pan-btn {
     cursor: pointer;
+    color:#555;
     background-repeat: no-repeat;
     background-attachment: local;
     background-position: top center;
     float:right;
+    text-align:center;
     margin-right:2px;
     margin-left:2px;
     height: 24px;

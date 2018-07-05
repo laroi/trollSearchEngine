@@ -17,23 +17,23 @@
                 <div class="bottom-panel">
                     <div class="button-panel">
                         <div class="row1">
-                             {{#ifeq this.isOwner}}<div class="pan-btn more"></div> {{/ifeq}}
+                             {{#ifeq this.isOwner}}<div class="pan-btn fas fa-ellipsis-v more"></div> {{/ifeq}}
                             
                             <div class="pan-btn user"><img class="user-img" src={{this.user.image}}></div>
                             {{#if this.isStarred}}
-                                <div class="pan-btn star-btn starred"></div>
+                                <div class="pan-btn far fa-star star-btn starred"></div>
                             {{else}}
-                                <div class="pan-btn star-btn star"></div>
+                                <div class="pan-btn far fa-star star-btn star"></div>
                             {{/if}}
                             <div class="pan-btn-cont">
-                                <a href="/api/image/{{this._id}}" > <div class="pan-btn download"></div></a>
+                                <a href="/api/image/{{this._id}}" > <div class="far fa-arrow-alt-circle-down pan-btn download"></div></a>
                                 <div class='pan-count down-count'>{{this.downloads}}</div>
                             </div>
                             <div class="pan-btn-cont">
                                 {{#if this.isLiked}}
-                                    <div class="pan-btn fav faved"></div>
+                                    <div class="far fa-heart pan-btn fav faved"></div>
                                 {{else}}
-                                    <div class="pan-btn fav favorite"></div>            
+                                    <div class="far fa-heart pan-btn fav favorite"></div>            
                                 {{/if}}
                                 <div class='pan-count fav-count'>{{this.likes.length}}</div>
                             </div> 

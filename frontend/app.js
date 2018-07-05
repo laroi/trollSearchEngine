@@ -183,13 +183,13 @@
              } else {
                 disableAdminFeatures();
              }
-             $('#request').css('color', 'black');
+             $('#request').css('color', '#555');
              $('#request').css('cursor', 'pointer');
              $('.fb_login').hide();
              $('.logut').show();
              $('.user-photo').attr('src', store.get('picture'));
              $('.user-name').text(store.get('username'))
-             $('#about_us').parent().css('border-bottom', '1px solid black');
+             $('#about_us').parent().css('border-bottom', '1px solid #555');
              landingView.render({});       
         }
         var disableFeatures = function(){

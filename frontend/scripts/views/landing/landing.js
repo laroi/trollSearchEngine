@@ -74,7 +74,8 @@ define([
         var search = function() {
             var search_term = $('#basic-search').val().trim();
             if (search_term) {
-                store.set('search_term', {basic_search:search_term}) 
+                store.set('search_term', {basic_search:search_term});
+                store.set('from', 0);
                 url.navigate('landing');
             }
         }
@@ -107,6 +108,7 @@ define([
             if (Object.keys(advSearchTerm).length > 0) {
                 store.set('search_term', advSearchTerm);
                 $('.dropdown.open').removeClass('open');
+                store.set('from', 0);
                 url.navigate('landing');
             }
         }
@@ -166,6 +168,7 @@ define([
                 }
                 store.set('filters', filtObj);                    
                 $('.dropdown.open').removeClass('open');
+                store.set('from', 0);
                 url.navigate('landing');
         };
         var updateUi = function (type, key) {
@@ -386,7 +389,7 @@ define([
                     postData.isApproved = query.isApproved
                 }
                 if (query.isFavorite) {
-                    postData.isFavorite = (store.get('stars') || []).join(',') || ''
+                    postData.isFavorite = (store.get('stars') || []).join(',') || null;
                 }
                 if (query.userId) {
                     postData.userId = query.userId

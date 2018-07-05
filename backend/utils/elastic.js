@@ -482,7 +482,7 @@ var elastic = function () {
         if (doc.title) {
             body.titleSuggest = {input: doc.title}
         }
-        if (doc.event.title) {
+        if (doc.event && doc.event.title) {
             body.eventSuggest = {input: doc.event.title}
         }
         if (doc.movie) {

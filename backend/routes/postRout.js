@@ -181,7 +181,11 @@ var routes = function () {
             if (group) {
                 opts.group = group;
             }
-            if (isFavorite !== undefined) {
+            if (isFavorite === null) {
+                opts.ids = [""];
+                
+            }
+            else if (isFavorite) {
                 opts.ids = isFavorite.split(',');
             }
             if (type) {

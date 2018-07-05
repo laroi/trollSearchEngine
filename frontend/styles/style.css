@@ -26,7 +26,7 @@
 }
 #create {
     display: none;
-        margin-top: 15px;
+        margin-top: 18px;
     float: left;
     cursor:pointer;
 }
@@ -137,6 +137,7 @@
     box-shadow: 5px 5px 5px black;
     border-radius: 4px;
     display:inline-block;
+    position:relative;
 }
 #high-lighter {
     margin-bottom: 10px;
@@ -145,14 +146,29 @@
 .hl-filter {
 background-position-x: 3px;
 background-position-y: 8px;
-background-image: url("../image/filter.png");
 background-repeat: no-repeat;
+}
+.hl-filter:before {
+    content: "\f0b0";
+    font-family: "Font Awesome 5 Free";
+    position: absolute;
+    left: 5px;
+    top: 7px;
+    font-size: 13px;
 }
 .hl-search {
 background-position-x: 3px;
 background-position-y: 8px;
 background-image: url("../image/search.png");
 background-repeat: no-repeat;
+}
+.hl-search:before {
+    content: "\f002";
+    font-family: "Font Awesome 5 Free";
+    position: absolute;
+    left: 5px;
+    top: 7px;
+    font-size: 13px;
 }
 .modal-footer>.pan-btn-cont>.fav-count {
     position: absolute;
@@ -204,8 +220,9 @@ width:16px;
 height:18px;
 display: inline-block;
 margin-left:5px;
+margin-top:4px;
 cursor:pointer;
-background-image: url("../image/cancel.png");
+color: white;
 background-repeat: no-repeat;
 background-position-y: 2px;
 }
@@ -242,10 +259,10 @@ background-position-y: 2px;
     padding-left:3px;
 }
 .user-drop > ul> li {
-    color:black;
+    color:#555;
     cursor: pointer;
     padding:5px 0px 5px 10px!important;
-    border-bottom:solid 1px grey;
+    border-bottom:solid 1px #555;
 }
 .user-drop > ul> li:last-child {
     border-bottom:0;
@@ -295,9 +312,9 @@ background-position-y: 2px;
 .field {
     background-color: #009688;
     border-radius: 4px; 
-    -webkit-box-shadow: 1px 1px 4px 4px #ccc;  /* Safari 3-4, iOS 4.0.2 - 4.2, Android 2.3+ */
-    -moz-box-shadow:    1px 1px 4px 4px #ccc;  /* Firefox 3.5 - 3.6 */
-    box-shadow:         1px 1px 4px 4px #ccc;  /* Opera 10.5, IE 9, Firefox 4+, Chrome 6+, iOS 5 */
+    -webkit-box-shadow: 1px 1px 1px 1px #ccc;  /* Safari 3-4, iOS 4.0.2 - 4.2, Android 2.3+ */
+    -moz-box-shadow:    1px 1px 1px 1px #ccc;  /* Firefox 3.5 - 3.6 */
+    box-shadow:         1px 1px 1px 1px #ccc;  /* Opera 10.5, IE 9, Firefox 4+, Chrome 6+, iOS 5 */
 }
  .row2 {
     display:none;
@@ -323,4 +340,7 @@ background-position-y: 2px;
   .page-item>.current {
     background-color:#009688;
     color:white;
+  }
+  .user-photo {
+    border-radius:15px;
   }

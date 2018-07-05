@@ -83,7 +83,7 @@ define(['controllers/requestController', 'controllers/storeController', 'models/
                 cachedVals.isPlain = postData.isPlain || undefined;
                 cachedVals.isAdult = postData.isAdult || undefined;
                 cachedVals.isApproved = postData.isApproved || undefined;
-                cachedVals.isFavorite = postData.isFavorite || undefined;
+                cachedVals.isFavorite = postData.isFavorite || "";
                 cachedVals.userId = postData.userId || undefined;
                 cachedVals.language = postData.language || undefined;
         }

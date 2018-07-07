@@ -401,13 +401,13 @@ define([
                     if (posts !== undefined) {
                         var html = template({posts: posts});
                         $('#post-contents').empty().append(html);
-                        /*$('.page-cont').imagesLoaded(function () {
+                        $('.page-cont').imagesLoaded(function () {
                             $('.page-cont').masonry({
                               // options
                               itemSelector: '.elem-cont',
                               isAnimated: true
                             });
-                        })*/
+                        })
                         loadContext();
                         loadLangs();
                         updateUi();

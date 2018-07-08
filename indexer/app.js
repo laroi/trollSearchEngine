@@ -91,9 +91,15 @@ var putMapping = function () {
                     isApproved: {"type" : "boolean", "index" : "not_analyzed"},
                     image: {"type" : "object", 
                         "properties" : {
-                            "url" : {"type" : "string", "index" : "not_analyzed"},
-                            "type" : {"type" : "string", "index" : "not_analyzed"},
-                            "thumb" : {"type" : "string", "index" : "not_analyzed"}
+                            "url"   : {"type" : "string", "index" : "not_analyzed"},
+                            "type"  : {"type" : "string", "index" : "not_analyzed"},
+                            "thumb" : {"type" : "string", "index" : "not_analyzed"},
+                            "size"  : {"type" : "object","properties" : 
+                                {
+                                "width": {"type": "long", "index" : "not_analyzed"},
+                                "height":{"type": "long", "index": "not_analyzed"}
+                                }
+                            }
                         }
                     },
                     descriptions: {"type" : "string"},

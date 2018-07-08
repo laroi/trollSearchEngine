@@ -34,22 +34,27 @@ var routes = function () {
     },
     isOwner = function (model, doc_id, token, callback) {
         model.findById(doc_id, function(docErr, docData) {
-            access.findOne({token: token}, function(err, data) {
-                if (!err && data) {
-                    if (data.user = docData.user.id || data.type === 'admin') {
-                        console.log('ownership verified ', data.type);
-                        callback();
+            if (!docErr && docData) {
+                access.findOne({token: token}, function(err, data) {
+                    if (!err && data) {
+                        if (data.user = docData.user.id || data.type === 'admin') {
+                            console.log('ownership verified ', data.type);
+                            callback();
+                        } else {
+                            console.log('failed to verify ownership');
+                            callback({err: 'failed to verify ownership'});
+                            //callback();
+                        }
                     } else {
-                        console.log('failed to verify ownership');
-                        callback({err: 'failed to verify ownership'});
+                        console.log('token not found');
+                        callback(err || 'token not found');
                         //callback();
                     }
-                } else {
-                    console.log('token not found');
-                    callback(err || 'token not found');
-                    //callback();
-                }
-            });
+                });
+            } else {
+                console.log('doc ' + doc_id + 'for model ' + model.collection.collectionName + ' not found', docErr, docData);
+                callback(docErr || 'doc not found');
+            }
         });        
     },
     post = function(req, res) {
@@ -90,12 +95,17 @@ var routes = function () {
             var filename = uuid.v1();
             var fileLoc = uploadPath + filename;
             var base64Data = req.body.image.image;
+            var size = undefined;
             base64Data = base64Data.replace(/^data:image\/png;base64,/,'')
             base64data = new Buffer(base64Data,'base64')
             gm(base64data)
+            .size((err, sz)=> {
+                size=sz
+            })
             .setFormat('jpg')            
             .write(fileLoc + '.jpg', function(err){
                 if (!err) {
+                    console.log('image saved')
                     saveThumb(filename+'.jpg', function(thumbErr) {
                         if (!thumbErr) {
                             obj.user= user;
@@ -105,7 +115,7 @@ var routes = function () {
                             obj.description = description;
                             obj.tags = tags;
                             obj.movie = movie;
-                            obj.image = {url: '/images/'+filename + '.jpg', thumb: '/images/thumb/'+filename + '.jpg', type: 'jpg'};
+                            obj.image = {url: '/images/'+filename + '.jpg', thumb: '/images/thumb/'+filename + '.jpg', type: 'jpg', size: size};
                             obj.language = language;
                             obj.actors = actors;
                             obj.characters = characters;

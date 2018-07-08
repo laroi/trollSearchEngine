@@ -49,6 +49,10 @@ define([
             }
             return '';
         })
+        Handlebars.registerHelper('getThumbHeight', function(post) {
+            return 150 * (post.height/post.width)
+        })
+        
         Handlebars.registerHelper('ifeq', (isOwner, options) => {
           if (isOwner || store.get('userType') === 'admin') {
             return options.fn(this)

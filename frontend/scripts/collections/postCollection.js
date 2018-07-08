@@ -123,6 +123,8 @@ define(['controllers/requestController', 'controllers/storeController', 'models/
                             isAdult: post._source.isAdult,
                             imageUrl: post._source.image.url,
                             thumbUrl: post._source.image.thumb,
+                            height : post._source.image.size ? post._source.image.size.height : 0,
+                            width: post._source.image.size ? post._source.image.size.width : 0,
 				            description: post._source.description,
 				            tags: post._source.tags,
 				            movie: post._source.movie,

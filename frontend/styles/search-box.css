@@ -300,7 +300,7 @@ max-width: 75%;
     .panel-body {
         padding-right:7px;
         padding-left:7px;
-        padding-bottom:5px;
+        padding-top:5px;
         padding-bottom:5px;
     }
     .pan-count, .pan-btn {

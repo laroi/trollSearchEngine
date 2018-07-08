@@ -43,6 +43,8 @@ define(['controllers/requestController', 'controllers/storeController'], functio
 				description: inPost.description || '',
 				imageUrl: inPost.imageUrl || '',
 				thumbUrl: inPost.thumbUrl || '',
+				width: inPost.width || 0,
+				height: inPost.height || 0,
 				tags: inPost.tags || [],
 				group: inPost.group || '',
 				movie: inPost.movie || '',

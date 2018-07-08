@@ -111,13 +111,21 @@ define([
             var render;
             render = function (id) {
                 postCollection.getPostById(id, function(err, post) {
-                    var html = template(post);
-                    $('#detailModel').empty().append(html);
-                    updateUi();
-                    $('.edit').on('click', editPost);
-                    $('.delete').on('click', deletePost);                    
-                    $('.fav').on('click', processLike);
-                    $('#detail-cont').on('hidden.bs.modal', gotoHome)
+                    if (!err && post) {
+                        if (post.height && post.width) {
+                            let containerWidth = $(window).width() - 68;
+                            post.adjustedHeight = (containerWidth < 552 ? containerWidth : 552)*(post.height/post.width)
+                        }
+                        var html = template(post);
+                        $('#detailModel').empty().append(html);
+                        updateUi();
+                        $('.edit').on('click', editPost);
+                        $('.delete').on('click', deletePost);                    
+                        $('.fav').on('click', processLike);
+                        $('#detail-cont').on('hidden.bs.modal', gotoHome)
+                    } else {
+                        toastr.error('We seems to have a problem. Please check your internet connection.', 'FTM Says')
+                    }
                 });                
             }
             return {

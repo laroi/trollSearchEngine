@@ -13,7 +13,7 @@ define([
         render;
         var editPost = function(e) {
             var id = $(e.target).parent().parent().parent().parent().attr('id');
-            postCollection.getPostById(id, (post) => {
+            postCollection.getPostById(id, (err, post) => {
                 create.render(undefined, post);    
             });                        
         }
@@ -31,7 +31,7 @@ define([
          $('#detail-cont').modal({show: true}); 
         }
         var processStar = function (e) {
-            var postId = $(e.target).parent().parent().parent().parent().attr('id'),
+            var postId = $(e.target).parent().parent().attr('id'),
                 unStar,
                 updatedStar,
                 prevStars,
@@ -72,7 +72,7 @@ define([
             });
         }
         var processLike = function (e) {
-            var postId = $(e.target).parent().parent().parent().parent().parent().attr('id');
+            var postId = $(e.target).parent().parent().parent().attr('id');
             var processCallback = function (err, data) {
                 if (!err) {
                     if ($(e.target).hasClass('faved')) {
@@ -89,9 +89,14 @@ define([
                 }
             };
             if ($(e.target).hasClass('faved')) {
-                postCollection.getPostById(postId).unlike(store.get('userId'), processCallback)
+                postCollection.getPostById(postId, (err, post)=> {
+                    post.unlike(store.get('userId'), processCallback)
+                })
             } else if ($(e.target).hasClass('favorite')) {
-                postCollection.getPostById(postId).like(store.get('userId'), (store.get('username') || store.get('email')), processCallback)
+                postCollection.getPostById(postId, (err, post)=> {
+                    post.like(store.get('userId'), (store.get('username') || store.get('email')), processCallback)
+                })
+                
             }
             
         };
@@ -122,6 +127,7 @@ define([
                         $('.edit').on('click', editPost);
                         $('.delete').on('click', deletePost);                    
                         $('.fav').on('click', processLike);
+                        $('.star-btn').on('click', processStar);
                         $('#detail-cont').on('hidden.bs.modal', gotoHome)
                     } else {
                         toastr.error('We seems to have a problem. Please check your internet connection.', 'FTM Says')

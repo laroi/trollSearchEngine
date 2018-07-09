@@ -139,7 +139,7 @@ let filesToCache = [
 '/api/langs'
 ]
 self.importScripts('/libs/pouchdb.min.js');
-var db = new PouchDB('trolls');
+var db = new PouchDB('trolls',{revs_limit: 1, auto_compaction: true});
 self.addEventListener('install', function(event) {
     console.log('Service worker installing...');
     // TODO 3.4: Skip waiting
@@ -169,7 +169,13 @@ self.addEventListener('fetch', function(event) {
         respo= data;
         return db.get('trolls')
         .then((res)=> {
-            console.log(data)
+            console.log('updating cache', data)
+            caches.open('toller')
+            .then(function(cache) {
+                for (datum in data.hits) {
+                    cache.add(data.hits[datum]._source.image.url);
+                }
+            })            
             return db.put({_id:'trolls', _rev:res._rev, data:data})
         })
         .then(() => {

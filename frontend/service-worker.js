@@ -131,6 +131,10 @@ let filesToCache = [
 '/styles/webfonts/fa-solid-900.ttf',
 '/styles/webfonts/fa-solid-900.woff',
 '/styles/webfonts/fa-solid-900.woff2',
+'http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.css',
+'http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/fonts/glyphicons-halflings-regular.ttf',
+'http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/fonts/glyphicons-halflings-regular.woff',
+'http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/fonts/glyphicons-halflings-regular.woff2',
 '/api/contexts',
 '/api/langs'
 ]
@@ -155,29 +159,37 @@ self.addEventListener('fetch', function(event) {
  
  //if (event.request.method === "POST" && event.request.uri==="")
  if (event.request.method === "POST" && event.request.url === self.registration.scope+'api/posts') {
+    let respo;
+    event.respondWith(    
     fetch(event.request)
     .then((resp)=> {
-         console.log('this also should not work')
+         console.log('live resoponse')
          return resp.json();
     }).then((data)=> {
-    console.log('This should not work')
-        console.log('This should not work')
-        return db.get('trolls').then(function(doc) {
-          return db.put({
-            _id: 'trolls',
-            _rev: doc._rev,
-            data: data
-          });
-        }).then(function(response) {
-          return data;
-        })        
+        respo= data;
+        return db.get('trolls')
+        .then((res)=> {
+            console.log(data)
+            return db.put({_id:'trolls', _rev:res._rev, data:data})
+        })
+        .then(() => {
+            console.log('cached response in db', data)
+            return new Response(JSON.stringify(data));
+        })     
     })
     .catch((err)=> {
+        console.log(err);
+        if (err.status === 404) {
+            return db.put({_id:'trolls', data:respo.data})
+            .then((data)=> {
+                return new Response(JSON.stringify(data));
+            })
+        }
         console.log('first log in fail')
        return db.get('trolls').
        then((data)=> {
-       console.log(data.data);
-        return data.data;
+        console.log(data.data)
+        return new Response(JSON.stringify(data.data));
        })
         /*db.get('trolls').then(function (doc) {
             console.log(JSON.stringify(doc.data));
@@ -185,13 +197,18 @@ self.addEventListener('fetch', function(event) {
         }).catch(function (err) {
           console.log(err);
         });*/   
-    })
+    }))
  } else {
      event.respondWith(
-       caches.match(event.request).then(function(response) {
-         return response || fetch(event.request);
-       })
-   );
+        caches.open('toller').then(function(cache) {
+          return cache.match(event.request).then(function (response) {
+            return response || fetch(event.request).then(function(response) {
+              cache.put(event.request, response.clone());
+              return response;
+            });
+          });
+        })
+      );
    }
    
 

@@ -1,10 +1,5 @@
-if (!('serviceWorker' in navigator)) {
-    console.log('Service worker not supported');
-} else {
-    navigator.serviceWorker.register('service-worker.js')
-    .then(function() {
-        console.log('Registered');
-            requirejs.config({
+let init = () => {
+requirejs.config({
             //By default load any module IDs from js/lib
             baseUrl: 'scripts',
             //except, if the module ID starts with "app",
@@ -317,6 +312,16 @@ if (!('serviceWorker' in navigator)) {
         })
 
         });
+}
+
+if (!('serviceWorker' in navigator)) {
+    console.log('Service worker not supported');
+    init()
+} else {
+    navigator.serviceWorker.register('service-worker.js')
+    .then(function() {
+        console.log('Registered');
+        init()    
     })
     .catch(function(error) {
         console.log('Registration failed:', error);

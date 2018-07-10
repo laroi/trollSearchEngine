@@ -203,7 +203,9 @@ self.addEventListener('fetch', function(event) {
         caches.open('toller').then(function(cache) {
           return cache.match(event.request).then(function (response) {
             return response || fetch(event.request).then(function(response) {
-              cache.put(event.request, response.clone());
+                if (event.request.url.split(':')[0]!=="data") {
+                  cache.put(event.request, response.clone());
+                }
               return response;
             });
           });

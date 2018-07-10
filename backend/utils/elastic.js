@@ -282,7 +282,8 @@ var elastic = function () {
     }
     var should_array = [],
         must_array = [],
-        sort =[];
+        sort =[],
+        minScore = undefined,
         body = {};
         
         if (options.advanced && isAdvancedSearch(options.advanced)) {           
@@ -326,6 +327,7 @@ var elastic = function () {
             should_array.push({ "match": { "actors": options.search }});
             should_array.push({ "match": { "characters": options.search }});
             should_array.push({ "match": { "event.title": options.search }});
+            minScore = 0.5;
             sort.push({
                 "_score": {
                    "order": "desc"
@@ -382,6 +384,9 @@ var elastic = function () {
                "size" : 10,
                "sort" : sort
         };
+        if (minScore) {
+            body.min_score = minScore;
+        }
         console.log('sort ', sort); 
         if (should_array.length > 0) {
             body.query.bool.should = should_array
@@ -400,7 +405,7 @@ var elastic = function () {
             type: 'post',
             body: body
         }, function (error, response) {
-            callback(error, response);
+            callback(error, response.hits);
         });
     }
     var getSuggestions = function(options, callback) {

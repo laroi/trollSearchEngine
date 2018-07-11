@@ -131,10 +131,10 @@ let filesToCache = [
 '/styles/webfonts/fa-solid-900.ttf',
 '/styles/webfonts/fa-solid-900.woff',
 '/styles/webfonts/fa-solid-900.woff2',
-'styles/css/bootstrap.css',
-'styles/webfonts/glyphicons-halflings-regular.ttf',
-'style/webfonts/glyphicons-halflings-regular.woff',
-'style/webfonts/glyphicons-halflings-regular.woff2',
+'/styles/css/bootstrap.css',
+'/styles/webfonts/glyphicons-halflings-regular.ttf',
+'/styles/webfonts/glyphicons-halflings-regular.woff',
+'/styles/webfonts/glyphicons-halflings-regular.woff2',
 '/api/contexts',
 '/api/langs'
 ]

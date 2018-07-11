@@ -7,6 +7,7 @@ requirejs.config({
             //config is relative to the baseUrl, and
             //never includes a ".js" extension since
             //the paths config could be for a directory.
+            waitSeconds : 0,
             paths: {
                 jquery: '../libs/jquery.min',
                 bootstrap: '../libs/bootstrap.min',

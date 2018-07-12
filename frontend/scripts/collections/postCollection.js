@@ -98,7 +98,7 @@ define(['controllers/requestController', 'controllers/storeController', 'models/
                 updateCache(postData);
                 request.post('/api/posts', postData, function (err, status, data) {
                     let hits = []
-                    if (data && data.hits ) {
+                    if (data && Array.isArray(data.hits) && data.hits.length > 0) {
                         hits = data.hits
                     }
                     postData.from = postData.from || 0;
@@ -149,7 +149,7 @@ define(['controllers/requestController', 'controllers/storeController', 'models/
 				        posts.push(postObj)
                     });
                     limit = postData.limit;
-                    total = data.total || 0; 
+                    total = data ? data.total : 0;
                     console.log('current', current, 'limit', postData.limit, 'total', total);
                     callback(err, {posts:posts, total: total, current: current, limit: limit});
                 });

@@ -11,7 +11,7 @@ define(['controllers/requestController', 'controllers/storeController', 'models/
                         callback(undefined, context);
                         return;
                     }
-                    callback(err, undefined)
+                    callback(contErr, undefined)
                     return;
                 })
             } else {
@@ -28,7 +28,7 @@ define(['controllers/requestController', 'controllers/storeController', 'models/
                         callback(undefined, lang);
                         return;
                     }
-                    callback(err, undefined)
+                    callback(langErr, undefined)
                     return;
                 })
             } else {

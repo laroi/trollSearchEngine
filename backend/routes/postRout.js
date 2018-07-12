@@ -29,7 +29,7 @@ var getIp = function (req) {
 }
 var routes = function () {
     elastic.init();
-    var test = function (req, res) {        
+    var test = function (req, res) {
         res.status(200).send();
     },
     isOwner = function (model, doc_id, token, callback) {
@@ -39,7 +39,7 @@ var routes = function () {
                     if (!err && data) {
                         if (data.user = docData.user.id || data.type === 'admin') {
                             console.log('ownership verified ', data.type);
-                            callback();
+                            callback(undefined, docData);
                         } else {
                             console.log('failed to verify ownership');
                             callback({err: 'failed to verify ownership'});
@@ -55,7 +55,7 @@ var routes = function () {
                 console.log('doc ' + doc_id + 'for model ' + model.collection.collectionName + ' not found', docErr, docData);
                 callback(docErr || 'doc not found');
             }
-        });        
+        });
     },
     post = function(req, res) {
         var _id = req.body._id || undefined,
@@ -490,14 +490,31 @@ var routes = function () {
         if (postId) {
             logger.log(1, 'delete post', 'Deleting post  ' + postId , 'postRoute.js', getIp(req), undefined);
             var tok = req.query.accessToken || req.headers['authorization'];
-            isOwner( Post, postId, tok, function (err) {
+            isOwner( Post, postId, tok, function (err, docData) {
                 if (!err) {
+                    let imagePath = path.join(__dirname,'../assets/uploads', docData.image.url.split('/')[2]);
+                    let thumbPath = path.join(__dirname,'../assets/uploads/thumb', docData.image.url.split('/')[2]);
                     Post.remove({_id: new ObjectID(postId)}, function(err, data){
                         if (!err) {
                             elastic.deletDoc(postId, function (delErr, delInfo) {
                                 if (!delErr) {
-                                    logger.log(1, 'delete post', 'Deleted post  ' + postId , 'postRoute.js', getIp(req), data)
-                                    res.status(204).send();
+                                    fs.unlink(imagePath, (err) => {
+                                        if (!err) {
+                                            fs.unlink(thumbPath, (err) => {
+                                                if (!err) {
+                                                    logger.log(1, 'delete post', 'Deleted post  ' + postId , 'postRoute.js', getIp(req), data)
+                                                    res.status(204).send();
+                                                } else {
+                                                    logger.log(3, 'delete post', 'could not remove thumb image  ' + thumbPath + ' from file system', 'postRoute.js', getIp(req), delErr);
+                                                    res.status(500).send();
+                                                }
+                                            })
+                                          } else {
+                                            logger.log(3, 'delete post', 'could not remove image  ' + imagePath + ' from file system', 'postRoute.js', getIp(req), delErr);
+                                            res.status(500).send();
+                                        }
+
+                                    })
                                 } else {
                                     logger.log(3, 'delete post', 'could not deleted post  ' + postId + ' from elastic search', 'postRoute.js', getIp(req), delErr);
                                     res.status(500).send();

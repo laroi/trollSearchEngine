@@ -9,15 +9,28 @@ requirejs.config({
             //the paths config could be for a directory.
             waitSeconds : 0,
             paths: {
-                jquery: '../libs/jquery.min',
-                bootstrap: '../libs/bootstrap.min',
                 app: 'app',
                 crossroads: '../libs/crossroads.min',
                 signals: '../libs/signals',
                 text: '../libs/text'
             }
-        });
-
+        });  
+/*requirejs([
+'text!views/components/search.html',
+'text!views/components/mainHeader.html',
+], (search, header)=> {
+    var headerTemplate = Handlebars.compile($(header).html());
+    var searchTemplate = Handlebars.compile($(search).html());
+    $(document).ready(function(){
+            $('#content').append(headerTemplate());
+            $('.drop-form').html(searchTemplate());
+            $.material.init();
+            $("#s1").dropdown({"optionClass": "withripple"});
+            $('.dropdown-menu').click(function(e) {
+                e.stopPropagation();
+            });
+    })
+})*/
         // Start the main app logic.
         requirejs([
             'views/landing/landing',
@@ -25,13 +38,11 @@ requirejs.config({
             'controllers/urlController',
             'controllers/userController',
             'controllers/storeController',
-            'text!views/components/mainHeader.html',
             'views/create/create',
             'views/request/request',
             'views/aboutus/aboutus',
-            'text!views/components/search.html'
         ],
-        function (landingView, detailView, url, user, store, header, createNewView, requestView, aboutView, search) {
+        function (landingView, detailView, url, user, store, createNewView, requestView, aboutView) {
         String.prototype.capitalize = function() {
             return this.charAt(0).toUpperCase() + this.slice(1);
         }
@@ -103,11 +114,7 @@ requirejs.config({
           };
         }
         $(document).ready(function(){
-
-            headerTemplate = Handlebars.compile($(header).html());
-            var searchTemplate = Handlebars.compile($(search).html());
-            $('#content').append(headerTemplate());
-            $('.drop-form').html(searchTemplate());
+            console.log('>>>>>')
             $.material.init();
             $("#s1").dropdown({"optionClass": "withripple"});
             $('.dropdown-menu').click(function(e) {

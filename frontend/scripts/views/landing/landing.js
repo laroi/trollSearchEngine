@@ -404,6 +404,7 @@ define([
                 postCollection.getAllPosts(postData, function(err, posts) {
                     if (posts !== undefined) {
                         var html = template({posts: posts});
+                        console.log('<<<<<<<')
                         $('#post-contents').empty().append(html);
                         $('.page-cont').imagesLoaded(function () {
                             $('.page-cont').masonry({

@@ -1,6 +1,4 @@
 let filesToCache = [
-'/',
-'/app.js',
 '/index.html',
 '/libs/bootstrap-3.3.6-dist/fonts/glyphicons-halflings-regular.eot',
 '/libs/bootstrap-3.3.6-dist/fonts/glyphicons-halflings-regular.svg',
@@ -10,6 +8,7 @@ let filesToCache = [
 '/libs/bootstrap-3.3.6-dist/js/bootstrap.js',
 '/libs/bootstrap-3.3.6-dist/js/npm.js',
 '/libs/bootstrap-checkbox.min.js',
+'/app.js',
 '/libs/bootstrap.min.js',
 '/libs/bootstrap3-typeahead.js',
 '/libs/bootstrap3_6.min.js',
@@ -17,7 +16,6 @@ let filesToCache = [
 '/libs/fbsdk.js',
 '/libs/handlebars-v4.0.5.js',
 '/libs/imagesloaded.pkgd.js',
-'/libs/jquery-1.10.2.min.js',
 '/libs/jquery-ui.min.js',
 '/libs/jquery.dropdown.js',
 '/libs/masonry.pkgd.min.js',
@@ -44,9 +42,7 @@ let filesToCache = [
 '/scripts/views/components/head_context.html',
 '/scripts/views/components/head_lang.html',
 '/scripts/views/components/login.html',
-'/scripts/views/components/mainHeader.html',
 '/scripts/views/components/profileMenu.html',
-'/scripts/views/components/search.html',
 '/scripts/views/components/singup.html',
 '/scripts/views/create/create.html',
 '/scripts/views/create/create.js',
@@ -56,6 +52,7 @@ let filesToCache = [
 '/scripts/views/landing/landing.js',
 '/scripts/views/request/request.html',
 '/scripts/views/request/request.js',
+'/libs/jquery-1.10.2.min.js',
 '/styles/bootstrap-material-design.css',
 '/styles/bootstrap-material-design.css.map',
 '/styles/bootstrap-select.min.css',
@@ -110,6 +107,7 @@ let filesToCache = [
 '/styles/less/_variables.less',
 '/styles/less/_welljumbo.less',
 '/styles/ripples.css',
+'/styles/loader.css',
 '/styles/ripples.css.map',
 '/styles/search-box.css',
 '/styles/style.css',
@@ -131,7 +129,7 @@ let filesToCache = [
 '/styles/webfonts/fa-solid-900.ttf',
 '/styles/webfonts/fa-solid-900.woff',
 '/styles/webfonts/fa-solid-900.woff2',
-'/styles/css/bootstrap.css',
+'/styles/bootstrap.css',
 '/styles/webfonts/glyphicons-halflings-regular.ttf',
 '/styles/webfonts/glyphicons-halflings-regular.woff',
 '/styles/webfonts/glyphicons-halflings-regular.woff2',
@@ -144,8 +142,12 @@ self.addEventListener('install', function(event) {
     console.log('Service worker installing...');
     // TODO 3.4: Skip waiting
     event.waitUntil(
-    caches.open('toller').then(function(cache) {
-     return cache.addAll(filesToCache);
+    caches.open('toller')
+    .then(function(cache) {
+        return cache.addAll(filesToCache);
+    })
+    .catch((err)=> {
+        console.error(err);
     })
     );
 
@@ -207,14 +209,18 @@ self.addEventListener('fetch', function(event) {
  } else {
      event.respondWith(
         caches.open('toller').then(function(cache) {
-          return cache.match(event.request).then(function (response) {
+          return cache.match(event.request)
+          .then(function (response) {
             return response || fetch(event.request).then(function(response) {
                 if (event.request.url.split(':')[0]!=="data") {
                   cache.put(event.request, response.clone());
                 }
               return response;
             });
-          });
+          })
+          .catch((err)=> {
+            console.log('error in fetching ', err)
+          })
         })
       );
    }

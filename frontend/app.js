@@ -323,7 +323,6 @@ requirejs.config({
 
         });
 }
-
 if (!('serviceWorker' in navigator)) {
     console.log('Service worker not supported');
     init()

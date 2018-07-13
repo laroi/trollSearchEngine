@@ -127,7 +127,7 @@ define([
             if (!$(e.target).closest('.page-item').hasClass('disabled')) {
                 var from = store.get('from');
                 var limit = store.get('limit');
-                store.set('from', ((from + 1) * limit));
+                store.set('from', ((parseInt(from, 10) + 1) * limit));
                 url.navigate('landing');
             }
         };
@@ -135,7 +135,7 @@ define([
             if (!$(e.target).closest('.page-item').hasClass('disabled')) {        
                 var from = store.get('from');
                 var limit = store.get('limit');
-                store.set('from', ((from - 1) * limit));
+                store.set('from', ((parseInt(from, 10) - 1) * limit));
                 url.navigate('landing');
             }
         };
@@ -406,13 +406,13 @@ define([
                         var html = template({posts: posts});
                         console.log('<<<<<<<')
                         $('#post-contents').empty().append(html);
-                        $('.page-cont').imagesLoaded(function () {
+                        //$('.page-cont').imagesLoaded(function () {
                             $('.page-cont').masonry({
                               // options
                               itemSelector: '.elem-cont',
                               isAnimated: true
                             });
-                        })
+                        //})
                         loadContext();
                         loadLangs();
                         updateUi();

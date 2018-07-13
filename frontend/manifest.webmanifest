@@ -1,0 +1,10 @@
+{
+  "name": "Find A Meme",
+  "short_name": "FAM",
+  "start_url": ".",
+  "display": "fullscreen",
+  "background_color": "#fff",
+  "description": "A site for finding memes",
+  "orientation": "portrait",
+  "theme_color": "#009688"
+}

@@ -7,6 +7,7 @@
   <title>Find A Meme - The Troll Search Engine</title>
   <meta name="description" content="Find The Meme">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="manifest" href="/manifest.webmanifest">
   <link rel="stylesheet" href="styles/bootstrap.css">
   <link rel="stylesheet" href="styles/style.css">
     <link rel="stylesheet" href="styles/loader.css">
@@ -166,21 +167,35 @@
 <div id="requestModel"></div>
 <div id="aboutModel"></div>
 
-
-<script src="libs/jquery-1.10.2.min.js"></script>
-<script src="libs/jquery-ui.min.js"></script>
-<script src="libs/bootstrap3_6.min.js"></script>
-<script src="libs/jquery.dropdown.js"></script>
-<script src="libs/material.js"></script>
-<script src="libs/ripples.js"></script>
-<script src="libs/bootstrap3-typeahead.js"></script>
-<script src="libs/tag-it.js"></script>
-<script src="libs/signals.js"></script>
-<script src="libs/crossroads.min.js"></script>
-<script src="libs/toastr.min.js"></script>
-<script src="libs/handlebars-v4.0.5.js"></script>
-<script src="libs/imagesloaded.pkgd.js"></script>
-<script src="libs/masonry.pkgd.min.js"></script>
-<script data-main="app" src="libs/require.js"></script>
+<script>
+[
+  'libs/jquery-1.10.2.min.js',
+  'libs/jquery-ui.min.js',
+  'libs/bootstrap3_6.min.js',
+  'libs/jquery.dropdown.js'  ,
+  'libs/material.js',
+  'libs/ripples.js',
+  'libs/bootstrap3-typeahead.js',
+  'libs/tag-it.js',
+  'libs/signals.js',
+  'libs/crossroads.min.js',
+  'libs/toastr.min.js',
+  'libs/handlebars-v4.0.5.js' , 
+  'libs/masonry.pkgd.min.js',
+  'libs/ripples.js',
+  'libs/bootstrap3-typeahead.js',
+  'libs/tag-it.js',
+  'libs/require.js'
+].forEach(function(src) {
+  var script = document.createElement('script');
+  script.src = src;
+  script.async = false;
+      console.log("loading ", src)
+  if (src==='libs/require.js') {
+    script.setAttribute("data-main", "app");
+  }
+  document.head.appendChild(script);
+});
+</script>
 </body>
 </html>

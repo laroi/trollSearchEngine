@@ -27,6 +27,7 @@ let filesToCache = [
 '/libs/tag-it.js',
 '/libs/text.js',
 '/libs/toastr.min.js',
+'/scripts/service-worker.js',
 '/scripts/collections/postCollection.js',
 '/scripts/collections/userCollection.js',
 '/scripts/config/config.js',
@@ -154,7 +155,17 @@ self.addEventListener('install', function(event) {
 });
 
 self.addEventListener('activate', function(event) {
-  console.log('Service worker activating...');
+  event.waitUntil(
+    caches.keys().then(function(cacheNames) {
+      return Promise.all(
+        cacheNames.filter(function(cacheName) {
+          return true
+        }).map(function(cacheName) {
+          return caches.delete(cacheName);
+        })
+      );
+    })
+  );
 });
 
 self.addEventListener('fetch', function(event) {

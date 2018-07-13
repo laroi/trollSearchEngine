@@ -1,4 +1,4 @@
-define(['controllers/requestController', 'controllers/storeController', 'models/postModel'], function (request, store, PostModel) {
+define(['scripts/controllers/requestController', 'scripts/controllers/storeController', 'scripts/models/postModel'], function (request, store, PostModel) {
     let user = () => {
         let context = [];
         let lang = [];

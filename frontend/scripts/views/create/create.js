@@ -1,8 +1,8 @@
 define([
  'text!./create.html',
- 'controllers/requestController',
- 'controllers/storeController',
- 'collections/userCollection'
+ 'scripts/controllers/requestController',
+ 'scripts/controllers/storeController',
+ 'scripts/collections/userCollection'
 ], function (html, request, store, userCollection) {
      var source   = $(html).html(),
         template = Handlebars.compile(source),

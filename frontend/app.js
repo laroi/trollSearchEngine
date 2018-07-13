@@ -1,7 +1,7 @@
 let init = () => {
 requirejs.config({
             //By default load any module IDs from js/lib
-            baseUrl: 'scripts',
+            baseUrl: '.',
             //except, if the module ID starts with "app",
             //load it from the js/app directory. paths
             //config is relative to the baseUrl, and
@@ -10,9 +10,11 @@ requirejs.config({
             waitSeconds : 0,
             paths: {
                 app: 'app',
-                crossroads: '../libs/crossroads.min',
-                signals: '../libs/signals',
-                text: '../libs/text'
+                crossroads: 'libs/crossroads.min',
+                $: 'libs/jquery.min',
+                jQuery: 'ibs/jquery.min',
+                signals: 'libs/signals',
+                text: 'libs/text'
             }
         });  
 /*requirejs([
@@ -33,14 +35,14 @@ requirejs.config({
 })*/
         // Start the main app logic.
         requirejs([
-            'views/landing/landing',
-            'views/detail/detail',
-            'controllers/urlController',
-            'controllers/userController',
-            'controllers/storeController',
-            'views/create/create',
-            'views/request/request',
-            'views/aboutus/aboutus',
+            'scripts/views/landing/landing',
+            'scripts/views/detail/detail',
+            'scripts/controllers/urlController',
+            'scripts/controllers/userController',
+            'scripts/controllers/storeController',
+            'scripts/views/create/create',
+            'scripts/views/request/request',
+            'scripts/views/aboutus/aboutus',
         ],
         function (landingView, detailView, url, user, store, createNewView, requestView, aboutView) {
         String.prototype.capitalize = function() {

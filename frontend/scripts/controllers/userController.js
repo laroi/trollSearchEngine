@@ -23,60 +23,80 @@ define(['./requestController', './storeController'], function (request, store) {
             callback(err, data);
         })
     };
-    var setToken = function(authResp, callback) {
-        if (authResp && Object.keys(authResp).length > 0) {
-            request.post('/api/token', {authResponse: authResp}, function(err, status, resp){
-            if (err) {
-                if (status === 404) {
-                    regNewUser(authResp.userID, authResp.accessToken, function(regErr, regData){
-                    if (!regErr && regData) {
-                            store.set('accessKey', authResp.accessToken);
-                            store.set('fbId', authResp.userID);
-                            store.set('username', regData.user.username);
-                            store.set('stars', regData.user.stars);
-                            store.set('picture', regData.user.picture);
-                            store.set('email', regData.user.email);
-                            store.set('userType', regData.user.type);
-                            store.set('userId', regData.user._id);
-                        }
-                        callback(regErr, regData ? regData.user : undefined);
-                    })
+    var setToken = function(email, password, callback) {
+        if (email && password) {
+            request.post('/api/token', {email: email, password:password}, function(err, status, resp){
+                if (!err && resp.token) {
+                    store.set('accessKey', resp.token);
+                    store.set('userId', resp.user._id);
+                    store.set('username', resp.user.name);
+                    store.set('email', resp.user.email);
+                    store.set('stars', resp.user.stars);
+                    store.set('picture', resp.user.picture);
+                    store.set('userType', resp.user.type);
+                    enableFeatures();
+                    $('#request').on('click', showRequest); 
+                    callback(userData);
                 } else {
-                    callback(err);
+                    callback('Login not successful');
                 }
-            } else {
-                if (authResp.accessToken && authResp.userID) {
-                    store.set('accessKey', authResp.accessToken);
-                    store.set('fbId', authResp.userID);
-                    request.get('/api'+resp.user, function(userErr, userData) {
-                        if (!userErr) {
-                            store.set('userId', userData._id);
-                            store.set('username', userData.name);
-                            store.set('email', userData.email);
-                            store.set('stars', userData.stars);
-                            store.set('picture', userData.picture);
-                            store.set('userType', userData.type);
-                            callback(userErr, userData);
-                        } else {
-                            callback(userErr);
-                        }            
-                    });
-                } else {
-                    callback('Facebook Login not successful');
-                }
-            }
           });
       } else {
-        console.log('auth resp not found', authResp);
+        console.log('incorrect data', email, password);
         callback('Could not authenticate');
       }
     };
-
+        var enableFeatures = function(){
+             $('#create').show();
+             $('#facebook_login').hide();
+             $('.isFavorite').prop("disabled", false)
+             $('.isMine').prop("disabled", false) 
+             if (store.get('userType') === 'admin') {
+                enableAdminFeatures();
+             } else {
+                disableAdminFeatures();
+             }
+             $('#request').css('color', '#555');
+             $('#request').css('cursor', 'pointer');
+             $('.fb_login').hide();
+             $('.logut').show();
+             //$('.user-photo').attr('src', store.get('picture'));
+             $('.user-icon').removeClass('fa-user-circle')
+             $('.user-icon').removeClass('far')
+             $('.user-icon').css('background-image', 'url('+encodeURIComponent(store.get('picture'))+')')
+             $('.user-name').text(store.get('username'))
+             $('#about_us').parent().css('border-bottom', '1px solid #555');
+             //landingView.render({});       
+        }
+        var disableFeatures = function(){
+            $('#create').hide();
+            $('.fb_login').show();
+            $('.isFavorite').prop("disabled", true)
+            $('.isMine').prop("disabled", true);
+            $('.logut').hide();
+            $('.user-name').text('You')     
+            $('.user-photo').attr('src', store.get('/image/user.png'));
+             $('#request').css('color', 'grey');
+             $('#request').css('cursor', 'not-allowed');
+             $('#request').off('click');
+             $('#about_us').parent().css('border-bottom', 'none');
+            disableAdminFeatures();
+            //landingView.render({})       
+        }
+        var disableAdminFeatures = function () {
+            $( ".isApproved" ).closest( "li" ).hide();
+        }
+        
+        var enableAdminFeatures = function () {
+            $( ".isApproved" ).closest( "li" ).show();
+        }
 
     
     return {
         setToken: setToken,
         regNewUser: regNewUser,
-        updateUser: updateUser
+        updateUser: updateUser,
+        disableFeatures: disableFeatures,
+        enableFeatures:enableFeatures
     }
 });

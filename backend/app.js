@@ -139,8 +139,8 @@ if (!Array.prototype.find) {
 }
 app.use('/images', express.static(__dirname + '/assets/uploads'));
 app.use('/images/profile', express.static(__dirname + '/assets/profile'));
-app.post('/login', route.login);
-app.post('/token', route.verifyFaceToken);
+app.post('/token', route.login);
+//app.post('/token', route.verifyFaceToken);
 app.delete('/token/:token', route.deleteToken);
 app.post('/user', route.addUser);
 app.get('/user/count', route.getUserCount);

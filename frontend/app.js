@@ -43,8 +43,9 @@ requirejs.config({
             'scripts/views/create/create',
             'scripts/views/request/request',
             'scripts/views/aboutus/aboutus',
+            'scripts/views/login/login',
         ],
-        function (landingView, detailView, url, user, store, createNewView, requestView, aboutView) {
+        function (landingView, detailView, url, user, store, createNewView, requestView, aboutView, loginView) {
         String.prototype.capitalize = function() {
             return this.charAt(0).toUpperCase() + this.slice(1);
         }
@@ -116,7 +117,6 @@ requirejs.config({
           };
         }
         $(document).ready(function(){
-            console.log('>>>>>')
             $.material.init();
             $("#s1").dropdown({"optionClass": "withripple"});
             $('.dropdown-menu').click(function(e) {
@@ -184,50 +184,6 @@ requirejs.config({
                   },
                   afterSelect: afterSelect($('#se_event'))
             });
-            var enableFeatures = function(){
-                 $('#create').show();
-                 $('#facebook_login').hide();
-                 $('.isFavorite').prop("disabled", false)
-                 $('.isMine').prop("disabled", false) 
-                 if (store.get('userType') === 'admin') {
-                    enableAdminFeatures();
-                 } else {
-                    disableAdminFeatures();
-                 }
-                 $('#request').css('color', '#555');
-                 $('#request').css('cursor', 'pointer');
-                 $('.fb_login').hide();
-                 $('.logut').show();
-                 //$('.user-photo').attr('src', store.get('picture'));
-                 $('.user-icon').removeClass('fa-user-circle')
-                 $('.user-icon').removeClass('far')
-                 $('.user-icon').css('background-image', 'url('+encodeURIComponent(store.get('picture'))+')')
-                 $('.user-name').text(store.get('username'))
-                 $('#about_us').parent().css('border-bottom', '1px solid #555');
-                 landingView.render({});       
-            }
-            var disableFeatures = function(){
-                $('#create').hide();
-                $('.fb_login').show();
-                $('.isFavorite').prop("disabled", true)
-                $('.isMine').prop("disabled", true);
-                $('.logut').hide();
-                $('.user-name').text('You')     
-                $('.user-photo').attr('src', store.get('/image/user.png'));
-                 $('#request').css('color', 'grey');
-                 $('#request').css('cursor', 'not-allowed');
-                 $('#request').off('click');
-                 $('#about_us').parent().css('border-bottom', 'none');
-                disableAdminFeatures();
-                landingView.render({});         
-            }
-            var disableAdminFeatures = function () {
-                $( ".isApproved" ).closest( "li" ).hide();
-            }
-            
-            var enableAdminFeatures = function () {
-                $( ".isApproved" ).closest( "li" ).show();
-            }
             var isUserLoggedIn = function() {
                 var acessKey = store.get('accessKey'),
                 isLoggedIn = false;
@@ -235,11 +191,14 @@ requirejs.config({
                     isLoggedIn = true;
                 }
                 return isLoggedIn;
-            }
+            };
             var showRequest = (e) => {
                 requestView.render();
-            }
-            var fblogin = function(e){
+            };
+            let showLogin = (e) => {
+                loginView.render();
+            };
+            /*var fblogin = function(e){
                 FB.getLoginStatus(function(response) {                 
                       if (response.status === 'connected') {
                         user.setToken(response.authResponse, function(err, data){
@@ -270,21 +229,19 @@ requirejs.config({
                       }
                 });
 
-            }
+            }*/
             let showAbout = (e) => {
                 aboutView.render();
             }
-            var init = function() {
-                if (isUserLoggedIn()) {
-                    enableFeatures()
-                    $('#request').on('click', showRequest);
-                } else {
-                    disableFeatures();
-                    $('#facebook_login').on('click', fblogin);
-                }
-                $('#about_us').on('click', showAbout);
-            }();
-        window.fbAsyncInit = function() {
+            if (isUserLoggedIn()) {
+                user.enableFeatures()
+                $('#request').on('click', showRequest);
+            } else {
+                user.disableFeatures();
+                $('#login').on('click', showLogin);
+            }
+                
+        /*window.fbAsyncInit = function() {
             FB.init({
               //appId      : '307608189577094', //Prod
               appId        : '307608722910374', //test
@@ -301,11 +258,11 @@ requirejs.config({
              js = d.createElement(s); js.id = id;
              js.src = "//connect.facebook.net/en_US/sdk.js";
              fjs.parentNode.insertBefore(js, fjs);
-           }(document, 'script', 'facebook-jssdk'));
+           }(document, 'script', 'facebook-jssdk'));*/
 
             //var html   = $(header).html();
             //console.log()
-
+            $('#about_us').on('click', showAbout);
             $('#create').on('click', createNewView.render);
             crossroads.bypassed.add(function(request){
                 url.navigate('landing');
@@ -323,6 +280,7 @@ requirejs.config({
 
         });
 }
+
 if (!('serviceWorker' in navigator)) {
     console.log('Service worker not supported');
     init()
@@ -336,3 +294,4 @@ if (!('serviceWorker' in navigator)) {
         console.log('Registration failed:', error);
     });
 }
+

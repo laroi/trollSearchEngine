@@ -338,10 +338,12 @@ var routes = function () {
     });
     },
     downloadImage = function (req, res){    
-        postId = req.params.id;
+        let postId = req.params.id;
+        let imgSize = undefined;
         Post.findById(postId, function(err, post){
             if (!err) {
                 var fileName = post.image.url.split('/')[2]
+                imgSize = post.image.size
                 fs.stat(uploadPath+fileName, function(statErr, statData) {
                     if (!statErr) {
                         res.writeHead(200, {
@@ -368,9 +370,26 @@ var routes = function () {
                             console.log('selected gravity ', gravity)
                             return gravity
                         }
+                        let getRandomArbitrary =  (min, max) => {
+                            return Math.floor(Math.random() * (max - min) + min);
+                        }
+                        let getLogoOffset = (size) => {
+                            if (size && size.width && size.height) {
+                                console.log('size -> ', size.width , size.height)
+                                let x = getRandomArbitrary(0, size.width - 150)
+                                let y = getRandomArbitrary(0, size.height - 60)
+                                console.log('Offest -> ', x , y)
+                                return x + "," + y
+                            }
+                            console.log('Offest -> ', '0' ,'0')
+                            return "0,0"
+                        };
                         gm(readStream)
-                        .gravity(getGravity())
-                        .draw(['text 0,0 findameme.com'])
+                        //.gravity(getGravity())
+                        //.fill('#bdbdbd')
+                        //.font( __dirname + '/../assets/fonts/amptmann.ttf')
+                        //.fontSize(getFontSize(1000))
+                        .draw('image Over ' + getLogoOffset(imgSize)+ ' 0,0 '+__dirname + '/../assets/logos/logo.png')
                         .stream(function (err, stdout, stderr) {                          
                           stdout.pipe(res);
                         });

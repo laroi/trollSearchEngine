@@ -3,8 +3,9 @@ define([
 '../../controllers/storeController',
 '../../controllers/urlController',
 '../../controllers/userController',
- 'text!./login.html'
-], function (request, store, url, user, html) {
+ 'text!./login.html',
+ '../register/register'
+], function (request, store, url, user, html, register) {
      var source   = $(html).html(),
         template = Handlebars.compile(source),
         imageData;
@@ -16,6 +17,11 @@ define([
                     toastr.error('Could not authenticate you', 'Troller Says')    
                 }
             })
+        };
+        
+        let showReg = () => {
+            $('#login-modal').modal( 'hide' ).data( 'bs.modal', null );
+           register.render();
         }
         var loginView = function () {
             var render;
@@ -25,6 +31,7 @@ define([
                     $('#login-modal').modal({show: true}); 
                     //$('#login-modal').on('hidden.bs.modal', gotoHome);
                     $('#btn-login').on('click', login)
+                    $('#btn-show-login').on('click', showReg);
             }
             return {
                 render: render

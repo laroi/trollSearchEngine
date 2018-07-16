@@ -16,6 +16,7 @@ var user = new Schema({
     picture : String,
     phone : String,
     gender : String,
+    age : Number,
     stars: [String]
 });
 

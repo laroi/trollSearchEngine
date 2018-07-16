@@ -1,6 +1,6 @@
 var MongoClient = require('mongodb').MongoClient;
 var url = 'mongodb://localhost:27017/trolls';
-var imgLoc = '/home/akbar/mydisk/projects/trollSearchEngine/backend/assets/uploads/';
+var imgLoc = '/home/akbar/dev/trollSearchEngine/backend/assets/uploads/';
 var fs = require('fs');
 var gm = require('gm');
 
@@ -13,7 +13,7 @@ MongoClient.connect(url, function(err, db) {
             var fileName = data.image.url.split('/')[2];
             var imgPath = imgLoc + fileName
             gm(imgPath)
-              .resize('150')
+              .resize('100')
               .gravity('Center')
               .write(imgLoc+'thumb/'+fileName, function (err) {
                 if (!err) {

@@ -1,0 +1,51 @@
+<script id="entry-template" type="text/x-handlebars-template">
+<div class="modal" id="register-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="modal-title"><b>Login</b></span>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body request-model-body">
+                <div class="form-group">
+                    <div class="form-group label-floating is-empty">
+                        <label for="login-email" class="control-label">Email</label>
+                        <input type="email" class="form-control" id="login-email" value="">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="form-group label-floating is-empty">
+                        <label for="login-password" class="control-label">Password</label>
+                        <input type="password" class="form-control" id="login-password" value="">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="form-group label-floating is-empty">
+                        <label for="login-username" class="control-label">Username</label>
+                        <input type="text" class="form-control" id="login-username" value="">
+                    </div>
+                </div>
+                <div class="form-group is-empty is-fileinput" style="overflow:hidden">
+                    <label for="prof-img" class="col-md-2 control-label">File</label>
+                    <div class="col-md-12" style="padding-left:0">
+                        <input type="text" readonly="" class="form-control" placeholder="Browse...">
+                        <input type="file" id="prof-img" multiple="">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="form-group label-floating is-empty">
+                        <label for="login-phone" class="control-label">Phone</label>
+                        <input type="tel" class="form-control" id="login-phone" value="">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-register" class="btn btn-primary">Login</button>
+            </div>
+        </div>
+    </div>
+</div>
+</script>

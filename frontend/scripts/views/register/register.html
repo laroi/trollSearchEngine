@@ -3,12 +3,12 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <span class="modal-title"><b>Login</b></span>
+                <span class="modal-title"><b>Register</b></span>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body request-model-body">
+            <div class="modal-body register-model-body">
                 <div class="form-group">
                     <div class="form-group label-floating is-empty">
                         <label for="login-email" class="control-label">Email</label>
@@ -23,17 +23,42 @@
                 </div>
                 <div class="form-group">
                     <div class="form-group label-floating is-empty">
-                        <label for="login-username" class="control-label">Username</label>
-                        <input type="text" class="form-control" id="login-username" value="">
+                        <label for="login-name" class="control-label">Name</label>
+                        <input type="text" class="form-control" id="login-name" value="">
                     </div>
                 </div>
-                <div class="form-group is-empty is-fileinput" style="overflow:hidden">
-                    <label for="prof-img" class="col-md-2 control-label">File</label>
-                    <div class="col-md-12" style="padding-left:0">
-                        <input type="text" readonly="" class="form-control" placeholder="Browse...">
-                        <input type="file" id="prof-img" multiple="">
+                
+                <div class="row">
+                    <div class="form-group is-empty col-md-6 is-fileinput" style="overflow:hidden">
+                        <label for="prof-img" class="col-md-4 control-label" style="padding-left:0">Profile Image</label>
+                        <div class="col-md-8" style="padding-left:0">
+                            <input type="text" readonly="" class="form-control" placeholder="Browse...">
+                            <input type="file" id="prof-img" multiple="">
+                        </div>
                     </div>
+                    <div class=" form-group dropdown">
+                       <span data-target="#" class="user-name dropdown-toggle hidden-xs hidden-sm" data-toggle="dropdown">My Gender Is</span>
+                       <span data-toggle="dropdown"><b class="caret hidden-xs hidden-sm"></b></span>
+                       <div class="dropdown-menu">
+                            <ul class="">
+                                <li>Male</li>
+                                <li>Female</li>
+                                <li>None of yo business</li>
+                            </ul>
+                       </div>
+                   </div>
+                   <div class=" form-group dropdown">
+                       <span data-target="#" class="user-name dropdown-toggle hidden-xs hidden-sm" data-toggle="dropdown">My Age Is</span>
+                       <span data-toggle="dropdown"><b class="caret hidden-xs hidden-sm"></b></span>
+                       <div class="dropdown-menu">
+                            <ul class="">
+                                <li>Above 18 </li>
+                            </ul>
+                       </div>
+                   </div>   
                 </div>
+                
+                
                 <div class="form-group">
                     <div class="form-group label-floating is-empty">
                         <label for="login-phone" class="control-label">Phone</label>
@@ -43,7 +68,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" id="btn-register" class="btn btn-primary">Login</button>
+                <button type="button" id="btn-register" class="btn btn-primary">Register</button>
             </div>
         </div>
     </div>

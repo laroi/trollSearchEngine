@@ -10,6 +10,9 @@ var request = require('request');
 var logger = require('../utils/logger');
 var facebook_app_access = "";
 var fs = require('fs');
+var uuid = require('uuid');
+var path = require('path');
+var gm = require('gm');
 const profImageUploadPath = __dirname + '/../assets/profile/thumb/';
 var getIp = function (req) {
     return req.headers['x-forwarded-for'] || req.connection.remoteAddress || req.socket.remoteAddress || req.connection.socket.remoteAddress;
@@ -71,36 +74,70 @@ var init = function () {
         }
     });
 }();
+
+let uploadProfPic = (data) => {
+    return new Promise((reject, resolve)=> {
+        if (data) {
+            var filename = uuid.v1();
+            var fileLoc = profUploadPath + filename;
+            var size = undefined;
+            data = data.replace(/^data:image\/png;base64,/,'')
+            data = new Buffer(data,'base64')
+            gm(data)
+            .setFormat('jpg')            
+            .write(fileLoc + '.jpg', function(err){
+                if (!err) {
+                    resolve(fileLoc + '.jpg')
+                } else {
+                    reject(err)
+                }            
+            })
+         } else {
+            resolve(false);
+         }
+    })
+}
 var routes = function () {
     register = function (req, res) {
+        let email = req.body.email,
+            password = req.body.password,
+            phone = req.body.phone,
+            name = req.body.name,
+            picture = req.body.picture;
         if (req.body.email && req.body.password) {
             var verification = generateToken();
              bcrypt.genSalt(10, function(err, salt) {
                 bcrypt.hash(req.body.password, salt, function(err, hash) {
-                    var user = new User({'email': req.body.email, password: hash, 'verification': verification});
-                    console.log(JSON.stringify(user));
-                    user.save(function(err, userData) {
-                        if(!err) {
-                            mailer(req.body.email, verification, function(mailerr) {
-                                if (!mailerr) {
-                                    console.log("Mail send successfully");
-                                } else {
-                                    console.error("Mail sending error");
-                                }
-                            });
-                            createAccesstoken(undefined, userData.id, function (token) {
-                                delete userData.password;
-                                res.status(200).send(JSON.stringify({token: token, user: userData}));
-                            });
-                            
-                        } else {
-                            console.error('Saving Failed' + JSON.stringify(err));
-                            res.status(500).send({err: 'Could not save user'});
+                    uploadProfPic(picture)
+                    .then((picturePath)=> {
+                        let userDetails = {'email': req.body.email, password: hash, 'verification': verification, 'phone': phone};
+                        if (picturePath) {
+                            userDetails.picture = picturePath;
                         }
-                    });
+                        console.log(JSON.stringify(user));
+                        let user = new User(userDetails);
+                        user.save(function(err, userData) {
+                            if(!err) {
+                                mailer(req.body.email, verification, function(mailerr) {
+                                    if (!mailerr) {
+                                        console.log("Mail send successfully");
+                                    } else {
+                                        console.error("Mail sending error");
+                                    }
+                                });
+                                createAccesstoken(undefined, userData.id, function (token) {
+                                    delete userData.password;
+                                    res.status(200).send(JSON.stringify({token: token, user: userData}));
+                                });
+                                
+                            } else {
+                                console.error('Saving Failed' + JSON.stringify(err));
+                                res.status(500).send({err: 'Could not save user'});
+                            }
+                        });
+                    });                    
                 });
-            });
-           
+            });           
         } else {
             res.status(400).send({err:"Parameters required"});
         }

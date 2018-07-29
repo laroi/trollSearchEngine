@@ -27,7 +27,15 @@ define([
                 return true;
             }
             if (validate()) {
-                request.post('/api/')
+                let postData = {email: email, password: password, name: name, phone: phone, picture: imageData}
+                request.post('/api/user', postData, function (err, data) {
+                    if (!err) {
+                        toastr.success('Your registration is accepted. Please verify the email address to complete the process!', 'FTM Says')
+                        $('#register-modal').modal( 'hide' ).data( 'bs.modal', null );
+                    } else {
+                        toastr.error('Could not accept registration request', 'FTM Says')   
+                    }
+                })
             }
         }
         var registerView = function () {
@@ -46,9 +54,6 @@ define([
                                 imageData = e.target.result;
                                 //$('.img-preview').attr('src', imageData);
                                 imageData = {type: input.files[0].type.split('/')[1], image:imageData.replace(/^data:image\/(png|jpg|jpeg);base64,/, "")};
-                                if (file.imageUrl) {
-                                    imageData.name = imageUrl.split("/")[1]
-                                }
                             }
                             reader.readAsDataURL(input.files[0]);
                         }

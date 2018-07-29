@@ -77,14 +77,15 @@ var isAuthenticated = function (admin) {
             var tok = req.query.accessToken || req.headers['authorization'];
             access.findOne({token: tok}, function (err, data) {
                 if (!err && data && blackListedUsers.indexOf(data.user) < 0) {
-                        if (data.type === 'admin') {
+                        //if (data.type === 'admin') {
                             req.isAdmin = true;
-                            logger.log(1, 'auth admin', 'Admin authenticated admin ' + data.user + ' with token ' + tok, 'app.js', getIp(req), undefined)                                   
+                            req.userId = data.user;
+                            logger.log(1, 'auth', ' authenticated user ' + data.user + ' with token ' + tok, 'app.js', getIp(req), undefined)                                   
                             next();
-                        } else {
+                        /*} else {
                             logger.log(3, 'auth admin', 'could not authenticate user ' + data.user + ' as admin with token' + tok, 'app.js', getIp(req), undefined)
                             res.status(401).send({err:'unauthorized'});
-                        }                    
+                        } */                   
                     return;
                 } else {
                     logger.log(3, 'auth', 'could not authenticate user ' + (data ? data.user : '')+ ' with token' + tok, 'app.js', getIp(req), err)
@@ -142,7 +143,7 @@ app.use('/images/profile', express.static(__dirname + '/assets/profile'));
 app.post('/token', route.login);
 //app.post('/token', route.verifyFaceToken);
 app.delete('/token/:token', route.deleteToken);
-app.post('/user', route.addUser);
+app.post('/user', route.register);
 app.get('/user/count', route.getUserCount);
 app.put('/user', isAuthenticated(false), route.updatePassword);
 app.put('/user/:id', isAuthenticated(false), route.updateUser);

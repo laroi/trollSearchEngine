@@ -205,10 +205,14 @@ self.addEventListener('fetch', function(event) {
             })
         }
         console.log('first log in fail')
-       return db.get('trolls').
-       then((data)=> {
+       return db.get('trolls')
+       .then((data)=> {
         console.log(data.data)
         return new Response(JSON.stringify(data.data));
+       })
+       .catch((err)=> {
+            console.error(err);
+            return new Response(JSON.stringify([]));
        })
         /*db.get('trolls').then(function (doc) {
             console.log(JSON.stringify(doc.data));
@@ -223,7 +227,7 @@ self.addEventListener('fetch', function(event) {
           return cache.match(event.request)
           .then(function (response) {
             return response || fetch(event.request).then(function(response) {
-                if (event.request.url.split(':')[0]!=="data") {
+                if (event.request.url.split(':')[0]!=="data" && event.request.method !== "POST") {
                   cache.put(event.request, response.clone());
                 }
               return response;

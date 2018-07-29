@@ -13,7 +13,7 @@ var fs = require('fs');
 var uuid = require('uuid');
 var path = require('path');
 var gm = require('gm');
-const profImageUploadPath = __dirname + '/../assets/profile/thumb/';
+const profImageUploadPath = __dirname + '/../assets/profile/';
 var getIp = function (req) {
     return req.headers['x-forwarded-for'] || req.connection.remoteAddress || req.socket.remoteAddress || req.connection.socket.remoteAddress;
 }
@@ -39,7 +39,9 @@ var createAccesstoken = function (timeToLive, user, email, type, token, callback
     if (timeToLive) {
         ttl = timeToLive
     }
-    //token = generateToken()
+    if (!token) {
+        token = generateToken()
+    }
     var access = {token: token, user: user, ttl: ttl ,email:email, type: type};
     var options = { upsert: true, new: true, setDefaultsOnInsert: true };
     accessToken.findOneAndUpdate({user: user}, access, options, function(err, data) {
@@ -60,6 +62,7 @@ var verifytoken = function (token, callback) {
         }
     });
 }
+/*
 var init = function () {
     //production
     //var appTokenUrl = 'https://graph.facebook.com/oauth/access_token?client_id=307608189577094&client_secret=abbe305279c252a30352d4c2591a5360&grant_type=client_credentials';
@@ -73,21 +76,45 @@ var init = function () {
             console.error('error in getting access token');
         }
     });
-}();
-
+}();*/
+let saveThumb = function (fileName) {
+    return new Promise((resolve, reject)=> {
+        gm(profImageUploadPath+fileName)
+       .setFormat('jpg')      
+       .resize('20')
+       .gravity('Center')
+       .write(profImageUploadPath+'thumb/'+fileName, function (err) {
+            if (!err) {
+                console.log('Created thumbile for filename')
+                resolve(profImageUploadPath+'thumb/'+fileName);  
+            } else {
+                console.error('could not resize '+ profImageUploadPath+fileName, err);
+                reject();  
+            }
+        });
+    })
+}
 let uploadProfPic = (data) => {
-    return new Promise((reject, resolve)=> {
+    return new Promise((resolve, reject)=> {
         if (data) {
             var filename = uuid.v1();
-            var fileLoc = profUploadPath + filename;
+            var fileLoc = profImageUploadPath + filename;
             var size = undefined;
             data = data.replace(/^data:image\/png;base64,/,'')
             data = new Buffer(data,'base64')
             gm(data)
-            .setFormat('jpg')            
+            .setFormat('jpg')
+            .resize('150')         
             .write(fileLoc + '.jpg', function(err){
                 if (!err) {
-                    resolve(fileLoc + '.jpg')
+                    saveThumb(filename+'.jpg')
+                    .then((thumbLoc)=> {
+                        console.log('Upload prfpic completed')
+                        resolve(filename+'.jpg')
+                    })
+                    .catch((err)=> {
+                        reject(err);
+                    })
                 } else {
                     reject(err)
                 }            
@@ -108,14 +135,14 @@ var routes = function () {
             var verification = generateToken();
              bcrypt.genSalt(10, function(err, salt) {
                 bcrypt.hash(req.body.password, salt, function(err, hash) {
-                    uploadProfPic(picture)
+                    uploadProfPic(picture.image)
                     .then((picturePath)=> {
-                        let userDetails = {'email': req.body.email, password: hash, 'verification': verification, 'phone': phone};
+                        let userDetails = {'email': req.body.email, password: hash, type: 'user', 'verification': verification, 'phone': phone};
                         if (picturePath) {
-                            userDetails.picture = picturePath;
-                        }
-                        console.log(JSON.stringify(user));
+                            userDetails.picture = {full :'/prof/'+picturePath, thumb: '/prof/thumb/'+picturePath};
+                        }                        
                         let user = new User(userDetails);
+                        console.log(JSON.stringify(user));
                         user.save(function(err, userData) {
                             if(!err) {
                                 mailer(req.body.email, verification, function(mailerr) {
@@ -125,10 +152,11 @@ var routes = function () {
                                         console.error("Mail sending error");
                                     }
                                 });
-                                createAccesstoken(undefined, userData.id, function (token) {
+                                res.status(200).send(JSON.stringify({user: userData}));
+                                /*createAccesstoken(undefined, userData.id, userData.email, userData.type, undefined, function (token) {
                                     delete userData.password;
                                     res.status(200).send(JSON.stringify({token: token, user: userData}));
-                                });
+                                });*/
                                 
                             } else {
                                 console.error('Saving Failed' + JSON.stringify(err));
@@ -142,6 +170,7 @@ var routes = function () {
             res.status(400).send({err:"Parameters required"});
         }
     };
+    /*
     addUser = function(req, res) {
         var userObj = {
             fbId : req.body.fbId,
@@ -193,7 +222,7 @@ var routes = function () {
                 }
             });
         })
-    };
+    };*/
     login = function (req, res) {
             var email,
             password;
@@ -202,11 +231,22 @@ var routes = function () {
             password = req.body.password;
             User.findOne({email:email}, function(userErr, userData) {
                 if (!userErr && userData) {
-                    if (bcrypt.compareSync(password, userData.password)) {
-                        createAccesstoken(undefined, userData._id, function (token) {
-                            delete userData.password;
-                            res.status(200).send(JSON.stringify({token: token, user: userData}));
-                        });
+                    console.log(userData);
+                    if (userData.status && userData.status !== "inactive") {
+                        if (bcrypt.compareSync(password, userData.password)) {
+                            createAccesstoken(undefined, userData._id, userData.email, userData.type, undefined, function (err, token) {
+                                if (!err) {
+                                    delete userData.password;
+                                    res.status(200).send(JSON.stringify({token: token.token, user: userData}));
+                                } else {
+                                    res.status(401).send({err: 'Could not generate token'});
+                                }
+                            });
+                        } else {
+                            res.status(401).send({err: "Invalid Credentials"})    
+                        }
+                    } else {
+                        res.status(401).send({err: "User not active"})
                     }
                 } else {
                     res.status(404).send({err:"User Not Found"})
@@ -238,9 +278,9 @@ var routes = function () {
             email = req.query.email;
         User.findOne({where: {email: email, verification: code}}, function (err, data) {
             if (!err) {
-                createAccesstoken(undefined, data._id, function (token) {
+                createAccesstoken(undefined, data._id, data.email, data.type, undefined, function (token) {
                     delete userData.password;
-                    res.status(200).send(JSON.stringify({token: token, user: data}));
+                    res.status(200).send(JSON.stringify({token: token.token, user: data}));
                 });
             } else {
                 res.status(404).send({err: 'User not found'});
@@ -259,6 +299,7 @@ var routes = function () {
             }
         })
     }
+    /*
     verifyFaceToken = function(req, res) {
         if (!req.body.authResponse) {
             res.status(400).send();
@@ -299,7 +340,7 @@ var routes = function () {
                 res.status(500).send();
             }
         });
-    };
+    };*/
     logout = function (req, res) {};
     var getUserDetail = function (req, res) {
         var id = req.params.id;
@@ -455,8 +496,8 @@ var routes = function () {
         login: login,
         updatePassword: updatePassword,
         verifyUser: verifyUser,
-        verifyFaceToken: verifyFaceToken,
-        addUser: addUser,
+ //       verifyFaceToken: verifyFaceToken,
+ //       addUser: addUser,
         getUserDetail: getUserDetail,
         updateUser: updateUser,
         listContexts: listContexts,

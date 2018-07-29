@@ -139,7 +139,7 @@ define([
                 url.navigate('landing');
             }
         };
-        var applyFilter = function (e) {
+        let setFilters = () => {
             var f_lang = $('.language-list').val(),
                 f_context=$('.context-list').val(),
                 isPlain = $('.isPlain').is(':checked'),
@@ -148,32 +148,35 @@ define([
                 isMine = $('.isMine').is(':checked'),
                 isApproved = $('.isApproved').is(':checked'),
                 filtObj = {};
-                if (f_lang && f_lang !== "0") {
-                    filtObj.lang = f_lang;
-                }
-                if (isPlain) {
-                    filtObj.isPlain = isPlain;
-                }
-                if (isAdult) {
-                    filtObj.isAdult = isAdult;
-                }
-                if (isFavorite) {
-                    filtObj.isFavorite = isFavorite;
-                }
-                if (isMine) {
-                    filtObj.userId = store.get('userId');
-                    filtObj.username = store.get('username');
-                }
-                if (f_context && f_context !== "0") {
-                    filtObj.context = f_context;
-                }
-                if (store.get('userType') === 'admin' && isApproved) {
-                    filtObj.isApproved = false;
-                }
-                store.set('filters', filtObj);                    
-                $('.dropdown.open').removeClass('open');
-                store.set('from', 0);
-                url.navigate('landing');
+            if (f_lang && f_lang !== "0") {
+                filtObj.lang = f_lang;
+            }
+            if (isPlain) {
+                filtObj.isPlain = isPlain;
+            }
+            if (isAdult) {
+                filtObj.isAdult = isAdult;
+            }
+            if (isFavorite) {
+                filtObj.isFavorite = isFavorite;
+            }
+            if (isMine) {
+                filtObj.userId = store.get('userId');
+                filtObj.username = store.get('username');
+            }
+            if (f_context && f_context !== "0") {
+                filtObj.context = f_context;
+            }
+            if (store.get('userType') === 'admin' && isApproved) {
+                filtObj.isApproved = false;
+            }
+            store.set('filters', filtObj);        
+        }
+        var applyFilter = function (e) {
+            setFilters();
+            $('.dropdown.open').removeClass('open');
+            store.set('from', 0);
+            url.navigate('landing');
         };
         var updateUi = function (type, key) {
             var mapping = {
@@ -188,7 +191,7 @@ define([
                     isPlain: '.isPlain',
                     isAdult: '.isAdult',
                     isFavorite: '.isFavorite',
-                    userId: '.isMine'                    
+//                    userId: '.isMine'                    
                 }
                 $('.se-control').val('');
                 $('.group-list').prop('selectedIndex', 0);                
@@ -401,10 +404,10 @@ define([
                 if (query.lang) {
                     postData.language = query.lang;
                 }
+                $('#detail-cont').modal( 'hide' ).data( 'bs.modal', null );
                 postCollection.getAllPosts(postData, function(err, posts) {
                     if (posts !== undefined) {
                         var html = template({posts: posts});
-                        console.log('<<<<<<<')
                         $('#post-contents').empty().append(html);
                         //$('.page-cont').imagesLoaded(function () {
                             $('.page-cont').masonry({
@@ -416,24 +419,25 @@ define([
                         loadContext();
                         loadLangs();
                         updateUi();
-                        $('.edit').on('click', editPost);
-                        $('.delete').on('click', deletePost);                    
+                        $('.edit').off('click').on('click', editPost);
+                        $('.delete').off('click').on('click', deletePost);                    
                         $('.btn-basic-search').off().on('click', search)
-                        $('.page-nav').on('click', paginate)
-                        $('.btn-apply-filter').on('click', applyFilter);
-                        $('#advanced-search').off('click').on('click', advancedSearch);
-                        highlight.highlight();
-                        $('.hl-close').on('click', cancelFilter);
-                        $('.star-btn').on('click', processStar);
-                        $('.fav').on('click', processLike);
-                        $('.user-img').on('click', processUserClick);
-                        $('.page-prev').on('click', navPrev);
-                        $('.page-next').on('click', navNext);
-                        $('.thumbImgCont').on('click', thumbClick);
-                        $('#logout').on('click', logout);
-                        $('.more').on('click', showMore);
-                        $('body').on('click', closeAllPops)
+                        $('.page-nav').off('click').on('click', paginate)
+                        $('.btn-apply-filter').off('click').on('click', applyFilter);
+                        $('#advanced-search').off('click').on('click', advancedSearch);                        
+                        $('.hl-close').off('click').on('click', cancelFilter);
+                        $('.star-btn').off('click').on('click', processStar);
+                        $('.fav').off('click').on('click', processLike);
+                        $('.user-img').off('click').on('click', processUserClick);
+                        $('.page-prev').off('click').on('click', navPrev);
+                        $('.page-next').off('click').on('click', navNext);
+                        $('.thumbImgCont').off('click').on('click', thumbClick);
+                        $('#logout').off('click').on('click', logout);
+                        $('.more').off('click').on('click', showMore);
+                        $('body').off('click').on('click', closeAllPops)
                     }
+                    setFilters();
+                    highlight.highlight();
                 });              
             }
             return {

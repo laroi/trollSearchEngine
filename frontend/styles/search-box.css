@@ -23,7 +23,10 @@
 }
 .advanced-search {
     width:400px;
-} 
+}
+.elem-cont {
+    max-width:150px!important;
+}
 .dropdown-menu-right {
   position:absolute;
   text-align: center;
@@ -199,7 +202,7 @@ max-width: 75%;
         padding-left:10px !important;
     }
     .elem-cont {
-        width:45%;
+        width:36.7%;
     }
     .user-photo {
         font-size:20px;
@@ -257,8 +260,6 @@ max-width: 75%;
         font-size:20px;
     }
     .panel-body {
-        padding-right:15px;
-        padding-left:15px;
         padding-bottom:5px;
     }
     .pan-count, .pan-btn {
@@ -294,13 +295,13 @@ max-width: 75%;
         width: 56%;
         padding-left:5px;
 }
+.elem-cont {
+        width:42.9%;
+    }
 .user-photo {
         font-size:20px;
     }
     .panel-body {
-        padding-right:7px;
-        padding-left:7px;
-        padding-top:5px;
         padding-bottom:5px;
     }
     .pan-count, .pan-btn {
@@ -337,14 +338,14 @@ max-width: 75%;
     .navbar-brand {
         padding-left:5px !important;
     }
+    .elem-cont {
+        width:42.9%;
+    }
     .user-photo {
         font-size:20px;
     }
     .panel-body {
-        padding-right:7px;
-        padding-left:7px;
         padding-bottom:5px;
-        padding-top:5px;
     }
     .pan-count, .pan-btn {
         margin-right:2.5px;

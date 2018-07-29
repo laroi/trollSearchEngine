@@ -3,22 +3,34 @@ define([
 '../../controllers/storeController',
 '../../controllers/urlController',
 '../../controllers/userController',
+'scripts/views/request/request',
  'text!./login.html',
  '../register/register'
-], function (request, store, url, user, html, register) {
+], function (request, store, url, user, requestView, html, register) {
      var source   = $(html).html(),
         template = Handlebars.compile(source),
         imageData;
        
         let login = () => {
-            user.setToken(email, password, function(err, data) {
-                if (err) {
-                    console.error('Some error happened ', err);
-                    toastr.error('Could not authenticate you', 'Troller Says')    
-                }
-            })
+            let email = $('#login-email').val().trim(),
+                password = $('#login-password').val().trim();
+            if (email && password) {            
+                user.setToken(email, password, function(err, data) {
+                    if (err) {
+                        console.error('Some error happened ', err);
+                        toastr.error('Could not authenticate you', 'Troller Says')    
+                    } else {
+                        $('#login-modal').modal( 'hide' ).data( 'bs.modal', null );
+                        $('#request').on('click', showRequest);
+                    }
+                })
+            } else {
+                toastr.error('Please fill username and password', 'FTM Says')   
+            }
         };
-        
+        var showRequest = (e) => {
+                requestView.render();
+            };
         let showReg = () => {
             $('#login-modal').modal( 'hide' ).data( 'bs.modal', null );
            register.render();

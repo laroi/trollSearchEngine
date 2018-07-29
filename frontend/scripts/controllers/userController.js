@@ -35,8 +35,8 @@ define(['./requestController', './storeController'], function (request, store) {
                     store.set('picture', resp.user.picture);
                     store.set('userType', resp.user.type);
                     enableFeatures();
-                    $('#request').on('click', showRequest); 
-                    callback(userData);
+                    //$('#request').on('click', showRequest); 
+                    callback(err, resp.user);
                 } else {
                     callback('Login not successful');
                 }
@@ -63,7 +63,7 @@ define(['./requestController', './storeController'], function (request, store) {
              //$('.user-photo').attr('src', store.get('picture'));
              $('.user-icon').removeClass('fa-user-circle')
              $('.user-icon').removeClass('far')
-             $('.user-icon').css('background-image', 'url('+encodeURIComponent(store.get('picture'))+')')
+             $('.user-icon').css('background-image', 'url('+encodeURIComponent(store.get('picture').thumb)+')')
              $('.user-name').text(store.get('username'))
              $('#about_us').parent().css('border-bottom', '1px solid #555');
              //landingView.render({});       

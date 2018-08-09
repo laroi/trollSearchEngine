@@ -139,15 +139,77 @@ define([
                 url.navigate('landing');
             }
         };
-        let setFilters = () => {
+        checkFilters = () => {
+        };
+        let setFilters = (query) => {
+            let filtObj = {};
+            let postData = {};
+            var from = query.from || 0;
+            if (from) {
+                postData.from = from;
+                store.set('from', from);
+            }
+            if (query.search) {
+                postData.search = query.search;
+            }
+            if (query.se_title) {
+                postData.title = query.se_title
+            }
+            if (query.se_tag) {
+                postData.tag = query.se_tag
+            }
+            if (query.se_actor) {
+                postData.actor = query.se_actor
+            }
+            if (query.se_movie) {
+                postData.movie = query.se_movie
+            }
+            if (query.se_character) {
+                postData.character = query.se_character
+            }
+            if (query.se_event) {
+                postData.event = query.se_event
+            }
+            if (query.context) {
+                postData.context = query.context;
+                filtObj.context = query.context;
+            }
+            if (query.isPlain) {
+                postData.isPlain = query.isPlain;
+                filtObj.isPlain = query.isPlain;
+            }
+            if (query.isAdult) {
+                postData.isAdult = query.isAdult
+                filtObj.isAdult = query.isAdult;
+            }
+            if (query.isApproved && store.get('userType') === 'admin') {
+                postData.isApproved = query.isApproved
+                filtObj.isApproved = true;
+            }
+            if (query.isFavorite) {
+                postData.isFavorite = (store.get('stars') || []).join(',') || null;
+                filtObj.isFavorite = true;
+            }
+            if (query.userId) {
+                postData.userId = query.userId
+                filtObj.userId = query.userId;
+            }
+            if (query.lang) {
+                postData.language = query.lang;
+                filtObj.lang = query.lang;
+            }
+            store.set('filters', filtObj);
+            return postData;    
+        }
+        var applyFilter = function (e) {
             var f_lang = $('.language-list').val(),
-                f_context=$('.context-list').val(),
-                isPlain = $('.isPlain').is(':checked'),
-                isAdult = $('.isAdult').is(':checked'),
-                isFavorite = $('.isFavorite').is(':checked'),
-                isMine = $('.isMine').is(':checked'),
-                isApproved = $('.isApproved').is(':checked'),
-                filtObj = {};
+            f_context=$('.context-list').val(),
+            isPlain = $('.isPlain').is(':checked'),
+            isAdult = $('.isAdult').is(':checked'),
+            isFavorite = $('.isFavorite').is(':checked'),
+            isMine = $('.isMine').is(':checked'),
+            isApproved = $('.isApproved').is(':checked'),
+            filtObj = {};
             if (f_lang && f_lang !== "0") {
                 filtObj.lang = f_lang;
             }
@@ -170,10 +232,7 @@ define([
             if (store.get('userType') === 'admin' && isApproved) {
                 filtObj.isApproved = false;
             }
-            store.set('filters', filtObj);        
-        }
-        var applyFilter = function (e) {
-            setFilters();
+            store.set('filters', filtObj);
             $('.dropdown.open').removeClass('open');
             store.set('from', 0);
             url.navigate('landing');
@@ -203,9 +262,13 @@ define([
                     $(mapping[se]).val(seTerms[se]);
                 });
                 Object.keys(fiTerms).forEach(function(fi) {
-                    if (fi === 'group') {
-                       $('.group-list').val(fiTerms[fi]); 
-                    } else {
+                    if (fi === 'lang') {
+                       $('.language-list').val(fiTerms[fi]); 
+                    }
+                    if (fi === 'context') {
+                       $('.context-list').val(fiTerms[fi]); 
+                    }                    
+                    else {
                         $(mapping[fi]).prop('checked', true);
                     }
                 });
@@ -303,6 +366,7 @@ define([
                 storage.userId = poster.id;
                 storage.username = poster.name;
                 store.set('filters', storage);
+                console.log(store.get('filters'));
                 url.navigate('landing');
             });
         }
@@ -355,55 +419,7 @@ define([
             render = function (query) {
                 // Read params from url, transform to apply in post requests
                 var from = query.from || 0;
-                var postData = {};
-                if (from) {
-                    postData.from = from;
-                }
-                if (query.search) {
-                    postData.search = query.search;
-                }
-                if (query.se_title) {
-                    postData.title = query.se_title
-                }
-                if (query.se_tag) {
-                    postData.tag = query.se_tag
-                }
-                if (query.se_actor) {
-                    postData.actor = query.se_actor
-                }
-                if (query.se_movie) {
-                    postData.movie = query.se_movie
-                }
-                if (query.se_character) {
-                    postData.character = query.se_character
-                }
-                if (query.se_event) {
-                    postData.event = query.se_event
-                }
-                if (query.group) {
-                    postData.group = query.group
-                }
-                if (query.context) {
-                    postData.context = query.context
-                }
-                if (query.isPlain) {
-                    postData.isPlain = query.isPlain
-                }
-                if (query.isAdult) {
-                    postData.isAdult = query.isAdult
-                }
-                if (query.isApproved && store.get('userType') === 'admin') {
-                    postData.isApproved = query.isApproved
-                }
-                if (query.isFavorite) {
-                    postData.isFavorite = (store.get('stars') || []).join(',') || null;
-                }
-                if (query.userId) {
-                    postData.userId = query.userId
-                }
-                if (query.lang) {
-                    postData.language = query.lang;
-                }
+                let postData = setFilters(query);
                 $('#detail-cont').modal( 'hide' ).data( 'bs.modal', null );
                 postCollection.getAllPosts(postData, function(err, posts) {
                     if (posts !== undefined) {
@@ -418,26 +434,26 @@ define([
                         //})
                         loadContext();
                         loadLangs();
-                        updateUi();
-                        $('.edit').off('click').on('click', editPost);
-                        $('.delete').off('click').on('click', deletePost);                    
-                        $('.btn-basic-search').off().on('click', search)
-                        $('.page-nav').off('click').on('click', paginate)
-                        $('.btn-apply-filter').off('click').on('click', applyFilter);
-                        $('#advanced-search').off('click').on('click', advancedSearch);                        
-                        $('.hl-close').off('click').on('click', cancelFilter);
-                        $('.star-btn').off('click').on('click', processStar);
-                        $('.fav').off('click').on('click', processLike);
-                        $('.user-img').off('click').on('click', processUserClick);
-                        $('.page-prev').off('click').on('click', navPrev);
-                        $('.page-next').off('click').on('click', navNext);
-                        $('.thumbImgCont').off('click').on('click', thumbClick);
-                        $('#logout').off('click').on('click', logout);
-                        $('.more').off('click').on('click', showMore);
-                        $('body').off('click').on('click', closeAllPops)
+                        updateUi();                        
                     }
-                    setFilters();
+                    checkFilters();
                     highlight.highlight();
+                    $('.edit').off('click').on('click', editPost);
+                    $('.delete').off('click').on('click', deletePost);                    
+                    $('.btn-basic-search').off().on('click', search)
+                    $('.page-nav').off('click').on('click', paginate)
+                    $('.btn-apply-filter').off('click').on('click', applyFilter);
+                    $('#advanced-search').off('click').on('click', advancedSearch);                        
+                    $('.hl-close').off('click').on('click', cancelFilter);
+                    $('.star-btn').off('click').on('click', processStar);
+                    $('.fav').off('click').on('click', processLike);
+                    $('.user-img').off('click').on('click', processUserClick);
+                    $('.page-prev').off('click').on('click', navPrev);
+                    $('.page-next').off('click').on('click', navNext);
+                    $('.thumbImgCont').off('click').on('click', thumbClick);
+                    $('#logout').off('click').on('click', logout);
+                    $('.more').off('click').on('click', showMore);
+                    $('body').off('click').on('click', closeAllPops);
                 });              
             }
             return {

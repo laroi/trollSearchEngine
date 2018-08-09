@@ -11,7 +11,8 @@ define(['./storeController'], function (store) {
         isAdult: 'Adult Memes',
         isFavorite: 'Favorite Memes',
         isApproved: 'Approval Pending',
-        userId: 'User'
+        userId: 'User',
+        username : 'User'
     };
     getHighlight = function(type, key, val) {
     var className ="";
@@ -43,7 +44,8 @@ define(['./storeController'], function (store) {
         var search_term = store.get('search_term'),
             filters = store.get('filters') || {},
             filterKeys = Object.keys(filters),
-            html = '';
+            html = '',
+            filterExclusions = ['from'];            
             if (search_term && Object.keys(search_term).length>0) {
                 Object.keys(search_term).forEach(function(sKey) {
                     html +=  getHighlight('search_term', sKey, search_term[sKey] );
@@ -51,14 +53,18 @@ define(['./storeController'], function (store) {
             }
             console.log(filterKeys)
             filterKeys.forEach(function(key) {
-                if (key!== 'username') {
-                var val;
-                if (key === 'userId') {
-                    val = filters['username'] || filters[key];
-                } else {
-                    val = filters[key]
-                }
-                html +=  getHighlight('filters', key, val);
+                if (filterExclusions.indexOf(key) < 0) {
+                    if (key!== 'username') {
+                        var val;
+                        if (key === 'userId') {
+                            val = filters['username'] || filters[key];
+                        } else {
+                            val = filters[key]
+                        }
+                        html +=  getHighlight('filters', key, val);
+                    } else {
+                        html +=  getHighlight('filters', key, store.get('username'));
+                    }
                 }
             });
             $('#high-lighter').empty().html(html);

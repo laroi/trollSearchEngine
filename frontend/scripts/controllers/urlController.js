@@ -2,6 +2,7 @@ define(['./storeController'], function (store) {
     var navigate;
     navigate = function (page, isForce) {
         var hash = '#';
+        let filterExclusions = ['from'];
         isForce = isForce || false
         if (page === 'landing') {
             store.set('postId', undefined);
@@ -48,12 +49,14 @@ define(['./storeController'], function (store) {
                         hash += "=";
                         hash +=  store.get('stars').join(',') || ""
                     } else {*/
-                    if (key !== 'username') {
-                        hash += "&"
-                        hash += key
-                        hash += "=";
-                        hash += filters[key];
+                    if (filterExclusions.indexOf(key) < 0) {
+                        if (key !== 'username') {
+                            hash += "&"
+                            hash += key
+                            hash += "=";
+                            hash += filters[key];
                         }
+                    }
                     //}
                 });
             }

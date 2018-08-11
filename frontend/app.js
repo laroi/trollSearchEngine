@@ -269,6 +269,7 @@ requirejs.config({
             });
             crossroads.addRoute('/#post/{id}', detailView.render);
             crossroads.addRoute('/#{?query}', landingView.render);
+            crossroads.addRoute('/#login', loginView.render);
 
             window.onhashchange = function(){
                crossroads.parse(window.location.hash)

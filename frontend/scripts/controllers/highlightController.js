@@ -45,7 +45,7 @@ define(['./storeController'], function (store) {
             filters = store.get('filters') || {},
             filterKeys = Object.keys(filters),
             html = '',
-            filterExclusions = ['from'];            
+            filterExclusions = ['from', 'username'];            
             if (search_term && Object.keys(search_term).length>0) {
                 Object.keys(search_term).forEach(function(sKey) {
                     html +=  getHighlight('search_term', sKey, search_term[sKey] );

@@ -193,6 +193,7 @@ define([
             if (query.userId) {
                 postData.userId = query.userId
                 filtObj.userId = query.userId;
+                filtObj.username = store.get('filters').username;
             }
             if (query.lang) {
                 postData.language = query.lang;
@@ -273,6 +274,13 @@ define([
                     }
                 });
         }
+        let logout = (e) => {
+            let accessKey = store.get('accessKey')
+            user.unsetToken(accessKey,  () => {
+                url.navigate('landing', true);
+                $('.open').removeClass('open');
+            })
+        }
         var cancelFilter = function(e) {
             var type = $(this).parent().attr('data-type').trim(),
                 key = $(this).parent().attr('data-key').trim();               
@@ -347,17 +355,7 @@ define([
             }
             
         };
-        let logout = (e) => {
-            let accessKey = store.get('accessKey')
-            request.del('/api/token/'+accessKey, function(err, data) {
-                if (!err) {
-                    localStorage.clear();
-                    url.navigate('landing', true);
-                } else {
-                    console.error(err);
-                }
-            })
-        }
+
         var processUserClick = function (e) {
             var postId = $(e.target).parent().parent().parent().parent().parent().attr('id');
             postCollection.getPostById(postId, function(err, post) {
@@ -421,7 +419,8 @@ define([
                 var from = query.from || 0;
                 let postData = setFilters(query);
                 $('#detail-cont').modal( 'hide' ).data( 'bs.modal', null );
-                postCollection.getAllPosts(postData, function(err, posts) {
+                
+                postCollection.getAllPosts(postData, query.force, function(err, posts) {
                     if (posts !== undefined) {
                         var html = template({posts: posts});
                         $('#post-contents').empty().append(html);
@@ -451,9 +450,9 @@ define([
                     $('.page-prev').off('click').on('click', navPrev);
                     $('.page-next').off('click').on('click', navNext);
                     $('.thumbImgCont').off('click').on('click', thumbClick);
-                    $('#logout').off('click').on('click', logout);
                     $('.more').off('click').on('click', showMore);
                     $('body').off('click').on('click', closeAllPops);
+                    $('#logout').off('click').on('click', logout);
                 });              
             }
             return {

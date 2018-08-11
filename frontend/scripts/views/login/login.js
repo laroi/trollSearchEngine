@@ -8,8 +8,7 @@ define([
  '../register/register'
 ], function (request, store, url, user, requestView, html, register) {
      var source   = $(html).html(),
-        template = Handlebars.compile(source),
-        imageData;
+        template = Handlebars.compile(source);
        
         let login = () => {
             let email = $('#login-email').val().trim(),
@@ -21,6 +20,7 @@ define([
                         toastr.error('Could not authenticate you', 'Troller Says')    
                     } else {
                         $('#login-modal').modal( 'hide' ).data( 'bs.modal', null );
+                        url.navigate('landing', true);
                         $('#request').on('click', showRequest);
                     }
                 })
@@ -35,6 +35,7 @@ define([
             $('#login-modal').modal( 'hide' ).data( 'bs.modal', null );
            register.render();
         }
+        
         var loginView = function () {
             var render;
             render = function () {
@@ -44,6 +45,7 @@ define([
                     //$('#login-modal').on('hidden.bs.modal', gotoHome);
                     $('#btn-login').on('click', login)
                     $('#btn-show-login').on('click', showReg);
+                   
             }
             return {
                 render: render

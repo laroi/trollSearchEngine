@@ -137,7 +137,7 @@ var routes = function () {
                 bcrypt.hash(req.body.password, salt, function(err, hash) {
                     uploadProfPic(picture.image)
                     .then((picturePath)=> {
-                        let userDetails = {'email': req.body.email, password: hash, type: 'user', 'verification': verification, 'phone': phone};
+                        let userDetails = {'email': req.body.email, password: hash, type: 'user', 'verification': verification, 'phone': phone, name : name};
                         if (picturePath) {
                             userDetails.picture = {full :'/prof/'+picturePath, thumb: '/prof/thumb/'+picturePath};
                         }                        

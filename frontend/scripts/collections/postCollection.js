@@ -93,8 +93,8 @@ define(['scripts/controllers/requestController', 'scripts/controllers/storeContr
                 cachedVals.userId = postData.userId || undefined;
                 cachedVals.language = postData.language || undefined;
         }
-        getAllPosts = function (postData, callback) {
-            if (!checkIfCached(postData)) {
+        getAllPosts = function (postData, force, callback) {
+            if (!checkIfCached(postData) || force) {
                 updateCache(postData);
                 request.post('/api/posts', postData, function (err, status, data) {
                     let hits = []

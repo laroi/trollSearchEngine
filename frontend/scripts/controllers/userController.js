@@ -46,6 +46,18 @@ define(['./requestController', './storeController'], function (request, store) {
         callback('Could not authenticate');
       }
     };
+    var unsetToken = function(accessKey, callback) {
+        request.del('/api/token/'+accessKey, function(err, data) {
+            if (!err) {
+                localStorage.clear();
+                disableFeatures()                
+                callback();
+            } else {
+                console.error(err);
+                callback(err);
+            }
+        })
+    };
         var enableFeatures = function(){
              $('#create').show();
              $('#facebook_login').hide();
@@ -74,8 +86,10 @@ define(['./requestController', './storeController'], function (request, store) {
             $('.isFavorite').prop("disabled", true)
             $('.isMine').prop("disabled", true);
             $('.logut').hide();
-            $('.user-name').text('You')     
-            $('.user-photo').attr('src', store.get('/image/user.png'));
+            $('.user-name').text('You')
+            $('.user-icon').css('background-image', 'none') 
+            $('.user-icon').addClass('fa-user-circle')
+             $('.user-icon').addClass('far')
              $('#request').css('color', 'grey');
              $('#request').css('cursor', 'not-allowed');
              $('#request').off('click');
@@ -97,6 +111,7 @@ define(['./requestController', './storeController'], function (request, store) {
         regNewUser: regNewUser,
         updateUser: updateUser,
         disableFeatures: disableFeatures,
-        enableFeatures:enableFeatures
+        enableFeatures:enableFeatures,
+        unsetToken:unsetToken
     }
 });

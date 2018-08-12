@@ -45,6 +45,16 @@ var toB = new TransformToBulk(function getIndexTypeId (doc) {
     return {_id: id, _index:"trolls", _type:"post"}
 })
 
+var requestTransform  = new TransformToBulk(function getIndexTypeId (doc) {
+    var id = doc._id
+    delete doc._id
+    if (doc.movieName) {
+        doc.movieSuggest = {input: doc.movieName}
+    }
+    doc.createdAt = doc.dates.createdAt;
+    doc.lastUpdated = doc.dates.lastUpdated;
+    return {_id: id, _index:"trolls", _type:"request"}
+})
 deleteIndex = function (indexName) {
     return new Promise(function (resolve, reject) {
         client.indices.delete({index: indexName}, function (err, data) {
@@ -69,7 +79,56 @@ createIndex = function (indexName) {
         })
     });
 }
-
+var putRequestMapping = function () {
+    return new Promise((resolve, reject) => {
+        client.indices.putMapping({
+            index: 'trolls',
+            type: 'requests',
+            body:{
+                properties: {
+                    user: {"type" : "object", 
+                    "properties" : {
+                            "id" : {"type" : "string", "index" : "not_analyzed"},
+                            "name" : {"type" : "string", "index" : "not_analyzed"},
+                            "image" : {"type" : "string", "index" : "not_analyzed"}
+                        }
+                    },
+                    movieName: {"type" : "string", "index" : "not_analyzed"},
+                    description: {"type" : "string", "index" : "not_analyzed"},
+                    link: {"type" : "string", "index" : "not_analyzed"},
+                    status: {"type" : "string", "index" : "not_analyzed"},
+                    isAdult: {"type" : "boolean", "index" : "not_analyzed"},
+                    isApproved: {"type" : "boolean", "index" : "not_analyzed"},
+                    image: {"type" : "object", 
+                        "properties" : {
+                            "url" : {"type" : "string", "index" : "not_analyzed"},
+                            "thumb" : {"type" : "string", "index" : "not_analyzed"},
+                            "type" : {"type" : "string", "index" : "not_analyzed"}
+                        }
+                    },
+                    createdAt: {"type" : "date"},
+                    lastModified: {"type": "date"},
+                    movieSuggest: {
+                        type: "completion",
+                        analyzer: "simple",
+                        preserve_separators: true,
+                        preserve_position_increments: true,
+                        max_input_length: 50
+                    }
+                }
+            }
+            
+        }, function (err, resp, respcode) {
+            if (!err) {
+                console.log('put request mapping')
+                resolve(resp)
+            } else {
+                console.error(err);
+                reject(err);
+            }
+        });
+    })
+}
 var putMapping = function () {
     return new Promise(function (resolve, reject) {
         client.indices.putMapping({
@@ -193,29 +252,40 @@ MongoClient.connect(url, function(err, db) {
         return createIndex("trolls")
     })
     .then(putMapping)
+    .then(putRequestMapping)
     .then(function () {
-        var collection = db.collection('posts');
-        //var stream = collection.find().batchSize(2).stream();
-        collection.find().batchSize(10).stream().pipe(toB).pipe(ws).on('finish', function(){console.log("done")})
-        ws.on('close', function () {
-        console.log("ws closed");
-  client.close();
-});
-        ws.on('error', function (err) {
-        console.log(err);
-  client.close();
-});
-        /*stream.on('end', function() {
-            console.log("Finished Streaming");
+        return new Promise((resolve, reject) => {
+            var collection = db.collection('posts');
+            //var stream = collection.find().batchSize(2).stream();
+            collection.find().batchSize(10).stream().pipe(toB).pipe(ws).on('finish', function(){console.log("done")})
             ws.on('close', function () {
-                console.log("fininshed piping");
+                console.log("ws closed");
                 client.close();
+                resolve()
             });
-        });
-        stream.on('data', function(data) {
-            var bulk = [];
-            bulk.push(toBulk(data))
-        });*/
+            ws.on('error', function (err) {
+                console.log(err);
+                client.close();
+                reject()
+            });
+        })
+     })
+     .then(()=> {
+        return new Promise((resolve, reject) => {
+            var collection = db.collection('request');
+            //var stream = collection.find().batchSize(2).stream();
+            collection.find().batchSize(10).stream().pipe(toB).pipe(ws).on('finish', function(){console.log("done")})
+            ws.on('close', function () {
+                console.log("ws closed");
+                client.close();
+                resolve()
+            });
+            ws.on('error', function (err) {
+                console.log(err);
+                client.close();
+                reject()
+            });
+        })
      })
     .catch(function (err) {
         console.error(err);

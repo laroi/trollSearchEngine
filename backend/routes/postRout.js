@@ -558,9 +558,26 @@ var routes = function () {
          var user = req.body.user,
             description = req.body.description,            
             movieName = req.body.movieName,
+            language = req.body.language,
             link = req.body.link || undefined,
             obj = {},
             postObj;
+        var saveThumb = function (fileName, callback) {
+           gm(uploadPath+fileName)
+          .setFormat('jpg')      
+          .resize('100')
+          .gravity('Center')
+          .write(reqUploadPath+'thumb/'+fileName, function (err) {
+            if (!err) {
+                 console.log('Created thumbile for', filename)
+                  callback()       
+            } else {
+                console.error('could not resize '+ uploadPath+fileName, err);
+                callback(err)  
+            }
+          });
+            
+        }
         if (req.body.user.id) {
             var filename = uuid.v1();
             var fileLoc = reqUploadPath + filename;
@@ -572,21 +589,38 @@ var routes = function () {
                 .setFormat('jpg')            
                 .write(fileLoc + '.jpg', function(err){
                     if (!err) {
-                        obj.user= user;
-                        obj.link = link;
-                        obj.description = description;
-                        obj.movieName = movieName;
-                        obj.image = {url: '/images/'+filename + '.jpg', thumb: '/images/thumb/'+filename + '.jpg', type: 'jpg'};
-                        reqObj = new Req(obj);
-                        reqObj.save(function(saveErr, saveData) {
-                            if (!saveErr) {
-                                console.log('Saved Post ' + saveData.id)
-                                res.status(200).send();              
+                        saveThumb(filename, function (err) {
+                            if (!err) {
+                                obj.user= user;
+                                obj.link = link;
+                                obj.description = description;
+                                obj.movieName = movieName;
+                                obj.language = language;
+                                obj.image = {url: '/images/'+filename + '.jpg', thumb: '/images/thumb/'+filename + '.jpg', type: 'jpg'};
+                                reqObj = new Req(obj);
+                                reqObj.save(function(saveErr, saveData) {
+                                    if (!saveErr) {
+                                        console.log('Saved Post ' + saveData.id)
+                                        elastic.putRequestDoc(saveData, (err)=> {
+                                            if (!err) {
+                                                console.log('ES updated ' + saveData.id)
+                                                res.status(200).send();    
+                                            } else {
+                                                console.error('ES update', err)
+                                                res.status(500).send();
+                                            }
+                                        })
+                                        
+                                    } else {
+                                        console.error(JSON.stringify(saveErr))
+                                        res.status(500).send({err: 'Could not save post'});
+                                    }
+                                });  
                             } else {
-                                console.error(JSON.stringify(saveErr))
+                                console.log(err)
                                 res.status(500).send({err: 'Could not save post'});
                             }
-                        });
+                        })
                     } else {
                         console.error(err);
                         res.status(500).send({err: 'Could not save post'});
@@ -595,6 +629,7 @@ var routes = function () {
             } else {
                 obj.user= user;
                 obj.link = link;
+                obj.language = language;
                 obj.description = description;
                 obj.movieName = movieName;
                 reqObj = new Req(obj);
@@ -615,7 +650,43 @@ var routes = function () {
         }
     
     }
-    
+    let getRequest = function (req, res) {
+        var id = req.params.id
+        if (id) {
+            Request.find({_id: id}, function(err, data) {
+                if (!err) {
+                    res.status(200).send(JSON.stringify(data));
+                } else {
+                    console.error(JSON.stringify(err));
+                    res.status(500).send(err)
+                }
+            });
+        } else {
+            res.status(400).send({err: 'bad request'})
+        }        
+    };
+    getRequests = function (req, res) {
+        var language = req.query.language,
+            movieName = req.query.moviename,
+            opts = {};
+            if (language) {
+                opts.language = language;
+            }
+            if (movieName) {
+                opts.movieName = movieName;
+            }           
+            opts.from = from;
+            opts.order = order;
+            console.log('searching ', opts);
+        elastic.getDocs(opts, function(err, data) {
+            if (!err) {
+                res.status(200).send(data)
+            } else {
+                console.error(JSON.stringify(err));
+                res.status(500).send({'errr': 'could not get data'})
+            }
+        })
+    }
     return { 
         test: test,
         post: post,
@@ -628,7 +699,11 @@ var routes = function () {
         unLike: unLike,
         updateComment: updateComment,
         deletePost: deletePost,
-        requestMeme: requestMeme
+        requestMeme: requestMeme,
+        getRequest: getRequest,
+        getRequests: getRequests,
+        deleteRequest : deleteRequest,
+        updateRequuest: updateRequest
     }
 }
 

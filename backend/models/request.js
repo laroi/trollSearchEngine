@@ -13,7 +13,7 @@ var request = new Schema({
     image: {
         url : {type: String },
         thumb : {type: String },
-        type: {type: String} 
+        type: {type: String}
     },
     dates: {createdAt: {type: Date}, lastUpdated:{type: Date, default: Date.now}}
 });

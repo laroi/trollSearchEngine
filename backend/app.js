@@ -78,7 +78,7 @@ var isAuthenticated = function (admin) {
             access.findOne({token: tok}, function (err, data) {
                 if (!err && data && blackListedUsers.indexOf(data.user) < 0) {
                         //if (data.type === 'admin') {
-                            req.isAdmin = true;
+                            //req.isAdmin = true;
                             req.userId = data.user;
                             logger.log(1, 'auth', ' authenticated user ' + data.user + ' with token ' + tok, 'app.js', getIp(req), undefined)                                   
                             next();
@@ -164,5 +164,5 @@ app.post('/request', isAuthenticated(false), postRoute.requestMeme)
 app.post('/post', isAuthenticated(false), postRoute.post)
 app.get('/image/:id', postRoute.downloadImage);
 app.get('/suggestions', postRoute.autoSuggestion);
-app.listen(3000);
+app.listen(4001);
 console.log("Express server listening on port 3000");

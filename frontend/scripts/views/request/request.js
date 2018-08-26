@@ -31,7 +31,7 @@ define([
                 var url = '/api/request',
                     postData = {
                         moveiName: $('#req-movie').val().trim(),                     
-                        user: {id: store.get('userId'), name: store.get('username'), image: store.get('picture')},
+                        user: store.get('userId'),
                         description:$('#req-desc').val().trim(),
                         createdAt: date.toISOString(),
                         lastModified: date.toISOString()

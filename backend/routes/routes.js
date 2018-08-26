@@ -343,9 +343,30 @@ var routes = function () {
     };*/
     logout = function (req, res) {};
     var getUserDetail = function (req, res) {
-        var id = req.params.id;
-        User.findById(id, function (err, data) {
+        let id = req.params.id;
+        let filters = {}
+        let isShort = req.query.short === 'true' ? true : false;
+        if (isShort) {
+            filters.username = 1;
+            filters.profile_img = 1;
+        }
+        User.findById(id, filters, function (err, data) {
             if (!err && data) {
+                res.status(200).send(data);
+            } else {
+                if (!err) {
+                    res.status(404).send();
+                } else {
+                    res.status(500).send();
+                }
+            }
+        });
+    };
+    let getUserShortDetails = (req, res) => {
+        let users = req.body.users;
+        User.find({_id: {$in:users}}, {name:1, picture:1}, function (err, data) {
+        console.log(data);
+            if (!err && Array.isArray(data) && data.length > 0) {
                 res.status(200).send(data);
             } else {
                 if (!err) {
@@ -499,6 +520,7 @@ var routes = function () {
  //       verifyFaceToken: verifyFaceToken,
  //       addUser: addUser,
         getUserDetail: getUserDetail,
+        getUserShortDetails: getUserShortDetails,
         updateUser: updateUser,
         listContexts: listContexts,
         listGroups: listGroups,

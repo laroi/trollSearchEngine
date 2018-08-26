@@ -37,7 +37,7 @@ var routes = function () {
             if (!docErr && docData) {
                 access.findOne({token: token}, function(err, data) {
                     if (!err && data) {
-                        if (data.user = docData.user.id || data.type === 'admin') {
+                        if (data.user = docData.user || data.type === 'admin') {
                             console.log('ownership verified ', data.type);
                             callback(undefined, docData);
                         } else {
@@ -163,7 +163,7 @@ var routes = function () {
             context = req.body.context,
             obj = {},
             postObj;
-        if (req.body.image && req.body.user.id && req.body.type) {
+        if (req.body.image && req.body.user && req.body.type) {
             saveImage(req.body.image, postUploadPath)
             .then((fileinfo) => {
                 obj.user= user;
@@ -312,7 +312,7 @@ var routes = function () {
                 doc = req.body,
                 id = doc._id;
                 doc.isApproved = doc.isApproved === 'true' ? true : false;
-                if (req.body.user.id && req.body.type) {
+                if (req.body.user && req.body.type) {
                     updateImage(req.body.image, postUploadPath, post.image.url)
                     .then((fileinfo)=> {
                         if (doc.title) {
@@ -667,7 +667,7 @@ var routes = function () {
             link = req.body.link || undefined,
             obj = {},
             postObj;
-         if (req.body.user.id) {
+         if (req.body.user) {
             if (req.body.image) {
                 saveImage(req.body.image, reqUploadPath)
                 .then((filename)=> {
@@ -763,7 +763,7 @@ var routes = function () {
                 var updateObj = {},
                 doc = req.body,
                 id = doc._id;
-                if (req.body.user.id && req.body.type) {
+                if (req.body.user && req.body.type) {
                 if (req.body.image) {
                     var filename = req.body.image.name;
                     var fileLoc = uploadPath + filename;

@@ -240,7 +240,43 @@ requirejs.config({
                 user.disableFeatures();
                 $('#login').on('click', showLogin);
             }
-                
+            disableAllFilters = () => {
+                $('.language-list').val("0");
+                $('.language-list').prop('disabled', true);
+                $('.context-list').val("0");
+                $('.context-list').prop('disabled', true);
+                $('.isPlain').prop('checked', false);
+                $('.isPlain').prop('disabled', true);
+                $('.isAdult').prop('checked', false);
+                $('.isAdult').prop('disabled', true);
+                $('.isFavorite').prop('checked', false);
+                $('.isFavorite').prop('disabled', true);
+                $('.isMine').prop('checked', false);
+                $('.isMine').prop('disabled', true);
+                $('#basic-search').val('');
+                $('#basic-search').prop('disabled', true);
+                $('.se_input').val('');
+                $('.se_input').prop('disabled', true);
+            };
+            enableAllFilters = () => {
+                $('.language-list').prop('disabled', false);
+                $('.context-list').prop('disabled', false);
+                $('.isPlain').prop('disabled', false);
+                $('.isAdult').prop('disabled', false);
+                if (isUserLoggedIn()) {
+                    $('.isFavorite').prop('disabled', false);
+                    $('.isMine').prop('disabled', false);
+                }
+                $('#basic-search').prop('disabled', false);
+                $('.se_input').prop('disabled', false);
+            }
+            $('.isReqeust').change(function() {
+                if($(this).is(":checked")) {
+                    disableAllFilters();
+                } else {
+                    enableAllFilters();
+                }
+            });
         /*window.fbAsyncInit = function() {
             FB.init({
               //appId      : '307608189577094', //Prod

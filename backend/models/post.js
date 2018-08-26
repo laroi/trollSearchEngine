@@ -4,7 +4,7 @@ var mongoose = require('mongoose'),
 
 
 var post = new Schema({
-    user: {id: {type: String, required: true}, name: {type: String, required: false}, image: {type: String, required: false}},
+    user: {type: String},
     title: {type: String},
     type: {type: String, required: true},
     isAdult: {type: Boolean, required: true},

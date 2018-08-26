@@ -4,7 +4,7 @@ var mongoose = require('mongoose'),
 
 
 var request = new Schema({
-    user: {id: {type: String, required: true}, name: {type: String, required: false}, image: {type: String, required: false}},
+    user: {type: String},
     movieName: {type: String},
     language: {type: String},
     description: {type: String},

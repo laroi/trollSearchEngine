@@ -220,16 +220,16 @@ background-repeat: no-repeat;
 .user-img {
     max-width: 100%;
     max-height: 100%;
+    vertical-align:top;
     border-radius:20px;
 }
 .user {
     width:20px;
 }
-.user-img {
-    width:19px;
-}
 .user-img:hover {
-    width:20px;
+    width:19px;
+    height:19px;
+    
 }
 .hl-close {
 width:20px;

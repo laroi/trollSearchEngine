@@ -149,55 +149,67 @@ define([
                 postData.from = from;
                 store.set('from', from);
             }
-            if (query.search) {
-                postData.search = query.search;
-            }
-            if (query.se_title) {
-                postData.title = query.se_title
-            }
-            if (query.se_tag) {
-                postData.tag = query.se_tag
-            }
-            if (query.se_actor) {
-                postData.actor = query.se_actor
-            }
-            if (query.se_movie) {
-                postData.movie = query.se_movie
-            }
-            if (query.se_character) {
-                postData.character = query.se_character
-            }
-            if (query.se_event) {
-                postData.event = query.se_event
-            }
-            if (query.context) {
-                postData.context = query.context;
-                filtObj.context = query.context;
-            }
-            if (query.isPlain) {
-                postData.isPlain = query.isPlain;
-                filtObj.isPlain = query.isPlain;
-            }
-            if (query.isAdult) {
-                postData.isAdult = query.isAdult
-                filtObj.isAdult = query.isAdult;
-            }
-            if (query.isApproved && store.get('userType') === 'admin') {
-                postData.isApproved = query.isApproved
-                filtObj.isApproved = true;
-            }
-            if (query.isFavorite) {
-                postData.isFavorite = (store.get('stars') || []).join(',') || null;
-                filtObj.isFavorite = true;
-            }
-            if (query.userId) {
-                postData.userId = query.userId
-                filtObj.userId = query.userId;
-                filtObj.username = store.get('filters').username;
-            }
-            if (query.lang) {
-                postData.language = query.lang;
-                filtObj.lang = query.lang;
+            if (query.request) {
+                postData.request = true;
+                filtObj.request = true;
+                filtObj.context = undefined;
+                filtObj.isPlain = undefined;
+                filtObj.isAdult = undefined;
+                filtObj.isApproved = undefined;
+                filtObj.isFavorite = undefined;
+                filtObj.userId = undefined;
+                filtObj.username = undefined;
+            } else {
+                if (query.search) {
+                    postData.search = query.search;
+                }
+                if (query.se_title) {
+                    postData.title = query.se_title
+                }
+                if (query.se_tag) {
+                    postData.tag = query.se_tag
+                }
+                if (query.se_actor) {
+                    postData.actor = query.se_actor
+                }
+                if (query.se_movie) {
+                    postData.movie = query.se_movie
+                }
+                if (query.se_character) {
+                    postData.character = query.se_character
+                }
+                if (query.se_event) {
+                    postData.event = query.se_event
+                }
+                if (query.context) {
+                    postData.context = query.context;
+                    filtObj.context = query.context;
+                }
+                if (query.isPlain) {
+                    postData.isPlain = query.isPlain;
+                    filtObj.isPlain = query.isPlain;
+                }
+                if (query.isAdult) {
+                    postData.isAdult = query.isAdult
+                    filtObj.isAdult = query.isAdult;
+                }
+                if (query.isApproved && store.get('userType') === 'admin') {
+                    postData.isApproved = query.isApproved
+                    filtObj.isApproved = true;
+                }
+                if (query.isFavorite) {
+                    postData.isFavorite = (store.get('stars') || []).join(',') || null;
+                    filtObj.isFavorite = true;
+                }
+                if (query.userId) {
+                    postData.userId = query.userId
+                    filtObj.userId = query.userId;
+                    filtObj.username = store.get('filters').username;
+                }
+                if (query.lang) {
+                    postData.language = query.lang;
+                    filtObj.lang = query.lang;
+                }
             }
             store.set('filters', filtObj);
             return postData;    
@@ -431,6 +443,17 @@ define([
                               isAnimated: true
                             });
                         //})
+                        postCollection.getPostUserDetails()
+                        .then(()=> {
+                            $('.panel-body').each((index, element)=> {
+                                console.log($(element).attr('id'));
+                                postCollection.getPostById($(element).attr('id'), (err, post)=> {
+                                    if (post) {
+                                    $(element).children('.bottom-panel').children('.button-panel').children('.row1').children('.user').children('.user-img').attr('src', post.userimg.thumb)
+                                    }
+                                }) 
+                            })
+                        })
                         loadContext();
                         loadLangs();
                         updateUi();                        

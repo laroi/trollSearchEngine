@@ -24,6 +24,15 @@
 .advanced-search {
     width:400px;
 }
+.isrequest-check>label {
+    color:#555;
+}
+.isrequest-check {
+    margin-left: 15px;
+}
+.isrequest-check>label>.checkbox-material>.check {
+    margin-right:25px;
+}
 .elem-cont {
     max-width:150px!important;
 }

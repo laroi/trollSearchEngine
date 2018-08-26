@@ -77,8 +77,9 @@ var isAuthenticated = function (admin) {
             var tok = req.query.accessToken || req.headers['authorization'];
             access.findOne({token: tok}, function (err, data) {
                 if (!err && data && blackListedUsers.indexOf(data.user) < 0) {
-                        //if (data.type === 'admin') {
-                            //req.isAdmin = true;
+                        if (data.type === 'admin') {
+                            req.isAdmin = true;
+                            }
                             req.userId = data.user;
                             logger.log(1, 'auth', ' authenticated user ' + data.user + ' with token ' + tok, 'app.js', getIp(req), undefined)                                   
                             next();
@@ -148,6 +149,7 @@ app.get('/user/count', route.getUserCount);
 app.put('/user', isAuthenticated(false), route.updatePassword);
 app.put('/user/:id', isAuthenticated(false), route.updateUser);
 app.get('/user/:id', isAuthenticated(false), route.getUserDetail);
+app.post('/users', route.getUserShortDetails);
 app.post('/feedback', route.addFeedback);
 app.get('/groups', route.listGroups);
 app.get('/contexts', route.listContexts);
@@ -164,5 +166,5 @@ app.post('/request', isAuthenticated(false), postRoute.requestMeme)
 app.post('/post', isAuthenticated(false), postRoute.post)
 app.get('/image/:id', postRoute.downloadImage);
 app.get('/suggestions', postRoute.autoSuggestion);
-app.listen(4001);
+app.listen(3000);
 console.log("Express server listening on port 3000");

@@ -78,6 +78,20 @@ define(['../config/config', './storeController'], function (config, store) {
             }
         }); 
     }
+    _post = (url = ``, data = {}) => {
+        // Default options are marked with *
+        return fetch(url, {
+            method: "POST", // *GET, POST, PUT, DELETE, etc.
+                       
+            headers: {
+                "Content-Type": "application/json; charset=utf-8",
+                'Authorization': store.get('accessKey')
+                // "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: JSON.stringify(data), // body data type must match "Content-Type" header
+        })
+        .then(response => response.json()); // parses response to JSON
+    }
     getErrMsg = function (msg) {
     var ret_msg;
         try {
@@ -154,7 +168,8 @@ define(['../config/config', './storeController'], function (config, store) {
         del:del,
         postImage: postImage,
         getImage: getImage,
-        putImage: putImage
+        putImage: putImage,
+        _post: _post
     }
 
 })

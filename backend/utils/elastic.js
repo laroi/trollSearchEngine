@@ -60,13 +60,7 @@ var elastic = function () {
                 type: 'post',
                 body:{
                     properties: {
-                        user: {"type" : "object", 
-                        "properties" : {
-                                "id" : {"type" : "string", "index" : "not_analyzed"},
-                                "name" : {"type" : "string", "index" : "not_analyzed"},
-                                "image" : {"type" : "string", "index" : "not_analyzed"}
-                            }
-                        },
+                        user:{"type" : "string", "index" : "not_analyzed"},
                         title: {"type" : "string", "fields": {"raw": {"type": "string","index": "not_analyzed"}}},
                         context: {"type" : "string"},
                         type: {"type" : "string", "index" : "not_analyzed"},
@@ -83,7 +77,6 @@ var elastic = function () {
                         likes: {
                             properties:{
                                 userId: {"type": "string", "index" : "not_analyzed"},
-                                username: {"type": "string", "index" : "not_analyzed"},
                                 time:  {"type": "date"}
                             }
                         },
@@ -172,13 +165,7 @@ var elastic = function () {
                 type: 'requests',
                 body:{
                     properties: {
-                        user: {"type" : "object", 
-                        "properties" : {
-                                "id" : {"type" : "string", "index" : "not_analyzed"},
-                                "name" : {"type" : "string", "index" : "not_analyzed"},
-                                "image" : {"type" : "string", "index" : "not_analyzed"}
-                            }
-                        },
+                        user: {"type" : "string", "index" : "not_analyzed"},
                         movieName: {"type" : "string", "index" : "not_analyzed"},
                         description: {"type" : "string", "index" : "not_analyzed"},
                         link: {"type" : "string", "index" : "not_analyzed"},
@@ -347,7 +334,7 @@ var elastic = function () {
         
         if (options.advanced && isAdvancedSearch(options.advanced)) {           
             if (options.advanced.userId) {
-                must_array.push({ "match": { "user.id": options.advanced.userId }});
+                must_array.push({ "match": { "user": options.advanced.userId }});
                 sort.push({"_score": {"order": "desc"}});
             }
             if (options.advanced.title) {
@@ -379,7 +366,7 @@ var elastic = function () {
                 sort.push({"_score": {"order": "desc"}});
             }
         } else if (options.search){
-            should_array.push({ "match": { "user.id": options.search}});
+            should_array.push({ "match": { "user": options.search}});
             should_array.push({ "match": { "title": options.search }});
             should_array.push({ "match": { "tags": options.search }});
             should_array.push({ "match": { "movie": options.search }});

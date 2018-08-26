@@ -86,13 +86,7 @@ var putRequestMapping = function () {
             type: 'requests',
             body:{
                 properties: {
-                    user: {"type" : "object", 
-                    "properties" : {
-                            "id" : {"type" : "string", "index" : "not_analyzed"},
-                            "name" : {"type" : "string", "index" : "not_analyzed"},
-                            "image" : {"type" : "string", "index" : "not_analyzed"}
-                        }
-                    },
+                    user: {"type" : "string", "index" : "not_analyzed"},
                     movieName: {"type" : "string", "index" : "not_analyzed"},
                     description: {"type" : "string", "index" : "not_analyzed"},
                     link: {"type" : "string", "index" : "not_analyzed"},
@@ -136,13 +130,7 @@ var putMapping = function () {
             type: 'post',
             body:{
                 properties: {
-                    user: {"type" : "object", 
-                    "properties" : {
-                            "id" : {"type" : "string", "index" : "not_analyzed"},
-                            "name" : {"type" : "string", "index" : "not_analyzed"},
-                            "image" : {"type" : "string", "index" : "not_analyzed"}
-                        }
-                    },
+                    user: {"type" : "string", "index" : "not_analyzed"},
                     title: {"type" : "string", "fields": {"raw": {"type": "string","index": "not_analyzed"}}},
                     context: {"type" : "string"},
                     type: {"type" : "string", "index" : "not_analyzed"},
@@ -165,7 +153,6 @@ var putMapping = function () {
                     likes: {
                         properties:{
                             userId: {"type": "string", "index" : "not_analyzed"},
-                            username: {"type": "string", "index" : "not_analyzed"},
                             time:  {"type": "date"}
                         }
                     },

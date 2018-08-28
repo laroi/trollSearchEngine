@@ -431,52 +431,55 @@ define([
                 var from = query.from || 0;
                 let postData = setFilters(query);
                 $('#detail-cont').modal( 'hide' ).data( 'bs.modal', null );
-                
-                postCollection.getAllPosts(postData, query.force, function(err, posts) {
-                    if (posts !== undefined) {
-                        var html = template({posts: posts});
-                        $('#post-contents').empty().append(html);
-                        //$('.page-cont').imagesLoaded(function () {
-                            $('.page-cont').masonry({
-                              // options
-                              itemSelector: '.elem-cont',
-                              isAnimated: true
-                            });
-                        //})
-                        postCollection.getPostUserDetails()
-                        .then(()=> {
-                            $('.panel-body').each((index, element)=> {
-                                console.log($(element).attr('id'));
-                                postCollection.getPostById($(element).attr('id'), (err, post)=> {
-                                    if (post) {
-                                    $(element).children('.bottom-panel').children('.button-panel').children('.row1').children('.user').children('.user-img').attr('src', post.userimg.thumb)
-                                    }
-                                }) 
+                if(postData.request) {
+                    url.navigate('requestList');
+                } else {
+                    postCollection.getAllPosts(postData, query.force, function(err, posts) {
+                        if (posts !== undefined) {
+                            var html = template({posts: posts});
+                            $('#post-contents').empty().append(html);
+                            //$('.page-cont').imagesLoaded(function () {
+                                $('.page-cont').masonry({
+                                  // options
+                                  itemSelector: '.elem-cont',
+                                  isAnimated: true
+                                });
+                            //})
+                            postCollection.getPostUserDetails()
+                            .then(()=> {
+                                $('.panel-body').each((index, element)=> {
+                                    console.log($(element).attr('id'));
+                                    postCollection.getPostById($(element).attr('id'), (err, post)=> {
+                                        if (post) {
+                                        $(element).children('.bottom-panel').children('.button-panel').children('.row1').children('.user').children('.user-img').attr('src', post.userimg.thumb)
+                                        }
+                                    }) 
+                                })
                             })
-                        })
-                        loadContext();
-                        loadLangs();
-                        updateUi();                        
-                    }
-                    checkFilters();
-                    highlight.highlight();
-                    $('.edit').off('click').on('click', editPost);
-                    $('.delete').off('click').on('click', deletePost);                    
-                    $('.btn-basic-search').off().on('click', search)
-                    $('.page-nav').off('click').on('click', paginate)
-                    $('.btn-apply-filter').off('click').on('click', applyFilter);
-                    $('#advanced-search').off('click').on('click', advancedSearch);                        
-                    $('.hl-close').off('click').on('click', cancelFilter);
-                    $('.star-btn').off('click').on('click', processStar);
-                    $('.fav').off('click').on('click', processLike);
-                    $('.user-img').off('click').on('click', processUserClick);
-                    $('.page-prev').off('click').on('click', navPrev);
-                    $('.page-next').off('click').on('click', navNext);
-                    $('.thumbImgCont').off('click').on('click', thumbClick);
-                    $('.more').off('click').on('click', showMore);
-                    $('body').off('click').on('click', closeAllPops);
-                    $('#logout').off('click').on('click', logout);
-                });              
+                            loadContext();
+                            loadLangs();
+                            updateUi();                        
+                        }
+                        checkFilters();
+                        highlight.highlight();
+                        $('.edit').off('click').on('click', editPost);
+                        $('.delete').off('click').on('click', deletePost);                    
+                        $('.btn-basic-search').off().on('click', search)
+                        $('.page-nav').off('click').on('click', paginate)
+                        $('.btn-apply-filter').off('click').on('click', applyFilter);
+                        $('#advanced-search').off('click').on('click', advancedSearch);                        
+                        $('.hl-close').off('click').on('click', cancelFilter);
+                        $('.star-btn').off('click').on('click', processStar);
+                        $('.fav').off('click').on('click', processLike);
+                        $('.user-img').off('click').on('click', processUserClick);
+                        $('.page-prev').off('click').on('click', navPrev);
+                        $('.page-next').off('click').on('click', navNext);
+                        $('.thumbImgCont').off('click').on('click', thumbClick);
+                        $('.more').off('click').on('click', showMore);
+                        $('body').off('click').on('click', closeAllPops);
+                        $('#logout').off('click').on('click', logout);
+                    });
+                }           
             }
             return {
                 render: render

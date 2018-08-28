@@ -68,6 +68,9 @@ define(['./storeController'], function (store) {
             hash += 'post/';
             hash += store.get('postId');
         }
+        else if (page === 'requestList') {
+            hash += 'requests'
+        }
         if (window.location.hash !== hash) {
             window.location.hash = hash
         }

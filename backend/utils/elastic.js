@@ -674,8 +674,8 @@ var elastic = function () {
             if (doc.movieName) {
                 body.movieSuggest = {input: doc.movieName}
             }
-            body.createAt = date.createdAt;
-            body.lastUpdated = date.lastUpdated
+            body.createAt = doc.dates.createdAt;
+            body.lastUpdated = doc.dates.lastUpdated
         client.create({
             index: 'trolls',
             id: doc.id,
@@ -701,6 +701,7 @@ var elastic = function () {
         if (options.movieName) {
                 must_array.push({ "match": { "moveName": options.movieName}});
         }
+        must_array.push({ "match": { "status": "P"}});
         if (options.language || options.movieName) {
             sort.push({
                 "_score": {
@@ -714,9 +715,9 @@ var elastic = function () {
                 }
              })
         }
-        body = {
+         body = {
             aggs : {
-                posts:{
+                requests:{
                    top_hits:{
                      size:10
                    }
@@ -725,20 +726,15 @@ var elastic = function () {
             query: {
                 bool: {
                     must:must_array,
-                    should:should_array
                 }
               },
                "from" : options.from || 0,
                "size" : 10,
                "sort" : sort
         };
-        if (minScore) {
+        /*if (minScore) {
             body.min_score = minScore;
-        }
-        console.log('sort ', sort); 
-        if (should_array.length > 0) {
-            body.query.bool.must = must_array
-        }
+        }*/
         console.log('options\n');
         console.log(JSON.stringify(options));
         console.log('options Ends\n');
@@ -750,6 +746,7 @@ var elastic = function () {
             type: 'request',
             body: body
         }, function (error, response) {
+            console.log("\n", JSON.stringify(response), "\n")
             callback(error, response.hits);
         });
     }

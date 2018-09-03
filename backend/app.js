@@ -155,6 +155,7 @@ app.get('/groups', route.listGroups);
 app.get('/contexts', route.listContexts);
 app.get('/langs', route.listLanguages);
 app.get('/test', postRoute.test)
+app.get('/requests', postRoute.getRequests)
 app.post('/posts', listAuth, postRoute.getPosts);
 app.get('/post/:id', postRoute.getPost);
 app.delete('/post/:id', isAuthenticated(), postRoute.deletePost);

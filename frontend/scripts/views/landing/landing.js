@@ -222,33 +222,46 @@ define([
             isFavorite = $('.isFavorite').is(':checked'),
             isMine = $('.isMine').is(':checked'),
             isApproved = $('.isApproved').is(':checked'),
+            isRequest = $('.isRequest').is(':checked'),
             filtObj = {};
-            if (f_lang && f_lang !== "0") {
-                filtObj.lang = f_lang;
+            if (isRequest) {
+                filtObj.request = true;
+                filtObj.context = undefined;
+                filtObj.isPlain = undefined;
+                filtObj.isAdult = undefined;
+                filtObj.isApproved = undefined;
+                filtObj.isFavorite = undefined;
+                filtObj.userId = undefined;
+                filtObj.username = undefined;
+                url.navigate('requestList');
+            } else {
+                if (f_lang && f_lang !== "0") {
+                    filtObj.lang = f_lang;
+                }
+                if (isPlain) {
+                    filtObj.isPlain = isPlain;
+                }
+                if (isAdult) {
+                    filtObj.isAdult = isAdult;
+                }
+                if (isFavorite) {
+                    filtObj.isFavorite = isFavorite;
+                }
+                if (isMine) {
+                    filtObj.userId = store.get('userId');
+                    filtObj.username = store.get('username');
+                }
+                if (f_context && f_context !== "0") {
+                    filtObj.context = f_context;
+                }
+                if (store.get('userType') === 'admin' && isApproved) {
+                    filtObj.isApproved = false;
+                }
+                store.set('filters', filtObj);
+                $('.dropdown.open').removeClass('open');
+                store.set('from', 0);
+                url.navigate('landing');
             }
-            if (isPlain) {
-                filtObj.isPlain = isPlain;
-            }
-            if (isAdult) {
-                filtObj.isAdult = isAdult;
-            }
-            if (isFavorite) {
-                filtObj.isFavorite = isFavorite;
-            }
-            if (isMine) {
-                filtObj.userId = store.get('userId');
-                filtObj.username = store.get('username');
-            }
-            if (f_context && f_context !== "0") {
-                filtObj.context = f_context;
-            }
-            if (store.get('userType') === 'admin' && isApproved) {
-                filtObj.isApproved = false;
-            }
-            store.set('filters', filtObj);
-            $('.dropdown.open').removeClass('open');
-            store.set('from', 0);
-            url.navigate('landing');
         };
         var updateUi = function (type, key) {
             var mapping = {

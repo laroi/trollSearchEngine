@@ -706,7 +706,15 @@ var routes = function () {
                 reqObj.save(function(saveErr, saveData) {
                     if (!saveErr) {
                         console.log('Saved Post ' + saveData.id)
-                        res.status(200).send();
+                        elastic.putRequestDoc(saveData, (err)=> {
+                                if (!err) {
+                                    console.log('ES updated ' + saveData.id)
+                                    res.status(200).send();
+                                } else {
+                                    console.error('ES update', err)
+                                    res.status(500).send();
+                                }
+                            })
                     } else {
                         console.error(JSON.stringify(saveErr))
                         res.status(500).send({err: 'Could not save post'});
@@ -737,6 +745,8 @@ var routes = function () {
     getRequests = function (req, res) {
         var language = req.query.language,
             movieName = req.query.moviename,
+            from = req.query.from || 0,
+            order = req.query.order;
             opts = {};
             if (language) {
                 opts.language = language;
@@ -745,7 +755,7 @@ var routes = function () {
                 opts.movieName = movieName;
             }
             opts.from = from;
-            opts.order = order;
+            //opts.order = order;
             console.log('searching ', opts);
         elastic.getRequestDocs(opts, function(err, data) {
             if (!err) {

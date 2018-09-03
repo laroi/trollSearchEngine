@@ -1,7 +1,7 @@
-define(['scripts/controllers/requestController', 'scripts/controllers/storeController', 'scripts/models/postModel'], function (request, store, PostModel) {
+define(['scripts/controllers/requestController', 'scripts/controllers/storeController', 'scripts/models/requestModel'], function (request, store, RequestModel) {
     //Do setup work here
     var post = function() {
-        var posts = [],
+        var requests = [],
             current,
             total,
             limit;
@@ -113,74 +113,55 @@ define(['scripts/controllers/requestController', 'scripts/controllers/storeContr
                 })
             })
         }
-        getAllPosts = function (postData, force, callback) {
-            if (!checkIfCached(postData) || force) {
+        getAllRequests = function (requestData, force, callback) {
+            /*if (!checkIfCached(postData) || force) {
                 updateCache(postData);
                 if (postData.request) {
                     
-                } else {
-                    request.post('/api/posts', postData, function (err, status, data) {
+                } else {*/
+                    request.get('/api/requests', function (err, status, data) {
                         let hits = []
                         if (data && Array.isArray(data.hits) && data.hits.length > 0) {
                             hits = data.hits
                         }
-                        postData.from = postData.from || 0;
-                        postData.from = parseInt(postData.from, 10);
-                        postData.limit = postData.limit || 10;
-                        postData.limit = parseInt(postData.limit, 10);
-                        limit = postData.limit;
-                        current = (postData.from  + postData.limit)/postData.limit;
-                        var stars = store.get('stars') || [];
+                        requestData.from = parseInt((requestData.from || 0), 10);
+                        requestData.limit = parseInt((requestData.limit || 0), 10);
+                        limit = requestData.limit;
+                        current = (requestData.from  + requestData.limit)/requestData.limit;
                         if (!err) {
-                            posts = [];
+                            requets = [];
                         }
-                        hits.forEach(function (post) {
-                            var postObj = new PostModel({
-                                _id : post._id,
-                                user: post._source.user,
-                               	title: post._source.title,
-                                type: post._source.type,
-                                views: post._source.views,
-                                likes: post._source.likes,
-                                downloads: post._source.downloads,
-                                isAdult: post._source.isAdult,
-                                imageUrl: post._source.image.url,
-                                thumbUrl: post._source.image.thumb,
-                                height : post._source.image.size ? post._source.image.size.height : 0,
-                                width: post._source.image.size ? post._source.image.size.width : 0,
-				                description: post._source.description,
-				                tags: post._source.tags,
-				                movie: post._source.movie,
-				                language: post._source.language,
-				                actors: post._source.actors,
-				                isApproved : post._source.isApproved,
-				                characters: post._source.characters,
-				                event: post._source.event,
-				                context : post._source.context
+                        hits.forEach(function (req) {
+                            var requestObj = new RequestModel({
+                                _id : req._id,
+                                user: req._source.user,
+                               	movieName: req._source.movieName,
+                                language: req._source.language,
+                                description: req._source.description,
+                                link: req._source.link,
+                                status: req._source.status,
 				            });
-				            if (postObj.type === 'clean') {
-				                postObj.isClean = true;
+				            if (req._source.image) {
+				                requestObj.imageUrl = req._source.image.url,
+                                requestObj.thumbUrl = req._source.image.thumb,
+                                requestObj.height  = req._source.image.size ? req._source.image.size.height : 0,
+                                requestObj.width = req._source.image.size ? req._source.image.size.width : 0
 				            }
-				            if (store.get('userId') === post._source.user.id) {
-				               postObj.isOwner = true; 
+				            if (store.get('userId') === req._source.user.id) {
+				               requestObj.isOwner = true; 
 				            }
-				            postObj.isLiked = post._source.likes.find(function(like){return like.userId === store.get('userId')})
-				            postObj.isLiked = postObj.isLiked && postObj.isLiked.userId ? true : false;
-				            if (stars.indexOf(post._id) > -1) {
-				                postObj.isStarred = true;
-				            }
-				            posts.push(postObj)
+				            requests.push(requestObj)
                         });
-                        limit = postData.limit;
+                        limit = requestData.limit;
                         total = data ? data.total : 0;
-                        console.log('current', current, 'limit', postData.limit, 'total', total);
-                        callback(err, {posts:posts, total: total, current: current, limit: limit});
+                        console.log('current', current, 'limit', requestData.limit, 'total', total);
+                        callback(err, {requests:requests, total: total, current: current, limit: limit});
                     });
-                }
+               /* }
             } else {
                 callback(undefined, undefined);
                 //callback(undefined, {posts:posts, total: total, current: current, limit: limit});
-            }
+            }*/
         }
         getPostById = function(id, callback) {
             var retPost;
@@ -238,9 +219,9 @@ define(['scripts/controllers/requestController', 'scripts/controllers/storeContr
             }
          }
         return  {
-           getAllPosts: getAllPosts,
-           getPostById: getPostById,
-           getPostUserDetails: getPostUserDetails
+           getAllRequests: getAllRequests
+//           getPostById: getPostById,
+//           getPostUserDetails: getPostUserDetails
         };
         
     };

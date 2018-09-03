@@ -42,10 +42,11 @@ requirejs.config({
             'scripts/controllers/storeController',
             'scripts/views/create/create',
             'scripts/views/request/request',
+            'scripts/views/requestlist/requestlist',
             'scripts/views/aboutus/aboutus',
             'scripts/views/login/login',
         ],
-        function (landingView, detailView, url, user, store, createNewView, requestView, aboutView, loginView) {
+        function (landingView, detailView, url, user, store, createNewView, requestView, requestListView, aboutView, loginView) {
         String.prototype.capitalize = function() {
             return this.charAt(0).toUpperCase() + this.slice(1);
         }
@@ -304,7 +305,7 @@ requirejs.config({
                 url.navigate('landing');
             });
             crossroads.addRoute('/#post/{id}', detailView.render);
-            crossroads.addRoute('/#requests', detailView.render);
+            crossroads.addRoute('/#requests', requestListView.render);
             crossroads.addRoute('/#{?query}', landingView.render);
             crossroads.addRoute('/#login', loginView.render);
 

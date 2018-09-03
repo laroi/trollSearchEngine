@@ -16,10 +16,10 @@ define(['../config/config', './storeController'], function (config, store) {
                 }
             },
             success: function (data){
-                callback(undefined, data);
+                callback(undefined, undefined, data);
             },
             error: function(xhr, status, err) {
-                callback(getErrMsg(xhr.responseText));
+                callback(getErrMsg(xhr.responseText), xhr.status);
             }
         }); 
     };

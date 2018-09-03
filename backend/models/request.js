@@ -12,8 +12,8 @@ var request = new Schema({
     status:{type: String, default : 'P'}, //P -> Pending, 'I' -> Inactive
     image: {
         url : {type: String },
-        thumb : {type: String },
-        type: {type: String}
+        type: {type: String},
+        size: {width: {type:Number}, height:{type:Number}}
     },
     dates: {createdAt: {type: Date}, lastUpdated:{type: Date, default: Date.now}}
 });

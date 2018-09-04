@@ -664,6 +664,7 @@ var routes = function () {
             description = req.body.description,
             movieName = req.body.movieName,
             language = req.body.language,
+            requestTitle = req.body.requestTitle,
             link = req.body.link || undefined,
             obj = {},
             postObj;
@@ -675,6 +676,7 @@ var routes = function () {
                     obj.link = link;
                     obj.description = description;
                     obj.movieName = movieName;
+                    obj.requestTitle = requestTitle;
                     obj.language = language;
                     obj.image = {url: '/images/'+fileinfo.filename + '.jpg', thumb: '/images/thumb/'+fileinfo.filename + '.jpg', type: 'jpg', size: fileinfo.size};
                     reqObj = new Req(obj);
@@ -700,6 +702,7 @@ var routes = function () {
                 obj.user= user;
                 obj.link = link;
                 obj.language = language;
+                obj.requestTitle = requestTitle;                
                 obj.description = description;
                 obj.movieName = movieName;
                 reqObj = new Req(obj);
@@ -785,6 +788,9 @@ var routes = function () {
                     }
                     if (doc.movieName) {
                         updateObj.movieName = doc.movieName;
+                    }
+                    if (doc.requestTitle) {
+                        updateObj.requestTitle = doc.requestTitle;
                     }
                     if (doc.language) {
                         updateObj.language = doc.language

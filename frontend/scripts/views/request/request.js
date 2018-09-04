@@ -24,6 +24,9 @@ define([
                 if ($('#req-desc').val().trim() == '') {
                     isValidate = false
                 }
+                if ($('#req-title').val().trim() == '') {
+                    isValidate = false
+                }
                 return isValidate;
             };
             var save = function (callback) {
@@ -31,8 +34,9 @@ define([
                 var url = '/api/request',
                     postData = {
                         moveiName: $('#req-movie').val().trim(),                     
+                        requestTitle: $('#req-title').val().trim(),
                         user: store.get('userId'),
-                        description:$('#req-desc').val().trim(),
+                        description: $('#req-desc').val().trim(),
                         createdAt: date.toISOString(),
                         lastModified: date.toISOString()
                     }

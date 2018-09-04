@@ -15,6 +15,7 @@ var post = new Schema({
     isApproved: {type: Boolean, default: false},
     image: {
         url : {type: String, required: true},
+        thumb : {type: String, required: true},
         type: {type: String, required: true},
         size: {width: {type:Number}, height:{type:Number}}
     },

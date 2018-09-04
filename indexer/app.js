@@ -51,6 +51,9 @@ var requestTransform  = new TransformToBulk(function getIndexTypeId (doc) {
     if (doc.movieName) {
         doc.movieSuggest = {input: doc.movieName}
     }
+    if (doc.requestTitle) {
+        doc.requestTitleSuggest = {input: doc.requestTitle}
+    }
     doc.createdAt = doc.dates.createdAt;
     doc.lastUpdated = doc.dates.lastUpdated;
     return {_id: id, _index:"trolls", _type:"request"}
@@ -87,7 +90,8 @@ var putRequestMapping = function () {
             body:{
                 properties: {
                     user: {"type" : "string", "index" : "not_analyzed"},
-                    movieName: {"type" : "string", "index" : "not_analyzed"},
+                    movieName:{"type" : "string", "index" : "not_analyzed"},
+                    requestTitle: {"type" : "string"},
                     description: {"type" : "string", "index" : "not_analyzed"},
                     link: {"type" : "string", "index" : "not_analyzed"},
                     status: {"type" : "string", "index" : "not_analyzed"},
@@ -101,8 +105,15 @@ var putRequestMapping = function () {
                         }
                     },
                     createdAt: {"type" : "date"},
-                    lastModified: {"type": "date"},
+                    lastUpdated: {"type": "date"},
                     movieSuggest: {
+                        type: "completion",
+                        analyzer: "simple",
+                        preserve_separators: true,
+                        preserve_position_increments: true,
+                        max_input_length: 50
+                    },
+                    requestTitleSuggest: {
                         type: "completion",
                         analyzer: "simple",
                         preserve_separators: true,

@@ -167,6 +167,7 @@ var elastic = function () {
                     properties: {
                         user: {"type" : "string", "index" : "not_analyzed"},
                         movieName: {"type" : "string", "index" : "not_analyzed"},
+                        requestTitle: {"type" : "string"},
                         description: {"type" : "string", "index" : "not_analyzed"},
                         link: {"type" : "string", "index" : "not_analyzed"},
                         status: {"type" : "string", "index" : "not_analyzed"},
@@ -182,6 +183,13 @@ var elastic = function () {
                         createdAt: {"type" : "date"},
                         lastModified: {"type": "date"},
                         movieSuggest: {
+                            type: "completion",
+                            analyzer: "simple",
+                            preserve_separators: true,
+                            preserve_position_increments: true,
+                            max_input_length: 50
+                        },
+                        requestTitleSuggest: {
                             type: "completion",
                             analyzer: "simple",
                             preserve_separators: true,
@@ -633,6 +641,7 @@ var elastic = function () {
                 user: doc.user,
                 movieName: doc.movieName,
                 language: doc.language,
+                requestTitle: doc.requestTitle,
                 description : doc.description,
                 image: doc.image,
                 descriptions: doc.descriptions,
@@ -642,6 +651,9 @@ var elastic = function () {
             }
             if (doc.movieName) {
                 body.movieSuggest = {input: doc.movieName}
+            }
+            if (doc.requestTitle) {
+                body.requestTitleSuggest = {input: doc.requestTitle}
             }
             body.createAt = date.createdAt;
             body.lastUpdated = date.lastUpdated
@@ -666,6 +678,7 @@ var elastic = function () {
                 language: doc.language,
                 description : doc.description,
                 image: doc.image,
+                requestTitle: doc.requestTitle,
                 descriptions: doc.descriptions,
                 link: doc.link,
                 status: doc.status,
@@ -673,6 +686,9 @@ var elastic = function () {
             }
             if (doc.movieName) {
                 body.movieSuggest = {input: doc.movieName}
+            }
+            if (doc.requestTitle) {
+                body.requestTitleSuggest = {input: doc.requestTitle}
             }
             body.createAt = doc.dates.createdAt;
             body.lastUpdated = doc.dates.lastUpdated

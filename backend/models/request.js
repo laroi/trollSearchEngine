@@ -6,12 +6,14 @@ var mongoose = require('mongoose'),
 var request = new Schema({
     user: {type: String},
     movieName: {type: String},
+    requestTitle: {type: String},
     language: {type: String},
     description: {type: String},
     link: {type: String},
     status:{type: String, default : 'P'}, //P -> Pending, 'I' -> Inactive
     image: {
         url : {type: String },
+        thumb : {type: String },
         type: {type: String},
         size: {width: {type:Number}, height:{type:Number}}
     },

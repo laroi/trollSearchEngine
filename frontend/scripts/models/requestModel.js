@@ -19,6 +19,7 @@ define(['scripts/controllers/requestController', 'scripts/controllers/storeContr
                	user: inRequest.user || '',
                 movieName: inRequest.movieName || '',
                 language: inRequest.language || '',
+                title: inRequest.title || '',
 				description: inRequest.description || '',
 				link: inRequest.link || '',
 				status: inRequest.status || '',

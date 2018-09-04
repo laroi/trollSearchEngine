@@ -137,6 +137,7 @@ define(['scripts/controllers/requestController', 'scripts/controllers/storeContr
                                 user: req._source.user,
                                	movieName: req._source.movieName,
                                 language: req._source.language,
+                                title: req._source.title,
                                 description: req._source.description,
                                 link: req._source.link,
                                 status: req._source.status,

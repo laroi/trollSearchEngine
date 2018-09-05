@@ -48,8 +48,9 @@ var toB = new TransformToBulk(function getIndexTypeId (doc) {
 var requestTransform  = new TransformToBulk(function getIndexTypeId (doc) {
     var id = doc._id
     delete doc._id
-    if (doc.movieName) {
-        doc.movieSuggest = {input: doc.movieName}
+    doc.
+    if (doc.movie) {
+        doc.requestMovieSuggest = {input: doc.movie}
     }
     if (doc.requestTitle) {
         doc.requestTitleSuggest = {input: doc.requestTitle}
@@ -78,7 +79,7 @@ createIndex = function (indexName) {
                 resolve(data)
             } else {
                 reject(data);
-            }        
+            }
         })
     });
 }
@@ -89,24 +90,23 @@ var putRequestMapping = function () {
             type: 'requests',
             body:{
                 properties: {
-                    user: {"type" : "string", "index" : "not_analyzed"},
-                    movieName:{"type" : "string", "index" : "not_analyzed"},
+                    requestUser: {"type" : "string", "index" : "not_analyzed"},
+                    requestMovie:{"type" : "string", "index" : "not_analyzed"},
                     requestTitle: {"type" : "string"},
-                    description: {"type" : "string", "index" : "not_analyzed"},
-                    link: {"type" : "string", "index" : "not_analyzed"},
-                    status: {"type" : "string", "index" : "not_analyzed"},
-                    isAdult: {"type" : "boolean", "index" : "not_analyzed"},
-                    isApproved: {"type" : "boolean", "index" : "not_analyzed"},
-                    image: {"type" : "object", 
+                    requestDescription: {"type" : "string", "index" : "not_analyzed"},
+                    requestLink: {"type" : "string", "index" : "not_analyzed"},
+                    requestStatus: {"type" : "string", "index" : "not_analyzed"},
+                    requestIsApproved: {"type" : "boolean", "index" : "not_analyzed"},
+                    requestImage: {"type" : "object",
                         "properties" : {
                             "url" : {"type" : "string", "index" : "not_analyzed"},
                             "thumb" : {"type" : "string", "index" : "not_analyzed"},
                             "type" : {"type" : "string", "index" : "not_analyzed"}
                         }
                     },
-                    createdAt: {"type" : "date"},
-                    lastUpdated: {"type": "date"},
-                    movieSuggest: {
+                    requestCreatedAt: {"type" : "date"},
+                    requestLastUpdated: {"type": "date"},
+                    requestMovieSuggest: {
                         type: "completion",
                         analyzer: "simple",
                         preserve_separators: true,
@@ -122,7 +122,6 @@ var putRequestMapping = function () {
                     }
                 }
             }
-            
         }, function (err, resp, respcode) {
             if (!err) {
                 console.log('put request mapping')
@@ -147,12 +146,12 @@ var putMapping = function () {
                     type: {"type" : "string", "index" : "not_analyzed"},
                     isAdult: {"type" : "boolean", "index" : "not_analyzed"},
                     isApproved: {"type" : "boolean", "index" : "not_analyzed"},
-                    image: {"type" : "object", 
+                    image: {"type" : "object",
                         "properties" : {
                             "url"   : {"type" : "string", "index" : "not_analyzed"},
                             "type"  : {"type" : "string", "index" : "not_analyzed"},
                             "thumb" : {"type" : "string", "index" : "not_analyzed"},
-                            "size"  : {"type" : "object","properties" : 
+                            "size"  : {"type" : "object","properties" :
                                 {
                                 "width": {"type": "long", "index" : "not_analyzed"},
                                 "height":{"type": "long", "index": "not_analyzed"}

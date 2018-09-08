@@ -5,7 +5,7 @@ var client = new elasticsearch.Client({
   apiVersion: '5.5'
 });
 var elastic = function () {
-    var putSettings = function (callback) {        
+    var putSettings = function (callback) {
         client.indices.close({index: 'trolls'},function(err) {
         console.log('closed index')
           if (!err) {
@@ -40,7 +40,7 @@ var elastic = function () {
                 client.indices.open({index: 'trolls'}, function() {
                     console.log('opened index')
                     callback();
-                });     
+                });
             } else {
                 console.error(setErr);
                 callback(setErr);
@@ -52,7 +52,6 @@ var elastic = function () {
             callback(err);
         }
         })
-        
     }
     var putMapping = function (callback) {
             client.indices.putMapping({
@@ -66,7 +65,7 @@ var elastic = function () {
                         type: {"type" : "string", "index" : "not_analyzed"},
                         isAdult: {"type" : "boolean", "index" : "not_analyzed"},
                         isApproved: {"type" : "boolean", "index" : "not_analyzed"},
-                        image: {"type" : "object", 
+                        image: {"type" : "object",
                             "properties" : {
                                 "url" : {"type" : "string", "index" : "not_analyzed"},
                                 "thumb" : {"type" : "string", "index" : "not_analyzed"},
@@ -146,7 +145,6 @@ var elastic = function () {
                         }
                     }
                 }
-                
             }, function (err, resp, respcode) {
                     if (!err) {
                         console.log('put mapping')
@@ -159,57 +157,53 @@ var elastic = function () {
                     }
                 });
     }
-    var putRequestMapping = function (callback) {
-            client.indices.putMapping({
-                index: 'trolls',
-                type: 'requests',
-                body:{
-                    properties: {
-                        user: {"type" : "string", "index" : "not_analyzed"},
-                        movieName: {"type" : "string", "index" : "not_analyzed"},
-                        requestTitle: {"type" : "string"},
-                        description: {"type" : "string", "index" : "not_analyzed"},
-                        link: {"type" : "string", "index" : "not_analyzed"},
-                        status: {"type" : "string", "index" : "not_analyzed"},
-                        isAdult: {"type" : "boolean", "index" : "not_analyzed"},
-                        isApproved: {"type" : "boolean", "index" : "not_analyzed"},
-                        image: {"type" : "object", 
-                            "properties" : {
-                                "url" : {"type" : "string", "index" : "not_analyzed"},
-                                "thumb" : {"type" : "string", "index" : "not_analyzed"},
-                                "type" : {"type" : "string", "index" : "not_analyzed"}
-                            }
-                        },
-                        createdAt: {"type" : "date"},
-                        lastModified: {"type": "date"},
-                        movieSuggest: {
-                            type: "completion",
-                            analyzer: "simple",
-                            preserve_separators: true,
-                            preserve_position_increments: true,
-                            max_input_length: 50
-                        },
-                        requestTitleSuggest: {
-                            type: "completion",
-                            analyzer: "simple",
-                            preserve_separators: true,
-                            preserve_position_increments: true,
-                            max_input_length: 50
+    var putRequestMapping = function () {
+        client.indices.putMapping({
+            index: 'trolls',
+            type: 'requests',
+            body:{
+                properties: {
+                    requestUser: {"type" : "string", "index" : "not_analyzed"},
+                    movieName:{"type" : "string", "index" : "not_analyzed"},
+                    requestTitle: {"type" : "string"},
+                    requestDescription: {"type" : "string", "index" : "not_analyzed"},
+                    requestLink: {"type" : "string", "index" : "not_analyzed"},
+                    requestStatus: {"type" : "string", "index" : "not_analyzed"},
+                    requestIsApproved: {"type" : "boolean", "index" : "not_analyzed"},
+                    requestImage: {"type" : "object",
+                        "properties" : {
+                            "url" : {"type" : "string", "index" : "not_analyzed"},
+                            "thumb" : {"type" : "string", "index" : "not_analyzed"},
+                            "type" : {"type" : "string", "index" : "not_analyzed"}
                         }
+                    },
+                    requestCreatedAt: {"type" : "date"},
+                    requestLastUpdated: {"type": "date"},
+                    requestMovieSuggest: {
+                        type: "completion",
+                        analyzer: "simple",
+                        preserve_separators: true,
+                        preserve_position_increments: true,
+                        max_input_length: 50
+                    },
+                    requestTitleSuggest: {
+                        type: "completion",
+                        analyzer: "simple",
+                        preserve_separators: true,
+                        preserve_position_increments: true,
+                        max_input_length: 50
                     }
                 }
-                
-            }, function (err, resp, respcode) {
-                    if (!err) {
-                        console.log('put mapping')
-                        callback()
-                        return;
-                    } else {
-                        console.error(err);
-                        callback(err);
-                        return;
-                    }
-                });
+            }
+        }, function (err, resp, respcode) {
+            if (!err) {
+                console.log('put request mapping')
+                callback()
+            } else {
+                console.error(err);
+                callback(err);
+            }
+        });
     }
     var init = function (callback) {
         console.log('Initing ES index');
@@ -238,16 +232,15 @@ var elastic = function () {
                                         callback(err);
                                     }
                                 }
-                            })                            
+                            })
                         } else {
                             console.log('error in putting index', err);
                         }
-                    })                        
+                    })
 
                 } else {
                     console.log('Error creating index', createErr)
                 }
-                    
             })
             }
         });
@@ -339,8 +332,7 @@ var elastic = function () {
             sort =[],
             minScore = undefined,
             body = {};
-        
-        if (options.advanced && isAdvancedSearch(options.advanced)) {           
+        if (options.advanced && isAdvancedSearch(options.advanced)) {
             if (options.advanced.userId) {
                 must_array.push({ "match": { "user": options.advanced.userId }});
                 sort.push({"_score": {"order": "desc"}});
@@ -411,7 +403,7 @@ var elastic = function () {
         }
         if (options.language) {
             must_array.push({ "match": { "language": options.language }});
-        }               
+        }
         if (options.type) {
             must_array.push({ "match": { "type": options.type }});
         }
@@ -441,7 +433,7 @@ var elastic = function () {
         if (minScore) {
             body.min_score = minScore;
         }
-        console.log('sort ', sort); 
+        console.log('sort ', sort);
         if (should_array.length > 0) {
             body.query.bool.should = should_array
         }
@@ -480,9 +472,9 @@ var elastic = function () {
                     "regex" : ".*"+options.query+".*",
                     completion : {
                         field: fieldMap[field]
-                    } 
+                    }
                   }
-            });            
+            });
         } else {
             Object.keys(fieldMap).forEach(function(field) {
                 /*if (field === 'title' || field === 'movie' ||field === 'event' ) {
@@ -490,17 +482,17 @@ var elastic = function () {
                         "prefix" : options.query,
                         completion : {
                             field: fieldMap[field]
-                        } 
+                        }
                       }
                 } else { */
                     suggestObj.suggest[field]={
                         "regex" : ".*"+options.query+".*",
                         completion : {
                             field: fieldMap[field]
-                        } 
+                        }
                       }
                 //}
-            });         
+            });
         }
         console.log('\n' + JSON.stringify(suggestObj) + '\n')
         client.search({
@@ -517,7 +509,7 @@ var elastic = function () {
     }
     var getRequestSuggestions = function(options, callback) {
         var fieldMap = {
-            movie: 'movieSuggest'
+            movie: 'requestMovieSuggest'
         },
         suggestObj = {
             suggest: {}
@@ -528,9 +520,9 @@ var elastic = function () {
                     "regex" : ".*"+options.query+".*",
                     completion : {
                         field: fieldMap[field]
-                    } 
+                    }
                   }
-            });            
+            });
         } else {
             Object.keys(fieldMap).forEach(function(field) {
                 /*if (field === 'title' || field === 'movie' ||field === 'event' ) {
@@ -538,17 +530,17 @@ var elastic = function () {
                         "prefix" : options.query,
                         completion : {
                             field: fieldMap[field]
-                        } 
+                        }
                       }
                 } else { */
                     suggestObj.suggest[field]={
                         "regex" : ".*"+options.query+".*",
                         completion : {
                             field: fieldMap[field]
-                        } 
+                        }
                       }
                 //}
-            });         
+            });
         }
         console.log('\n' + JSON.stringify(suggestObj) + '\n')
         client.search({
@@ -638,25 +630,23 @@ var elastic = function () {
     }
     var updateRequestDoc = function (id, doc, callback) {
             var body = {
-                user: doc.user,
-                movieName: doc.movieName,
-                language: doc.language,
+                requestUser: doc.user,
+                requestMovie: doc.movie,
+                requestLanguage: doc.language,
                 requestTitle: doc.requestTitle,
-                description : doc.description,
-                image: doc.image,
-                descriptions: doc.descriptions,
-                link: doc.link,
-                status: doc.status,
-                image: doc.image
+                requestDescription : doc.description,
+                requestImage: doc.image,
+                requestLink: doc.link,
+                requestStatus: doc.status,
             }
-            if (doc.movieName) {
-                body.movieSuggest = {input: doc.movieName}
+            if (doc.movie) {
+                body.requestMovieSuggest = {input: doc.movie}
             }
             if (doc.requestTitle) {
                 body.requestTitleSuggest = {input: doc.requestTitle}
             }
-            body.createAt = date.createdAt;
-            body.lastUpdated = date.lastUpdated
+            body.requestCreateAt = dates.createdAt;
+            body.requestLastUpdated = dates.lastUpdated
         console.log("es body\n", body)
         client.update({
             index: 'trolls',
@@ -673,25 +663,24 @@ var elastic = function () {
     }
     var putRequestDoc = function (doc, callback) {
         var body = {
-                user: doc.user,
-                movieName: doc.movieName,
-                language: doc.language,
-                description : doc.description,
-                image: doc.image,
-                requestTitle: doc.requestTitle,
-                descriptions: doc.descriptions,
-                link: doc.link,
-                status: doc.status,
-                image: doc.image
+                requestUser: doc.user,
+                requestMovie: doc.movie,
+                requestLanguage: doc.language,
+                requestDescription : doc.description,
+                requestImage: doc.image,
+                requestTitle: doc.title,
+                requestLink: doc.link,
+                requestStatus: doc.status,
+
             }
-            if (doc.movieName) {
-                body.movieSuggest = {input: doc.movieName}
+            if (doc.movie) {
+                body.requestMovieSuggest = {input: doc.movie}
             }
-            if (doc.requestTitle) {
-                body.requestTitleSuggest = {input: doc.requestTitle}
+            if (doc.title) {
+                body.requestTitleSuggest = {input: doc.title}
             }
-            body.createAt = doc.dates.createdAt;
-            body.lastUpdated = doc.dates.lastUpdated
+            body.requestCreateAt = doc.dates.createdAt;
+            body.requestLastUpdated = doc.dates.lastUpdated
         client.create({
             index: 'trolls',
             id: doc.id,
@@ -712,13 +701,13 @@ var elastic = function () {
             minScore = 0.5,
             body = {};
         if (options.language) {
-                must_array.push({ "match": { "language": options.language}});
+                must_array.push({ "match": { "requestLanguage": options.language}});
         }
-        if (options.movieName) {
-                must_array.push({ "match": { "moveName": options.movieName}});
+        if (options.movie) {
+                must_array.push({ "match": { "requestMovie": options.movie}});
         }
         must_array.push({ "match": { "status": "P"}});
-        if (options.language || options.movieName) {
+        if (options.requestLanguage || options.requestMovie) {
             sort.push({
                 "_score": {
                    "order": "desc"
@@ -726,7 +715,7 @@ var elastic = function () {
              });
         } else {
             sort.push({
-                "lastUpdated": {
+                "requestLastUpdated": {
                    "order": options.order || "desc"
                 }
              })

@@ -33,12 +33,11 @@ define([
                 var date = new Date();
                 var url = '/api/request',
                     postData = {
-                        moveiName: $('#req-movie').val().trim(),                     
+                        movieName: $('#req-movie').val().trim(),                     
                         requestTitle: $('#req-title').val().trim(),
+                        language:$("#req-language").val().trim() === 'Select' ? '' : $("#req-language").val().trim(),
                         user: store.get('userId'),
-                        description: $('#req-desc').val().trim(),
-                        createdAt: date.toISOString(),
-                        lastModified: date.toISOString()
+                        description: $('#req-desc').val().trim()
                     }
                     request.postImage(url, postData, function(err, data) {
                         callback(err, data)
@@ -63,7 +62,7 @@ define([
         var requestView = function () {
             var render;
             render = function (id) {
-                    var html = template();
+                    var html = template({requests: undefined, langs:["Malayalam"]});
                     $('#requestModel').empty().append(html);
                     updateUi();
                     $('#request-meme').on('hidden.bs.modal', gotoHome);

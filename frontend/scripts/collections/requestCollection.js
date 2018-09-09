@@ -134,21 +134,21 @@ define(['scripts/controllers/requestController', 'scripts/controllers/storeContr
                         hits.forEach(function (req) {
                             var requestObj = new RequestModel({
                                 _id : req._id,
-                                user: req._source.user,
-                               	movieName: req._source.movieName,
-                                language: req._source.language,
-                                title: req._source.title,
-                                description: req._source.description,
-                                link: req._source.link,
-                                status: req._source.status,
+                                user: req._source.requestUser,
+                               	movieName: req._source.requestMovie,
+                                language: req._source.requestLanguage,
+                                title: req._source.requestTitle,
+                                description: req._source.requestDescription,
+                                link: req._source.requestLink,
+                                status: req._source.requestStatus,
 				            });
-				            if (req._source.image) {
-				                requestObj.imageUrl = req._source.image.url,
-                                requestObj.thumbUrl = req._source.image.thumb,
-                                requestObj.height  = req._source.image.size ? req._source.image.size.height : 0,
-                                requestObj.width = req._source.image.size ? req._source.image.size.width : 0
+				            if (req._source.requestImage) {
+				                requestObj.imageUrl = req._source.requestImage.url,
+                                requestObj.thumbUrl = req._source.requestImage.thumb,
+                                requestObj.height  = req._source.requestImage.size ? req._source.requestImage.size.height : 0,
+                                requestObj.width = req._source.requestImage.size ? req._source.requestImage.size.width : 0
 				            }
-				            if (store.get('userId') === req._source.user.id) {
+				            if (store.get('userId') === req._source.requestUser) {
 				               requestObj.isOwner = true; 
 				            }
 				            requests.push(requestObj)
@@ -202,7 +202,7 @@ define(['scripts/controllers/requestController', 'scripts/controllers/storeContr
 				    if (postObj.type === 'clean') {
 				        postObj.isClean = true;
 				    }
-				    if (store.get('userId') === post.user.id) {
+				    if (store.get('userId') === post.user) {
 				       postObj.isOwner = true; 
 				    }
 			        stars = store.get('stars') || [];

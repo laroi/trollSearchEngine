@@ -11,6 +11,8 @@ var client = new elasticsearch.Client({
 var deleteIndex;
 var createIndex;
 var putMapping;
+var Transform = require('stream').Transform,
+    util = require('util');
 
 var bulkExec = function(bulkCmds, callback) {
   client.bulk({
@@ -20,6 +22,52 @@ var bulkExec = function(bulkCmds, callback) {
   }, callback);
 };
 
+var esTransformStream = function() {
+  Transform.call(this, {objectMode: true});
+};
+util.inherits(esTransformStream, Transform);
+
+esTransformStream.prototype._transform = function(chunk, encoding, callback) {
+    let toObj = {};
+  if (typeof chunk.originalValue === 'undefined') {
+    chunk.originalValue = chunk.value;
+   }
+   if (chunk.user) {
+	toObj.requestUser = chunk.user;
+    }
+   if (chunk.mmovie) {
+	toObj.requestMovie = chunk.movie;
+	toObj.requestMovieSuggest = {input: chunk.movie};
+    }
+   if (chunk.title) {
+	toObj.requestTitle = chunk.title;
+	toObj.requestTitleSuggest = {input: chunk.title};
+    }
+   if (chunk.description) {
+	toObj.requestDescription = chunk.description;
+    }
+   if (chunk.link) {
+	toObj.requestLink = chunk.link
+    }
+   if (chunk.status) {
+	toObj.requestStatus = chunk.status
+    }
+   if (chunk.isApproved) {
+	toObj.requestIsApproved = chunk.isApproved
+    }
+   if (chunk.image) {
+	toObj.requestImage = chunk.image
+    }
+   if (chunk.dates.createdAt) {
+	toObj.requestCreatedAt = chunk.dates.createdAt
+    }
+   if (chunk.dates.lastUpadtedAt) {
+	toObj.requestLastUpdatedAt = chunk.lastUpdatedAt
+    }
+  this.push(toObj);
+  callback();
+};
+var es = new esTransformStream();
 var ws = new WritableBulk(bulkExec);
 var toB = new TransformToBulk(function getIndexTypeId (doc) {
     var id = doc._id
@@ -48,7 +96,6 @@ var toB = new TransformToBulk(function getIndexTypeId (doc) {
 var requestTransform  = new TransformToBulk(function getIndexTypeId (doc) {
     var id = doc._id
     delete doc._id
-    doc.
     if (doc.movie) {
         doc.requestMovieSuggest = {input: doc.movie}
     }
@@ -271,7 +318,7 @@ MongoClient.connect(url, function(err, db) {
         return new Promise((resolve, reject) => {
             var collection = db.collection('request');
             //var stream = collection.find().batchSize(2).stream();
-            collection.find().batchSize(10).stream().pipe(toB).pipe(ws).on('finish', function(){console.log("done")})
+            collection.find().batchSize(10).stream().pipe(es).pipe(toB).pipe(ws).on('finish', function(){console.log("done")})
             ws.on('close', function () {
                 console.log("ws closed");
                 client.close();

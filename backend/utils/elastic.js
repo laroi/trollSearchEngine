@@ -164,7 +164,7 @@ var elastic = function () {
             body:{
                 properties: {
                     requestUser: {"type" : "string", "index" : "not_analyzed"},
-                    movieName:{"type" : "string", "index" : "not_analyzed"},
+                    requestmovie:{"type" : "string", "index" : "not_analyzed"},
                     requestTitle: {"type" : "string"},
                     requestDescription: {"type" : "string", "index" : "not_analyzed"},
                     requestLink: {"type" : "string", "index" : "not_analyzed"},
@@ -706,7 +706,7 @@ var elastic = function () {
         if (options.movie) {
                 must_array.push({ "match": { "requestMovie": options.movie}});
         }
-        must_array.push({ "match": { "status": "P"}});
+        must_array.push({ "match": { "requestStatus": "P"}});
         if (options.requestLanguage || options.requestMovie) {
             sort.push({
                 "_score": {

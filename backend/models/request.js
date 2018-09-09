@@ -5,11 +5,12 @@ var mongoose = require('mongoose'),
 
 var request = new Schema({
     user: {type: String},
-    movieName: {type: String},
-    requestTitle: {type: String},
+    movie: {type: String},
+    title: {type: String},
     language: {type: String},
     description: {type: String},
     link: {type: String},
+    isApproved:{type: Boolean, default: false},
     status:{type: String, default : 'P'}, //P -> Pending, 'I' -> Inactive
     image: {
         url : {type: String },

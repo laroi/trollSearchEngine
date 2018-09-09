@@ -161,7 +161,7 @@ define(['scripts/controllers/requestController', 'scripts/controllers/storeContr
 				            if (postObj.type === 'clean') {
 				                postObj.isClean = true;
 				            }
-				            if (store.get('userId') === post._source.user.id) {
+				            if (store.get('userId') === post._source.user) {
 				               postObj.isOwner = true; 
 				            }
 				            postObj.isLiked = post._source.likes.find(function(like){return like.userId === store.get('userId')})
@@ -220,7 +220,7 @@ define(['scripts/controllers/requestController', 'scripts/controllers/storeContr
 				    if (postObj.type === 'clean') {
 				        postObj.isClean = true;
 				    }
-				    if (store.get('userId') === post.user.id) {
+				    if (store.get('userId') === post.user) {
 				       postObj.isOwner = true; 
 				    }
 			        stars = store.get('stars') || [];

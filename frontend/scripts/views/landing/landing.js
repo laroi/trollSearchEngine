@@ -450,7 +450,9 @@ define([
                     postCollection.getAllPosts(postData, query.force, function(err, posts) {
                         if (posts !== undefined) {
                             var html = template({posts: posts});
+                            $('#request-contents').hide()
                             $('#post-contents').empty().append(html);
+                            $('#post-contents').show()
                             //$('.page-cont').imagesLoaded(function () {
                                 $('.page-cont').masonry({
                                   // options

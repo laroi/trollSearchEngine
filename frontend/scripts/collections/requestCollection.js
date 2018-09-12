@@ -123,6 +123,7 @@ define(['scripts/controllers/requestController', 'scripts/controllers/storeContr
                         let hits = []
                         if (data && Array.isArray(data.hits) && data.hits.length > 0) {
                             hits = data.hits
+                            requests = [];
                         }
                         requestData.from = parseInt((requestData.from || 0), 10);
                         requestData.limit = parseInt((requestData.limit || 0), 10);

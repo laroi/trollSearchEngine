@@ -23,8 +23,11 @@ define([
             var render;
             render = function (id) {
                 requestCollection.getAllRequests({from:0}, false, (err, requests) => {
+                    console.log(requests)
                     var html = template({requests: requests});
                     $('#request-contents').empty().append(html);
+                    $('#request-contents').show();
+                    $('#post-contents').hide()
                     
                 })
             }

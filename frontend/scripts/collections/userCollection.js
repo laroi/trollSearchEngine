@@ -5,7 +5,7 @@ define(['scripts/controllers/requestController', 'scripts/controllers/storeContr
         getContext = (callback) => {            
             if (context.length < 1) {
                 request.get('/api/contexts', function (contErr, status, contData) {
-                    if (!contErr) {
+                    if (!contErr && Array.isArray(contData) && contData.length > 0) {
                         contData = contData.map(_=> " "+_.capitalize()+ " ");
                         context = contData
                         callback(undefined, context);

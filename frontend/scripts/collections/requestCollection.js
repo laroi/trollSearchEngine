@@ -1,6 +1,6 @@
-define(['scripts/controllers/requestController', 'scripts/controllers/storeController', 'scripts/models/requestModel'], function (request, store, RequestModel) {
+define(['scripts/controllers/requestController', 'scripts/controllers/storeController', 'scripts/models/requestModel'], function (requestController, store, RequestModel) {
     //Do setup work here
-    var post = function() {
+    var request = function() {
         var requests = [],
             current,
             total,
@@ -96,7 +96,7 @@ define(['scripts/controllers/requestController', 'scripts/controllers/storeContr
         let getPostUserDetails = () => {
             return new Promise((resolve, reject)=> {
                 let users = posts.map((_)=>_.user);
-                request._post('/api/users', {users: users})
+                requestController._post('/api/users', {users: users})
                 .then((data)=> {
                     data.map((datum)=> {
                         for (let i = 0; i < posts.length; i+= 1) {
@@ -113,13 +113,33 @@ define(['scripts/controllers/requestController', 'scripts/controllers/storeContr
                 })
             })
         }
+        let getRequestUserDetails = () => {
+            return new Promise((resolve, reject)=> {
+                let users = requests.map((_)=>_.user);
+                requestController._post('/api/users', {users: users})
+                .then((data)=> {
+                    data.map((datum)=> {
+                        for (let i = 0; i < requests.length; i+= 1) {
+                            if (requests[i].user === datum._id) {
+                                requests[i].username = datum.name;
+                                requests[i].userimg = datum.picture;
+                            }
+                        }                        
+                    })
+                    resolve(requests)
+                })
+                .catch((err)=> {
+                    reject(err);
+                })
+            })
+        }
         getAllRequests = function (requestData, force, callback) {
             /*if (!checkIfCached(postData) || force) {
                 updateCache(postData);
                 if (postData.request) {
                     
                 } else {*/
-                    request.get('/api/requests', function (err, status, data) {
+                    requestController.get('/api/requests', function (err, status, data) {
                         let hits = []
                         if (data && Array.isArray(data.hits) && data.hits.length > 0) {
                             hits = data.hits
@@ -165,54 +185,33 @@ define(['scripts/controllers/requestController', 'scripts/controllers/storeContr
                 //callback(undefined, {posts:posts, total: total, current: current, limit: limit});
             }*/
         }
-        getPostById = function(id, callback) {
+        getRequestById = function(id, callback) {
             var retPost;
-            for(var i = 0; i < posts.length; i += 1) {
-                if (posts[i]._id === id) {
-                    retPost = posts[i];
+            for(var i = 0; i < requests.length; i += 1) {
+                if (requests[i]._id === id) {
+                    retPost = requests[i];
                     break;
                 }
             }
             if (retPost) {
                 callback(undefined, retPost);
             } else {
-                request.get('/api/post/'+id, function (err, post) {
+                requestController.get('/api/request/'+id, function (err, request) {
                     if (!err) {
-                        post = post[0];
-                        var postObj = new PostModel({
-                        _id : post._id,
-                        user: post.user,
-                       	title: post.title,
-                        type: post.type,
-                        views: post.views,
-                        likes: post.likes,
-                        downloads: post.downloads,
-                        isAdult: post.isAdult,
-                        imageUrl: post.image.url,
-                        thumbUrl: post.image.thumb,
-				        description: post.description,
-				        tags: post.tags,
-				        movie: post.movie,
-				        language: post.language,
-				        actors: post.actors,
-				        isApproved : post.isApproved,
-				        characters: post.characters,
-				        event: post.event,
-				        context : post.context
-				    });
-				    if (postObj.type === 'clean') {
-				        postObj.isClean = true;
+                        request = request[0];
+                        var requestObj = new RequestModel({
+                            user: request.user,
+                           	movieName: request.movie,
+                            language: request.language,
+                            title: request.title,
+                            description: request.description,
+                            link: request.link,
+                            status: request.status
+				        });				    
+				    if (store.get('userId') === request.user) {
+				       requestObj.isOwner = true; 
 				    }
-				    if (store.get('userId') === post.user) {
-				       postObj.isOwner = true; 
-				    }
-			        stars = store.get('stars') || [];
-				    postObj.isLiked = post.likes.find(function(like){return like.userId === store.get('userId')})
-				    postObj.isLiked = postObj.isLiked && postObj.isLiked.userId ? true : false;
-				    if (stars.indexOf(post._id) > -1) {
-				        postObj.isStarred = true;
-				    }
-                        callback(undefined, postObj)
+                        callback(undefined, requestObj)
                     } else {
                         callback(err, undefined);
                         console.error(err);
@@ -221,11 +220,11 @@ define(['scripts/controllers/requestController', 'scripts/controllers/storeContr
             }
          }
         return  {
-           getAllRequests: getAllRequests
-//           getPostById: getPostById,
-//           getPostUserDetails: getPostUserDetails
+           getAllRequests: getAllRequests,
+           getRequestById: getRequestById,
+           getRequestUserDetails: getRequestUserDetails
         };
         
     };
-    return post()
+    return request()
 });

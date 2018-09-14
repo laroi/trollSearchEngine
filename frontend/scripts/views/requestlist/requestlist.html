@@ -4,14 +4,13 @@
     <div class="row page-cont">
     {{#each requests.requests}}
     <div class="elem-cont">
-          {{#unless this.isApproved}}<div class="notify-badge">U</div> {{/unless}}
           <div class="panel panel-default">
             <div id={{this._id}} class="panel-body">
                 <div class="thumbImgCont">
                     {{#if this.thumbUrl}}
                         <img alt="thumb-image" width="150px" {{#if this.height}}height={{#getThumbHeight this}} {{/getThumbHeight}}{{/if}} class="thumbImg" src={{this.thumbUrl}}>
                     {{else}}
-                        <div class="descr-alt-cont">{{this.description}}</div>
+                        <div class="descr-alt-cont" style="{{#getStyle}}{{/getStyle}}">{{this.description}}</div>
                     {{/if}}
                 </div>
                 <div class="row2">
@@ -25,7 +24,7 @@
                             <div class="pan-btn user"><img height="17" width="17" class="user-img" src={{this.user.image}}></div>
                            
                             <div class="pan-btn-cont">
-                                <div class="fas fa-reply pan-btn download"></div>
+                                <div class="fas fa-reply pan-btn"></div>
                             </div>
                         </div>
                     </div>

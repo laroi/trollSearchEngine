@@ -83,6 +83,19 @@ define([
                 url.navigate('landing');
             }
         }
+
+        let enableFilters = () => {
+            $('.language-list').prop('disabled', false);
+            $('.context-list').prop('disabled', false);
+            $('.isPlain').prop('disabled', false);
+            $('.isAdult').prop('disabled', false);
+            $('.isFavorite').prop('disabled', false);
+            $('.isMine').prop('disabled', false);
+            if (store.get('userType') === 'admin') {
+                $('.isApproved').prop('disabled', false);            
+            }
+            $('#basic-search').prop('disabled', false);
+        }
         var advancedSearch = function(e) {
             var se_title = $('#se_title').val().trim(),
             se_tag = $('#se_tag').val().trim(),
@@ -257,11 +270,11 @@ define([
                 if (store.get('userType') === 'admin' && isApproved) {
                     filtObj.isApproved = false;
                 }
-                store.set('filters', filtObj);
-                $('.dropdown.open').removeClass('open');
+                store.set('filters', filtObj);                
                 store.set('from', 0);
                 url.navigate('landing');
             }
+            $('.dropdown.open').removeClass('open');
         };
         var updateUi = function (type, key) {
             var mapping = {
@@ -447,12 +460,13 @@ define([
                 if(postData.request) {
                     url.navigate('requestList');
                 } else {
+                    enableFilters()
                     postCollection.getAllPosts(postData, query.force, function(err, posts) {
                         if (posts !== undefined) {
                             var html = template({posts: posts});
-                            $('#request-contents').hide()
+                            
                             $('#post-contents').empty().append(html);
-                            $('#post-contents').show()
+                            
                             //$('.page-cont').imagesLoaded(function () {
                                 $('.page-cont').masonry({
                                   // options
@@ -475,6 +489,8 @@ define([
                             loadLangs();
                             updateUi();                        
                         }
+                        $('#request-contents').hide()
+                        $('#post-contents').show()
                         checkFilters();
                         highlight.highlight();
                         $('.edit').off('click').on('click', editPost);

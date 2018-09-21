@@ -720,7 +720,7 @@ var elastic = function () {
                 }
              })
         }
-         body = {
+        /* body = {
             aggs : {
                 requests:{
                    top_hits:{
@@ -736,7 +736,17 @@ var elastic = function () {
                "from" : options.from || 0,
                "size" : 10,
                "sort" : sort
-        };
+        };*/
+        body = {
+          "query": {
+            "bool" : {
+              "must" : must_array
+            }
+          },
+           "from" : options.from || 0,
+           "size" : 10,
+           "sort" : sort
+        }
         /*if (minScore) {
             body.min_score = minScore;
         }*/
@@ -752,6 +762,7 @@ var elastic = function () {
             body: body
         }, function (error, response) {
             console.log("\n", JSON.stringify(response), "\n")
+            //callback(error, response.aggregations.requests.hits);
             callback(error, response.hits);
         });
     }

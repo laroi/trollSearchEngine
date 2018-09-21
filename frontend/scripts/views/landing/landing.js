@@ -95,6 +95,7 @@ define([
                 $('.isApproved').prop('disabled', false);            
             }
             $('#basic-search').prop('disabled', false);
+            $('.isRequest').prop('checked', false)
         }
         var advancedSearch = function(e) {
             var se_title = $('#se_title').val().trim(),
@@ -315,7 +316,7 @@ define([
         let logout = (e) => {
             let accessKey = store.get('accessKey')
             user.unsetToken(accessKey,  () => {
-                url.navigate('landing', true);
+                url.navigate('landing', undefined, true);
                 $('.open').removeClass('open');
             })
         }

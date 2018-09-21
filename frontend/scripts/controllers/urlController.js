@@ -1,6 +1,6 @@
 define(['./storeController'], function (store) {
     var navigate;
-    navigate = function (page, isForce) {
+    navigate = function (page, params, isForce) {
         var hash = '#';
         let filterExclusions = ['from'];
         isForce = isForce || false
@@ -69,7 +69,10 @@ define(['./storeController'], function (store) {
             hash += store.get('postId');
         }
         else if (page === 'requestList') {
-            hash += 'requests'
+            params = params || {};
+            hash += 'requests';
+            hash += '?from=';
+            hash += params.from || 0
         }
         if (window.location.hash !== hash) {
             window.location.hash = hash

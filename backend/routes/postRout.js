@@ -733,7 +733,7 @@ var routes = function () {
     let getRequest = function (req, res) {
         var id = req.params.id
         if (id) {
-            Request.find({_id: id}, function(err, data) {
+            Req.find({_id: id}, function(err, data) {
                 if (!err) {
                     res.status(200).send(JSON.stringify(data));
                 } else {

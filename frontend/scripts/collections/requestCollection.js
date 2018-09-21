@@ -93,44 +93,29 @@ define(['scripts/controllers/requestController', 'scripts/controllers/storeContr
                 cachedVals.userId = postData.userId || undefined;
                 cachedVals.language = postData.language || undefined;
         }
-        let getPostUserDetails = () => {
-            return new Promise((resolve, reject)=> {
-                let users = posts.map((_)=>_.user);
-                requestController._post('/api/users', {users: users})
-                .then((data)=> {
-                    data.map((datum)=> {
-                        for (let i = 0; i < posts.length; i+= 1) {
-                            if (posts[i].user === datum._id) {
-                                posts[i].username = datum.name;
-                                posts[i].userimg = datum.picture;
-                            }
-                        }                        
-                    })
-                    resolve(posts)
-                })
-                .catch((err)=> {
-                    reject(err);
-                })
-            })
-        }
         let getRequestUserDetails = () => {
             return new Promise((resolve, reject)=> {
                 let users = requests.map((_)=>_.user);
-                requestController._post('/api/users', {users: users})
-                .then((data)=> {
-                    data.map((datum)=> {
-                        for (let i = 0; i < requests.length; i+= 1) {
-                            if (requests[i].user === datum._id) {
-                                requests[i].username = datum.name;
-                                requests[i].userimg = datum.picture;
-                            }
-                        }                        
+                if (users.length > 0 ) {
+                    requestController._post('/api/users', {users: users})
+                    .then((data)=> {
+                        data = data || [];
+                        data.map((datum)=> {
+                            for (let i = 0; i < requests.length; i+= 1) {
+                                if (requests[i].user === datum._id) {
+                                    requests[i].username = datum.name;
+                                    requests[i].userimg = datum.picture;
+                                }
+                            }                        
+                        })
+                        resolve(requests)
                     })
-                    resolve(requests)
-                })
-                .catch((err)=> {
-                    reject(err);
-                })
+                    .catch((err)=> {
+                        reject(err);
+                    })
+                } else {
+                    resolve([]);
+                }
             })
         }
         getAllRequests = function (requestData, force, callback) {
@@ -139,7 +124,7 @@ define(['scripts/controllers/requestController', 'scripts/controllers/storeContr
                 if (postData.request) {
                     
                 } else {*/
-                    requestController.get('/api/requests', function (err, status, data) {
+                    requestController.get('/api/requests?from='+requestData.from, function (err, status, data) {
                         let hits = []
                         if (data && Array.isArray(data.hits) && data.hits.length > 0) {
                             hits = data.hits

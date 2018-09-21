@@ -20,7 +20,7 @@ define([
                         toastr.error('Could not authenticate you', 'Troller Says')    
                     } else {
                         $('#login-modal').modal( 'hide' ).data( 'bs.modal', null );
-                        url.navigate('landing', true);
+                        url.navigate('landing', undefined, true);
                         $('#request').on('click', showRequest);
                     }
                 })

@@ -90,7 +90,8 @@ define(['../config/config', './storeController'], function (config, store) {
             },
             body: JSON.stringify(data), // body data type must match "Content-Type" header
         })
-        .then(response => response.json()); // parses response to JSON
+        .then(response => response.json()) // parses response to JSON
+        .catch(error => console.error('Error:', error))
     }
     getErrMsg = function (msg) {
     var ret_msg;

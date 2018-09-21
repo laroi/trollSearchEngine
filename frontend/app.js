@@ -305,7 +305,7 @@ requirejs.config({
                 url.navigate('landing');
             });
             crossroads.addRoute('/#post/{id}', detailView.render);
-            crossroads.addRoute('/#requests', requestListView.render);
+            crossroads.addRoute('/#requests{?query}', requestListView.render);
             crossroads.addRoute('/#{?query}', landingView.render);
             crossroads.addRoute('/#login', loginView.render);
 

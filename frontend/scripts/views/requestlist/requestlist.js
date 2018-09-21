@@ -19,6 +19,55 @@ define([
 
 
         }
+        var applyFilter = function (e) {
+            var f_lang = $('.language-list').val(),
+            f_context=$('.context-list').val(),
+            isPlain = $('.isPlain').is(':checked'),
+            isAdult = $('.isAdult').is(':checked'),
+            isFavorite = $('.isFavorite').is(':checked'),
+            isMine = $('.isMine').is(':checked'),
+            isApproved = $('.isApproved').is(':checked'),
+            isRequest = $('.isRequest').is(':checked'),
+            filtObj = {};
+            if (isRequest) {
+                filtObj.request = true;
+                filtObj.context = undefined;
+                filtObj.isPlain = undefined;
+                filtObj.isAdult = undefined;
+                filtObj.isApproved = undefined;
+                filtObj.isFavorite = undefined;
+                filtObj.userId = undefined;
+                filtObj.username = undefined;
+                url.navigate('requestList');
+            } else {
+                if (f_lang && f_lang !== "0") {
+                    filtObj.lang = f_lang;
+                }
+                if (isPlain) {
+                    filtObj.isPlain = isPlain;
+                }
+                if (isAdult) {
+                    filtObj.isAdult = isAdult;
+                }
+                if (isFavorite) {
+                    filtObj.isFavorite = isFavorite;
+                }
+                if (isMine) {
+                    filtObj.userId = store.get('userId');
+                    filtObj.username = store.get('username');
+                }
+                if (f_context && f_context !== "0") {
+                    filtObj.context = f_context;
+                }
+                if (store.get('userType') === 'admin' && isApproved) {
+                    filtObj.isApproved = false;
+                }
+                store.set('filters', filtObj);                
+                store.set('from', 0);
+                url.navigate('landing');
+            }
+            $('.dropdown.open').removeClass('open');
+        };
         let disableFilters = () => {
             $('.language-list').prop('disabled', true);
             $('.context-list').prop('disabled', true);
@@ -28,6 +77,8 @@ define([
             $('.isMine').prop('disabled', true);
             $('.isApproved').prop('disabled', true);
             $('#basic-search').prop('disabled', true);
+            $('.isRequest').prop('checked', true )
+            
         };
         let invertColor = (hex, bw) => {
             let padZero = (str, len) => {
@@ -69,9 +120,16 @@ define([
         });
         var requestListView = function () {
             var render;
-            render = function (id) {
+            render = function (query) {
                 disableFilters();
-                requestCollection.getAllRequests({from:0}, false, (err, requests) => {
+                let from;
+                if (query) {
+                    from = query.from
+                } else {
+                    from = 0;
+                }
+                $('.btn-apply-filter').off('click').on('click', applyFilter);
+                requestCollection.getAllRequests({from:from || 1, limit: 10}, false, (err, requests) => {
                     var html = template({requests: requests});
                     $('#request-contents').empty().append(html);
                     $('#request-contents').show();

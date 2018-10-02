@@ -285,16 +285,16 @@ var routes = function () {
     getPost = function (req, res) {
         var id = req.params.id
         if (id) {
-            Post.find({_id: id}, function(err, data) {
+            Post.findOne({_id: id}, function(err, data) {
                 if (!err) {
                     res.status(200).send(JSON.stringify(data));
-                    Post.update({_id: id}, { $inc: {views:1}})
-                    data = data[0];
+                    //Post.update({_id: id}, { $inc: {views:1}})
+                    /*data = data[0];
                     if (!data.views) {
                         data.views = 0;
                     }
                     data.views = data.views+1;
-                    elastic.updateDoc(id, data);
+                    elastic.updateDoc(id, data);*/
                 } else {
                     console.error(JSON.stringify(err));
                     res.status(500).send(err)
@@ -733,9 +733,13 @@ var routes = function () {
     let getRequest = function (req, res) {
         var id = req.params.id
         if (id) {
-            Req.find({_id: id}, function(err, data) {
+            Req.findOne({_id: id}, function(err, data) {
                 if (!err) {
-                    res.status(200).send(JSON.stringify(data));
+                    if (data) {
+                        res.status(200).send(JSON.stringify(data));
+                    } else {
+                        res.status(404).send();
+                    }
                 } else {
                     console.error(JSON.stringify(err));
                     res.status(500).send(err)

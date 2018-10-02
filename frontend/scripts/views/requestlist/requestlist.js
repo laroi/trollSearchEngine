@@ -50,6 +50,12 @@ define([
             accum += '<li class="' + classNameNext + '"><span class="page-next page-link" aria-label="Next"><span aria-hidden="true">&raquo;</span><span class="sr-only">Next</span></span></li>'
             return accum;
         });
+        Handlebars.registerHelper('requestRepliable', function(isOwner) {
+            if (isOwner || store.get('userType') === 'admin') {
+                return '<div class="pan-btn-cont"><div class="fas fa-reply pan-btn"></div></div>';
+            }
+            return '';
+        })
         Handlebars.registerHelper('requestEditable', function(isOwner) {
             if (isOwner || store.get('userType') === 'admin') {
                 return '<div class="pan-btn-cont"><div class="far fa-edit pan-btn edit-request"></div></div>';

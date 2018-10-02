@@ -22,11 +22,10 @@
                         <div class="row1">
                             {{#requestEditable this.isOwner}}{{/requestEditable}}
                             {{#requestDeletable this.isOwner}}{{/requestDeletable}}
+                            {{#requestRepliable this.isOwner}}{{/requestRepliable}}
                             <div class="pan-btn user"><img height="17" width="17" class="user-img" src={{this.user.image}}></div>
                            
-                            <div class="pan-btn-cont">
-                                <div class="fas fa-reply pan-btn"></div>
-                            </div>
+                            
                         </div>
                     </div>
                 </div>

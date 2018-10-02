@@ -4,8 +4,9 @@ define([
 '../../controllers/urlController',
 '../../controllers/userController',
 '../../collections/requestCollection',
+'../editrequest/editrequest',
  'text!./requestlist.html'
-], function (request, store, url, user, requestCollection, html) {
+], function (request, store, url, user, requestCollection, editRequestView, html) {
      var source   = $(html).html(),
         template = Handlebars.compile(source),
         render;
@@ -19,6 +20,48 @@ define([
 
 
         }
+        let editRequest = (e) => {
+            let id = $(e.target).parent().parent().parent().parent().parent().attr('id');
+            editRequestView.render(id);
+        }
+        Handlebars.registerHelper('pageLink', function(total, limit, current) {
+            var accum = '',
+            n = Math.ceil(total/limit),
+            limit = n < 5 ? n : 5,
+            classNamePrev ='page-item';
+            classNameNext ='page-item';
+            if (current < 2) {
+               classNamePrev += ' disabled';
+            }
+            accum += '<li class="' + classNamePrev + '"><span class="page-prev page-link" aria-label="Previous"><span aria-hidden="true">&laquo;</span><span class="sr-only">Previous</span></span></li>'
+            for(var i = 1; i <= limit; ++i) {
+                accum += '<li class="page-item"><span class="page-nav ';
+                if (i === current) {
+                    accum += "current";
+                }
+                accum += ' page-link">' + i + '</span></li>';
+            }
+            if (limit>5){
+                accum += '<li class="page-item"><span class="page-nav page-link">' + n + '</span></li>';
+            }
+            if (current !== n-1) {
+                classNameNext += ' disabled';
+            }
+            accum += '<li class="' + classNameNext + '"><span class="page-next page-link" aria-label="Next"><span aria-hidden="true">&raquo;</span><span class="sr-only">Next</span></span></li>'
+            return accum;
+        });
+        Handlebars.registerHelper('requestEditable', function(isOwner) {
+            if (isOwner || store.get('userType') === 'admin') {
+                return '<div class="pan-btn-cont"><div class="far fa-edit pan-btn edit-request"></div></div>';
+            }
+            return '';
+        })
+        Handlebars.registerHelper('requestDeletable', function(isOwner) {
+            if (isOwner || store.get('userType') === 'admin') {
+                return '<div class="pan-btn-cont"><div class="far fa-trash-alt pan-btn delete-request"></div></div>';
+            }
+            return '';
+        })
         var applyFilter = function (e) {
             var f_lang = $('.language-list').val(),
             f_context=$('.context-list').val(),
@@ -134,12 +177,14 @@ define([
                     $('#request-contents').empty().append(html);
                     $('#request-contents').show();
                     $('#post-contents').hide();
+                    $('.edit-request').on('click', editRequest)
                     requestCollection.getRequestUserDetails()
                     .then(()=> {
-                        $('.panel-body').each((index, element)=> {
+                        $('#request-contents').children('.panel-cont').children('.page-cont').children('.elem-cont').children('.panel').children('.panel-body').each((index, element)=> {
                             console.log($(element).attr('id'));
                             requestCollection.getRequestById($(element).attr('id'), (err, request)=> {
                                 if (request) {
+                                console.log(request);
                                 $(element).children('.bottom-panel').children('.button-panel').children('.row1').children('.user').children('.user-img').attr('src', request.userimg.thumb)
                                 }
                             }) 

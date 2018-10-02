@@ -477,7 +477,7 @@ define([
                             //})
                             postCollection.getPostUserDetails()
                             .then(()=> {
-                                $('.panel-body').each((index, element)=> {
+                                $('#post-contents').children('.panel-cont').children('.page-cont').children('.elem-cont').children('.panel').children('.panel-body').each((index, element)=> {
                                     console.log($(element).attr('id'));
                                     postCollection.getPostById($(element).attr('id'), (err, post)=> {
                                         if (post) {

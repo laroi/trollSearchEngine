@@ -70,16 +70,21 @@ define([
                     $("#req-file").change(function(){
                         var input = $(this)[0];
                         if (input.files && input.files[0]) {
+                            $('.form-left').removeClass('col-md-12').addClass('col-md-6');
+                            $('.form-right').show();
                             var reader = new FileReader();
                             reader.onload = function (e) {
                                 imageData = e.target.result;
-                                $('.img-preview').attr('src', imageData);
+                                $('.req-meme-img').attr('src', imageData);
                                 imageData = {type: input.files[0].type.split('/')[1], image:imageData.replace(/^data:image\/(png|jpg|jpeg);base64,/, "")};
                                 if (file.imageUrl) {
                                     imageData.name = imageUrl.split("/")[1]
                                 }
                             }
                             reader.readAsDataURL(input.files[0]);
+                        } else {
+                            $('.form-left').removeClass('col-md-6').addClass('col-md-12');
+                            $('.form-right').hide();
                         }
                     });
             }

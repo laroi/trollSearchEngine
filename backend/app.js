@@ -158,6 +158,7 @@ app.get('/test', postRoute.test)
 app.get('/requests', postRoute.getRequests)
 app.post('/posts', listAuth, postRoute.getPosts);
 app.get('/post/:id', postRoute.getPost);
+app.get('/request/:id', postRoute.getRequest);
 app.delete('/post/:id', isAuthenticated(), postRoute.deletePost);
 app.put('/post/:id', isAuthenticated(false), postRoute.updatePost);
 app.put('/post/:id/comment', isAuthenticated(false), postRoute.updateComment);

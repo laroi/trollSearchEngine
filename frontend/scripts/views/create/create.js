@@ -185,9 +185,7 @@ define([
                                         imageData = e.target.result;
                                         $('.img-preview').attr('src', imageData);
                                         imageData = {type: input.files[0].type.split('/')[1], image:imageData.replace(/^data:image\/(png|jpg|jpeg);base64,/, "")};
-                                        if (file.imageUrl) {
-                                            imageData.name = imageUrl.split("/")[1]
-                                        }
+                                        imageData.name = input.files[0].name || ''
                                     }
                                     reader.readAsDataURL(input.files[0]);
                                 }

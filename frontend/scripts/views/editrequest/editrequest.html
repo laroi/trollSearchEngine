@@ -1,0 +1,58 @@
+<script id="entry-template" type="text/x-handlebars-template">
+<div class="modal" id="request-meme" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="modal-title"><b>Request Meme</b></span>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body request-model-body">
+                <div class="form-group">
+                    <div class="form-group label-floating is-empty">
+                        <label for="req-title" class="control-label">Title</label>
+                        <input type="text" class="form-control" id="req-title" value="{{request.title}}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="form-group label-floating is-empty">
+                        <label for="req-movie" class="control-label">Movie</label>
+                        <input type="text" class="form-control" id="req-movie" value="{{request.movieName}}">
+                    </div>
+                </div>
+                <div class="form-group is-empty is-fileinput col-md-6" style="overflow:hidden">
+                    <label for="req-file" class="col-md-2 control-label">File</label>
+                    <div class="col-md-4" style="padding-left:0">
+                        <input type="text" readonly="" class="form-control" placeholder="Browse...">
+                        <input type="file" id="req-file" multiple="">
+                    </div>
+                </div>
+                <div class="row">
+                 <div class="col-md-6" style="padding-left:0">
+                        <label for="req-language" class="col-md-4 control-label">Language</label>
+                          <div class="col-md-8">
+                            <select id="req-language" class="language form-control">
+                                <option>Select</option>  
+                                {{#each langs}}
+                                  <option value="{{this}}">{{this}}</option>                        
+                                {{/each}}
+                            </select>
+                          </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="form-group label-floating is-empty">
+                        <label for="req-desc" class="control-label">Description</label>
+                        <textarea type="text" class="form-control" id="req-desc">{{request.description}}</textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-request-meme" class="btn btn-primary">Request</button>
+            </div>
+        </div>
+    </div>
+</div>
+</script>

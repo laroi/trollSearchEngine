@@ -3,9 +3,9 @@ define([
 '../../controllers/storeController',
 '../../controllers/urlController',
 '../../controllers/userController',
-'../../collections/userCollection',
- 'text!./request.html'
-], function (request, store, url, user, userCollection, html) {
+'../../collections/requestCollection',
+ 'text!./editrequest.html'
+], function (request, store, url, user, requestCollection, html) {
      var source   = $(html).html(),
         template = Handlebars.compile(source),
         render,
@@ -14,7 +14,7 @@ define([
          $('#request-meme').modal({show: true}); 
         }
         var gotoHome = function () {
-            url.navigate('landing');
+            url.navigate('requestList');
         }
         let sendRequest = (e) => {
             var validate = function(){
@@ -38,7 +38,6 @@ define([
                         requestTitle: $('#req-title').val().trim(),
                         language:$("#req-language").val().trim() === 'Select' ? '' : $("#req-language").val().trim(),
                         user: store.get('userId'),
-                        link: $('#req-link').val().trim(),
                         description: $('#req-desc').val().trim()
                     }
                     request.postImage(url, postData, function(err, data) {
@@ -61,10 +60,12 @@ define([
                 toastr.error('Please fill the required fields!', 'FTM Says')
             }
         }
-        var requestView = function () {
+        var editRequestView = function () {
             var render;
             render = function (id) {
-                    var html = template({requests: undefined, langs:userCollection.getLang()});
+                requestCollection.getRequestById(id, (err, resRequest)=> {
+                    console.log(resRequest);
+                    var html = template({request: resRequest, langs:["Malayalam"]});
                     $('#requestModel').empty().append(html);
                     updateUi();
                     $('#request-meme').on('hidden.bs.modal', gotoHome);
@@ -72,25 +73,23 @@ define([
                     $("#req-file").change(function(){
                         var input = $(this)[0];
                         if (input.files && input.files[0]) {
-                            $('.form-left').removeClass('col-md-12').addClass('col-md-6');
-                            $('.form-right').show();
                             var reader = new FileReader();
                             reader.onload = function (e) {
                                 imageData = e.target.result;
-                                $('.req-meme-img').attr('src', imageData);
+                                $('.img-preview').attr('src', imageData);
                                 imageData = {type: input.files[0].type.split('/')[1], image:imageData.replace(/^data:image\/(png|jpg|jpeg);base64,/, "")};
-                                imageData.name = input.files[0].name || ''
+                                if (file.imageUrl) {
+                                    imageData.name = imageUrl.split("/")[1]
+                                }
                             }
                             reader.readAsDataURL(input.files[0]);
-                        } else {
-                            $('.form-left').removeClass('col-md-6').addClass('col-md-12');
-                            $('.form-right').hide();
                         }
                     });
+                })
             }
             return {
                 render: render
             }
         }
-        return requestView();
+        return editRequestView();
 })

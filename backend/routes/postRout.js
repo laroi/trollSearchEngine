@@ -52,7 +52,7 @@ var routes = function () {
                     }
                 });
             } else {
-                console.log('doc ' + doc_id + 'for model ' + model.collection.collectionName + ' not found', docErr, docData);
+                console.log('doc ' + doc_id + ' for model ' + model.collection.collectionName + ' not found', docErr, docData);
                 callback(docErr || 'doc not found');
             }
         });
@@ -142,6 +142,7 @@ var routes = function () {
                 return saveImage(image, uploadPath)     
             })
         } else {
+            
             return Promise.resolve()
         }
     };
@@ -611,45 +612,50 @@ var routes = function () {
     deleteRequest = function (req, res) {
         var requestId = req.params.id;
         if (requestId) {
-            logger.log(1, 'delete request', 'Deleting request  ' + postId , 'postRoute.js', getIp(req), undefined);
+            logger.log(1, 'delete request', 'Deleting request  ' + requestId , 'postRoute.js', getIp(req), undefined);
             var tok = req.query.accessToken || req.headers['authorization'];
-            isOwner(Request, requestId, tok, function (err, docData) {
-                if (!err) {
-                    let imagePath = path.join(__dirname,'../assets/uploads', docData.image.url.split('/')[2]);
-                    let thumbPath = path.join(__dirname,'../assets/uploads/thumb', docData.image.url.split('/')[2]);
-                    Request.remove({_id: new ObjectID(postId)}, function(err, data){
+            isOwner(Req, requestId, tok, function (err, docData) {
+                if (!err) {                    
+                    Req.remove({_id: new ObjectID(requestId)}, function(err, data){
                         if (!err) {
                             elastic.deleteRequestDoc(requestId, function (delErr, delInfo) {
                                 if (!delErr) {
-                                    fs.unlink(imagePath, (err) => {
-                                        if (!err) {
-                                            fs.unlink(thumbPath, (err) => {
-                                                if (!err) {
-                                                    logger.log(1, 'delete request', 'Deleted post  ' + postId , 'postRoute.js', getIp(req), data)
-                                                    res.status(204).send();
-                                                } else {
-                                                    logger.log(3, 'delete request', 'could not remove thumb image  ' + thumbPath + ' from file system', 'postRoute.js', getIp(req), delErr);
-                                                    res.status(500).send();
-                                                }
-                                            })
-                                          } else {
-                                            logger.log(3, 'delete request', 'could not remove image  ' + imagePath + ' from file system', 'postRoute.js', getIp(req), delErr);
-                                            res.status(500).send();
-                                        }
+                                    if (docData.image.url) {
+                                        let imagePath = path.join(__dirname,'../assets/requests', docData.image.url.split('/')[3]);
+                                        let thumbPath = path.join(__dirname,'../assets/requests/thumb', docData.image.url.split('/')[3  ]);
+                                        fs.rename(imagePath, imagePath + '.delete', (err) => {
+                                            if (!err) {
+                                                fs.rename(thumbPath, thumbPath + '.delete', (err) => {
+                                                    if (!err) {
+                                                        logger.log(1, 'delete request', 'Deleted post  ' + requestId , 'postRoute.js', getIp(req), data)
+                                                        res.status(204).send();
+                                                    } else {
+                                                        logger.log(3, 'delete request', 'could not remove thumb image  ' + thumbPath + ' from file system', 'postRoute.js', getIp(req), delErr);
+                                                        res.status(500).send();
+                                                    }
+                                                })
+                                              } else {
+                                                logger.log(3, 'delete request', 'could not remove image  ' + imagePath + ' from file system', 'postRoute.js', getIp(req), delErr);
+                                                res.status(500).send();
+                                            }
 
-                                    })
+                                        })
+                                    } else {
+                                        logger.log(1, 'delete request', 'request without image', 'postRoute.js', getIp(req), delErr);
+                                        res.status(204).send();
+                                    }
                                 } else {
-                                    logger.log(3, 'delete request', 'could not deleted post  ' + postId + ' from elastic search', 'postRoute.js', getIp(req), delErr);
+                                    logger.log(3, 'delete request', 'could not deleted post  ' + requestId + ' from elastic search', 'postRoute.js', getIp(req), delErr);
                                     res.status(500).send();
                                 }
                             })
                         } else {
-                            logger.log(3, 'delete request', 'could not deleted post  ' + postId + ' from database', 'postRoute.js', getIp(req), err);
+                            logger.log(3, 'delete request', 'could not deleted post  ' + requestId + ' from database', 'postRoute.js', getIp(req), err);
                             res.status(500).send();
                         }
                     });
                 } else {
-                    logger.log(3, 'delete request', 'could not authenticate user to deleted post  ' + postId , 'postRoute.js', getIp(req), err);
+                    logger.log(3, 'delete request', 'could not authenticate user to deleted post  ' + requestId , 'postRoute.js', getIp(req), err);
                     res.status(403).send();
                 }
             });
@@ -660,25 +666,25 @@ var routes = function () {
     },
 
     requestMeme = (req, res) => {
-         var user = req.body.user,
+         let user = req.body.user,
             description = req.body.description,
-            movieName = req.body.movieName,
+            movie = req.body.movie,
             language = req.body.language,
-            requestTitle = req.body.requestTitle,
+            title = req.body.title,
             link = req.body.link || undefined,
             obj = {},
             postObj;
          if (req.body.user) {
             if (req.body.image) {
                 saveImage(req.body.image, reqUploadPath)
-                .then((filename)=> {
+                .then((fileinfo)=> {
                     obj.user= user;
                     obj.link = link;
                     obj.description = description;
-                    obj.movieName = movieName;
-                    obj.requestTitle = requestTitle;
+                    obj.movie = movie;
+                    obj.title = title;
                     obj.language = language;
-                    obj.image = {url: '/images/'+fileinfo.filename + '.jpg', thumb: '/images/thumb/'+fileinfo.filename + '.jpg', type: 'jpg', size: fileinfo.size};
+                    obj.image = {url: '/requests/images/'+fileinfo.filename + '.jpg', thumb: '/requests/images/thumb/'+fileinfo.filename + '.jpg', type: 'jpg', size: fileinfo.size};
                     reqObj = new Req(obj);
                     reqObj.save(function(saveErr, saveData) {
                         if (!saveErr) {
@@ -702,9 +708,9 @@ var routes = function () {
                 obj.user= user;
                 obj.link = link;
                 obj.language = language;
-                obj.requestTitle = requestTitle;                
+                obj.title = title;                
                 obj.description = description;
-                obj.movieName = movieName;
+                obj.movie = movie;
                 reqObj = new Req(obj);
                 reqObj.save(function(saveErr, saveData) {
                     if (!saveErr) {
@@ -751,15 +757,15 @@ var routes = function () {
     },
     getRequests = function (req, res) {
         var language = req.query.language,
-            movieName = req.query.moviename,
+            movie = req.query.movie,
             from = req.query.from || 0,
             order = req.query.order;
             opts = {};
             if (language) {
                 opts.language = language;
             }
-            if (movieName) {
-                opts.movieName = movieName;
+            if (movie) {
+                opts.movie = movie;
             }
             opts.from = from;
             //opts.order = order;
@@ -775,31 +781,30 @@ var routes = function () {
     },
     updateRequest= function (req, res) {
         var tok = req.query.accessToken || req.headers['authorization'];
-        isOwner(Request, req.body._id, tok, function (err, request) {
+        isOwner(Req, req.params.id, tok, function (err, request) {
             if (!err) {
                 var updateObj = {},
                 doc = req.body,
-                id = doc._id;
-                if (req.body.user && req.body.type) {
-                if (req.body.image) {
-                    var filename = req.body.image.name;
-                    var fileLoc = uploadPath + filename;
-                }
-                saveImage(req.body.image, reqUploadPath)
+                id = req.params.id;
+                updateImage(req.body.image, reqUploadPath)
                 .then((fileinfo)=> {
                     if (doc.description) {
                         updateObj.description = doc.description
                     }
-                    if (doc.movieName) {
-                        updateObj.movieName = doc.movieName;
+                    if (doc.movie) {
+                        updateObj.movie = doc.movie;
                     }
-                    if (doc.requestTitle) {
-                        updateObj.requestTitle = doc.requestTitle;
+                    if (doc.title) {
+                        updateObj.title = doc.title;
+                    }
+                    if (doc.link) {
+                        updateObj.link = doc.link;
                     }
                     if (doc.language) {
                         updateObj.language = doc.language
                     }
-                    Request.update({_id: id}, {$set: updateObj}, function(err, numAffected) {
+                    updateObj.dates = {lastUpdated : new Date().toISOString()};
+                    Req.update({_id: id}, {$set: updateObj}, function(err, numAffected) {
                         console.log('updated db with ', updateObj)
                         if (!err) {
                             console.log('Updated post ' + id + ' in database');
@@ -807,7 +812,7 @@ var routes = function () {
                                 console.log('updated elastic')
                                 if(!err) {
                                     console.log('Updated post ' + id + ' in elasticsearch');
-                                    res.status(200).send();
+                                    res.status(200).send({status: "ok"});
                                 } else {
                                     res.status(500).send({err: 'Could not save post'});
                                 }
@@ -818,7 +823,6 @@ var routes = function () {
                         }
                     })
                 })
-            }
         } else {
             console.error('Could not update post', err);
             res.status(401).send({'err':'Something went wrong'})

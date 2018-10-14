@@ -24,6 +24,18 @@ define([
             let id = $(e.target).parent().parent().parent().parent().parent().attr('id');
             editRequestView.render(id);
         }
+        let deleteRequest = (e) => {
+            let id = $(e.target).parent().parent().parent().parent().parent().attr('id');
+            requestCollection.deleteRequestById(id)
+            .then(()=>{
+                $('#'+id).parent().parent().remove();
+                toastr.success('Your request is deleted!', 'FTM Says')
+            })
+            .catch((err)=> {
+                console.error('error in deleting request '+ id,  err);
+                toastr.error('Deleteing request failed.', 'FTM Says')
+            })
+        }
         Handlebars.registerHelper('pageLink', function(total, limit, current) {
             var accum = '',
             n = Math.ceil(total/limit),
@@ -184,6 +196,7 @@ define([
                     $('#request-contents').show();
                     $('#post-contents').hide();
                     $('.edit-request').on('click', editRequest)
+                    $('.delete-request').on('click', deleteRequest);
                     requestCollection.getRequestUserDetails()
                     .then(()=> {
                         $('#request-contents').children('.panel-cont').children('.page-cont').children('.elem-cont').children('.panel').children('.panel-body').each((index, element)=> {

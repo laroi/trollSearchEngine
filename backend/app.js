@@ -139,10 +139,16 @@ if (!Array.prototype.find) {
     return undefined;
   };
 }
+/*
+Static Routes
+*/
+
 app.use('/images', express.static(__dirname + '/assets/uploads'));
+app.use('/requests/images', express.static(__dirname + '/assets/requests'));
 app.use('/images/profile', express.static(__dirname + '/assets/profile'));
+
+/* User Routes */
 app.post('/token', route.login);
-//app.post('/token', route.verifyFaceToken);
 app.delete('/token/:token', route.deleteToken);
 app.post('/user', route.register);
 app.get('/user/count', route.getUserCount);
@@ -150,23 +156,34 @@ app.put('/user', isAuthenticated(false), route.updatePassword);
 app.put('/user/:id', isAuthenticated(false), route.updateUser);
 app.get('/user/:id', isAuthenticated(false), route.getUserDetail);
 app.post('/users', route.getUserShortDetails);
+
+/*Master Data*/
 app.post('/feedback', route.addFeedback);
 app.get('/groups', route.listGroups);
 app.get('/contexts', route.listContexts);
 app.get('/langs', route.listLanguages);
+
+/*Health Check*/
 app.get('/test', postRoute.test)
-app.get('/requests', postRoute.getRequests)
+
+/*Requests*/
+app.get('/requests', postRoute.getRequests);
+app.get('/request/:id', postRoute.getRequest);
+app.delete('/request/:id', isAuthenticated(), postRoute.deleteRequest);
+app.post('/request', isAuthenticated(false), postRoute.requestMeme);
+app.put('/request/:id', isAuthenticated(false), postRoute.updateRequest);
+
+/*Post Routes*/
 app.post('/posts', listAuth, postRoute.getPosts);
 app.get('/post/:id', postRoute.getPost);
-app.get('/request/:id', postRoute.getRequest);
 app.delete('/post/:id', isAuthenticated(), postRoute.deletePost);
 app.put('/post/:id', isAuthenticated(false), postRoute.updatePost);
 app.put('/post/:id/comment', isAuthenticated(false), postRoute.updateComment);
 app.put('/post/:id/like', isAuthenticated(false), postRoute.updateLike);
 app.put('/post/:id/unlike', isAuthenticated(false), postRoute.unLike);
-app.post('/request', isAuthenticated(false), postRoute.requestMeme)
 app.post('/post', isAuthenticated(false), postRoute.post)
 app.get('/image/:id', postRoute.downloadImage);
 app.get('/suggestions', postRoute.autoSuggestion);
+
 app.listen(3000);
 console.log("Express server listening on port 3000");

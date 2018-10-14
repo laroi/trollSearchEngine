@@ -4,14 +4,45 @@ define([
 '../../controllers/urlController',
 '../../controllers/userController',
 '../../collections/requestCollection',
+'../../collections/userCollection',
  'text!./editrequest.html'
-], function (request, store, url, user, requestCollection, html) {
+], function (request, store, url, user, requestCollection, userCollection, html) {
      var source   = $(html).html(),
         template = Handlebars.compile(source),
         render,
+        requestId,
+        requestObject,
         imageData;
-        var updateUi = function () {
-         $('#request-meme').modal({show: true}); 
+        Handlebars.registerHelper('ifEquals', function(arg1, arg2, options) {
+            if ((typeof(arg1==="string")) && (typeof(arg1==="string"))) {
+                arg1 = arg1.toLowerCase().trim();
+                arg2 = arg2.toLowerCase().trim();
+            }
+            return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
+        });
+
+
+        var updateUi = function (resRequest) {
+         $('#request-meme').modal({show: true});
+         if (resRequest.thumbUrl) {
+            $('.form-left').removeClass('col-md-12').addClass('col-md-6');
+            $('.form-right').show();
+         } else {
+               $('.form-left').removeClass('col-md-6').addClass('col-md-12');
+               $('.form-right').hide();
+         }
+         if (resRequest.description) {
+            $('#req-desc').trigger('change');
+         }
+         if (resRequest.movie) {
+            $('#req-movie').trigger('change');
+         }
+         if (resRequest.title) {
+            $('#req-title').trigger('change');
+         }
+         if (resRequest.link) {
+            $('#req-link').trigger('change');
+         }
         }
         var gotoHome = function () {
             url.navigate('requestList');
@@ -30,32 +61,46 @@ define([
                 }
                 return isValidate;
             };
-            var save = function (callback) {
-                var date = new Date();
-                var url = '/api/request',
-                    postData = {
-                        movieName: $('#req-movie').val().trim(),                     
-                        requestTitle: $('#req-title').val().trim(),
-                        language:$("#req-language").val().trim() === 'Select' ? '' : $("#req-language").val().trim(),
-                        user: store.get('userId'),
-                        description: $('#req-desc').val().trim()
-                    }
-                    request.postImage(url, postData, function(err, data) {
-                        callback(err, data)
-                    });
-            }
             if (validate()) {
-                save(function(err, data) {
-                    
-                    if (!err) {
-                        $('#request-meme').modal( 'hide' ).data( 'bs.modal', null );
-                        toastr.success('Your request has been submitted!', 'FTM Says')
-                    } else {
-                        console.error(err);
-                        toastr.error('Failed to submit the request.', 'FTM Says')
-                    }
-                    
-                });
+                let data = {},
+                    movie = $('#req-movie').val().trim(),
+                    title = $('#req-title').val().trim(),
+                    language = $("#req-language").val().trim(),
+                    link = $('#req-link').val().trim(),
+                    description = $('#req-desc').val().trim();
+                if (movie && movie !== requestObject.movie) {
+                    data.movie = movie;
+                }
+                if (title && title !== requestObject.title) {
+                    data.title = title;
+                }
+                if (language !== 'Select' && language !== requestObject.language) {
+                    data.language = language;
+                }
+                if (link && requestObject.link !== link) {
+                    data.link = link
+                }
+                if (description && requestObject.description !== description) {
+                    data.description = description;
+                }
+                if (imageData) {
+                    data.image = imageData;
+                }
+                //data.user = store.get('userId');
+                console.log(data);
+                if (Object.keys(data).length > 0) {
+                    data._id = requestId;
+                requestCollection.updateRequestById(data)
+                .then(()=> {
+                    toastr.success('Request Edited!', 'FTM Says')
+                })
+                .catch((err)=> {
+                    console.error('[UPDATE REQUEST] ', err);
+                    toastr.error('Could not edit request!', 'FTM Says');
+                })
+                } else {
+                    toastr.warning('There are no changes to save !', 'FTM says')
+                }
             } else {
                 toastr.error('Please fill the required fields!', 'FTM Says')
             }
@@ -63,27 +108,33 @@ define([
         var editRequestView = function () {
             var render;
             render = function (id) {
+                requestId = id;
                 requestCollection.getRequestById(id, (err, resRequest)=> {
-                    console.log(resRequest);
-                    var html = template({request: resRequest, langs:["Malayalam"]});
-                    $('#requestModel').empty().append(html);
-                    updateUi();
-                    $('#request-meme').on('hidden.bs.modal', gotoHome);
-                    $('#btn-request-meme').on('click', sendRequest)
-                    $("#req-file").change(function(){
-                        var input = $(this)[0];
-                        if (input.files && input.files[0]) {
-                            var reader = new FileReader();
-                            reader.onload = function (e) {
-                                imageData = e.target.result;
-                                $('.img-preview').attr('src', imageData);
-                                imageData = {type: input.files[0].type.split('/')[1], image:imageData.replace(/^data:image\/(png|jpg|jpeg);base64,/, "")};
-                                if (file.imageUrl) {
-                                    imageData.name = imageUrl.split("/")[1]
+                    userCollection.getLang((err, langs)=> {
+                        requestObject = resRequest;
+                        var html = template({request: resRequest, langs: langs});
+                        $('#requestModel').empty().append(html);
+                        updateUi(resRequest);
+                        $('#request-meme').on('hidden.bs.modal', gotoHome);
+                        $('#btn-save-request-meme').on('click', sendRequest)
+                        $("#req-file").change(function(){
+                            var input = $(this)[0];
+                            if (input.files && input.files[0]) {
+                                $('.form-left').removeClass('col-md-12').addClass('col-md-6');
+                                $('.form-right').show();
+                                var reader = new FileReader();
+                                reader.onload = function (e) {
+                                    imageData = e.target.result;
+                                    $('.req-meme-img').attr('src', imageData);
+                                    imageData = {type: input.files[0].type.split('/')[1], image:imageData.replace(/^data:image\/(png|jpg|jpeg);base64,/, "")};
+                                    imageData.name = input.files[0].name || ''
                                 }
+                                reader.readAsDataURL(input.files[0]);
+                            } else {
+                                $('.form-left').removeClass('col-md-6').addClass('col-md-12');
+                                $('.form-right').hide();
                             }
-                            reader.readAsDataURL(input.files[0]);
-                        }
+                        });
                     });
                 })
             }

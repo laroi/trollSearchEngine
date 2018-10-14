@@ -139,7 +139,7 @@ define(['../config/config', './storeController'], function (config, store) {
             }
         }); 
     };
-    put = function (url, postdata, contenttype, callback) {
+    put = function (url, postdata, callback) {
         if (postdata) {       
             postdata = JSON.stringify(postdata);
         }
@@ -147,7 +147,7 @@ define(['../config/config', './storeController'], function (config, store) {
             url: url, 
             method: 'PUT',
             data: postdata,
-            contentType: contenttype || "application/json; charset=utf-8",
+            contentType: "application/json; charset=utf-8",
             dataType: 'JSON',
             beforeSend: function (xhr){
                 if (store.get('accessKey')) {

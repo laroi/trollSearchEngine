@@ -14,61 +14,7 @@ var putMapping;
 var Transform = require('stream').Transform,
     util = require('util');
 
-var bulkExec = function(bulkCmds, callback) {
-  client.bulk({
-    index : "trolls",
-    type  : "post",
-    body  : bulkCmds
-  }, callback);
-};
 
-var esTransformStream = function() {
-  Transform.call(this, {objectMode: true});
-};
-util.inherits(esTransformStream, Transform);
-
-esTransformStream.prototype._transform = function(chunk, encoding, callback) {
-    let toObj = {};
-  if (typeof chunk.originalValue === 'undefined') {
-    chunk.originalValue = chunk.value;
-   }
-   if (chunk.user) {
-	toObj.requestUser = chunk.user;
-    }
-   if (chunk.mmovie) {
-	toObj.requestMovie = chunk.movie;
-	toObj.requestMovieSuggest = {input: chunk.movie};
-    }
-   if (chunk.title) {
-	toObj.requestTitle = chunk.title;
-	toObj.requestTitleSuggest = {input: chunk.title};
-    }
-   if (chunk.description) {
-	toObj.requestDescription = chunk.description;
-    }
-   if (chunk.link) {
-	toObj.requestLink = chunk.link
-    }
-   if (chunk.status) {
-	toObj.requestStatus = chunk.status
-    }
-   if (chunk.isApproved) {
-	toObj.requestIsApproved = chunk.isApproved
-    }
-   if (chunk.image) {
-	toObj.requestImage = chunk.image
-    }
-   if (chunk.dates.createdAt) {
-	toObj.requestCreatedAt = chunk.dates.createdAt
-    }
-   if (chunk.dates.lastUpadtedAt) {
-	toObj.requestLastUpdatedAt = chunk.lastUpdatedAt
-    }
-  this.push(toObj);
-  callback();
-};
-var es = new esTransformStream();
-var ws = new WritableBulk(bulkExec);
 var toB = new TransformToBulk(function getIndexTypeId (doc) {
     var id = doc._id
     delete doc._id
@@ -93,19 +39,6 @@ var toB = new TransformToBulk(function getIndexTypeId (doc) {
     return {_id: id, _index:"trolls", _type:"post"}
 })
 
-var requestTransform  = new TransformToBulk(function getIndexTypeId (doc) {
-    var id = doc._id
-    delete doc._id
-    if (doc.movie) {
-        doc.requestMovieSuggest = {input: doc.movie}
-    }
-    if (doc.requestTitle) {
-        doc.requestTitleSuggest = {input: doc.requestTitle}
-    }
-    doc.createdAt = doc.dates.createdAt;
-    doc.lastUpdated = doc.dates.lastUpdated;
-    return {_id: id, _index:"trolls", _type:"request"}
-})
 deleteIndex = function (indexName) {
     return new Promise(function (resolve, reject) {
         client.indices.delete({index: indexName}, function (err, data) {
@@ -134,7 +67,7 @@ var putRequestMapping = function () {
     return new Promise((resolve, reject) => {
         client.indices.putMapping({
             index: 'trolls',
-            type: 'requests',
+            type: 'request',
             body:{
                 properties: {
                     requestUser: {"type" : "string", "index" : "not_analyzed"},
@@ -299,34 +232,105 @@ MongoClient.connect(url, function(err, db) {
     .then(putRequestMapping)
     .then(function () {
         return new Promise((resolve, reject) => {
+            console.log('[Bluk insert post]')
+            let bulkExec = function(bulkCmds, callback) {
+              client.bulk({
+                index : "trolls",
+                type  : "post",
+                body  : bulkCmds
+              }, callback);
+            };
+
             var collection = db.collection('posts');
             //var stream = collection.find().batchSize(2).stream();
-            collection.find().batchSize(10).stream().pipe(toB).pipe(ws).on('finish', function(){console.log("done")})
+            let ws = new WritableBulk(bulkExec);
+            collection.find().batchSize(10).stream().pipe(toB).pipe(ws).on('finish', function(){console.log("done"); resolve()})
             ws.on('close', function () {
-                console.log("ws closed");
-                client.close();
+                console.log("post ws closed");
+                //client.close();
                 resolve()
             });
             ws.on('error', function (err) {
                 console.log(err);
-                client.close();
+                //client.close();
                 reject()
             });
         })
      })
      .then(()=> {
         return new Promise((resolve, reject) => {
-            var collection = db.collection('request');
+            console.log('[Bluk insert request]')
+            var collection = db.collection('requests');
+            var esTransformStream = function() {
+              Transform.call(this, {objectMode: true});
+            };
+            util.inherits(esTransformStream, Transform);
+            esTransformStream.prototype._transform = function(chunk, encoding, callback) {
+                let toObj = {};
+                console.log(chunk);
+                if (typeof chunk.originalValue === 'undefined') {
+                    chunk.originalValue = chunk.value;
+                }
+               if (chunk.user) {
+	            toObj.requestUser = chunk.user;
+                }
+               if (chunk.movie) {
+	            toObj.requestMovie = chunk.movie;
+	            toObj.requestMovieSuggest = {input: chunk.movie};
+                }
+               if (chunk.title) {
+	            toObj.requestTitle = chunk.title;
+	            toObj.requestTitleSuggest = {input: chunk.title};
+                }
+               if (chunk.description) {
+	            toObj.requestDescription = chunk.description;
+                }
+               if (chunk.link) {
+	            toObj.requestLink = chunk.link
+                }
+               if (chunk.status) {
+	            toObj.requestStatus = chunk.status
+                }
+               if (chunk.isApproved) {
+	            toObj.requestIsApproved = chunk.isApproved
+                }
+               if (chunk.image) {
+	            toObj.requestImage = chunk.image
+                }
+               if (chunk.dates.createdAt) {
+	            toObj.requestCreatedAt = chunk.dates.createdAt
+                }
+               if (chunk.dates.lastUpadtedAt) {
+	            toObj.requestLastUpdatedAt = chunk.lastUpdatedAt
+                }
+                toObj._id = chunk._id;
+              //this.push(toObj);
+              callback(null, toObj);
+            };
+            let bulkExec = function(bulkCmds, callback) {
+              client.bulk({
+                index : "trolls",
+                type  : "request",
+                body  : bulkCmds
+              }, callback);
+            };
+            let es = new esTransformStream();
+            let ws = new WritableBulk(bulkExec);
             //var stream = collection.find().batchSize(2).stream();
-            collection.find().batchSize(10).stream().pipe(es).pipe(toB).pipe(ws).on('finish', function(){console.log("done")})
+            var torB = new TransformToBulk(function getIndexTypeId (doc) {
+                var id = doc._id
+                delete doc._id
+                return {_id: id, _index:"trolls", _type:"request"}
+            })        
+            collection.find().batchSize(10).stream().pipe(es).pipe(torB).pipe(ws).on('finish', function(){console.log("done"); resolve()})
             ws.on('close', function () {
-                console.log("ws closed");
-                client.close();
-                resolve()
+                console.log("request ws closed");
+                //client.close();
+              //  resolve()
             });
             ws.on('error', function (err) {
-                console.log(err);
-                client.close();
+                console.log('Error in writing requests', err);
+                //client.close();
                 reject()
             });
         })

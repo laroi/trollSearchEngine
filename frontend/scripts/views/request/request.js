@@ -34,11 +34,12 @@ define([
                 var date = new Date();
                 var url = '/api/request',
                     postData = {
-                        movieName: $('#req-movie').val().trim(),                     
-                        requestTitle: $('#req-title').val().trim(),
+                        movie: $('#req-movie').val().trim(),                     
+                        title: $('#req-title').val().trim(),
                         language:$("#req-language").val().trim() === 'Select' ? '' : $("#req-language").val().trim(),
                         user: store.get('userId'),
                         link: $('#req-link').val().trim(),
+                        image: imageData,
                         description: $('#req-desc').val().trim()
                     }
                     request.postImage(url, postData, function(err, data) {
@@ -64,7 +65,8 @@ define([
         var requestView = function () {
             var render;
             render = function (id) {
-                    var html = template({requests: undefined, langs:userCollection.getLang()});
+                userCollection.getLang((err, langs)=> {
+                    var html = template({requests: undefined, langs:langs});
                     $('#requestModel').empty().append(html);
                     updateUi();
                     $('#request-meme').on('hidden.bs.modal', gotoHome);
@@ -87,6 +89,7 @@ define([
                             $('.form-right').hide();
                         }
                     });
+                })                    
             }
             return {
                 render: render

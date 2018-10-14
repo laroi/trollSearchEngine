@@ -141,7 +141,7 @@ define(['scripts/controllers/requestController', 'scripts/controllers/storeContr
                             var requestObj = new RequestModel({
                                 _id : req._id,
                                 user: req._source.requestUser,
-                               	movieName: req._source.requestMovie,
+                               	movie: req._source.requestMovie,
                                 language: req._source.requestLanguage,
                                 title: req._source.requestTitle,
                                 description: req._source.requestDescription,
@@ -203,11 +203,30 @@ define(['scripts/controllers/requestController', 'scripts/controllers/storeContr
                     }
                 })
             }
+         };
+         let deleteRequestById = (id) => {
+            return new Promise((resolve, reject)=> {
+                console.log('[DELETE REQUEST] ', id);
+                requestController.del('/api/request/'+id, function(err) {
+                    if (!err) {
+                        resolve()
+                    } else {
+                        reject(err)
+                    }
+                })
+            })
+         }
+         let updateRequestById = (data) => {
+           var requestObj = new RequestModel(data);
+           console.log(requestObj);
+           return requestObj.save();
          }
         return  {
            getAllRequests: getAllRequests,
            getRequestById: getRequestById,
-           getRequestUserDetails: getRequestUserDetails
+           getRequestUserDetails: getRequestUserDetails,
+           deleteRequestById: deleteRequestById,
+           updateRequestById: updateRequestById
         };
         
     };

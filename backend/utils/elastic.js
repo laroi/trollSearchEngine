@@ -629,29 +629,30 @@ var elastic = function () {
         });
     }
     var updateRequestDoc = function (id, doc, callback) {
-            var body = {
-                requestUser: doc.user,
-                requestMovie: doc.movie,
-                requestLanguage: doc.language,
-                requestTitle: doc.requestTitle,
-                requestDescription : doc.description,
-                requestImage: doc.image,
-                requestLink: doc.link,
-                requestStatus: doc.status,
-            }
-            if (doc.movie) {
-                body.requestMovieSuggest = {input: doc.movie}
-            }
-            if (doc.requestTitle) {
-                body.requestTitleSuggest = {input: doc.requestTitle}
-            }
-            body.requestCreateAt = dates.createdAt;
-            body.requestLastUpdated = dates.lastUpdated
+        let body = {};
+        if (doc.movie) {
+            body.requestMovie = doc.movie;
+            body.requestMovieSuggest = {input: doc.movie}
+        }
+        if (doc.title) {
+            body.requestTitle = doc.title;
+            body.requestTitleSuggest = {input: doc.title}
+        }
+        if (doc.description) {
+            body.requestDescription = doc.description;
+        }
+        if (doc.link) {
+            body.requestLink = doc.link;
+        }
+        if (doc.movie) {
+            body.requestLanguage = doc.language;
+        }
+        body.requestLastUpdated = doc.dates.lastUpdated;
         console.log("es body\n", body)
         client.update({
             index: 'trolls',
             id: id,
-            type: 'post',
+            type: 'request',
             body: {
                 doc: body
             }

@@ -123,6 +123,7 @@ var putMapping = function () {
                     user: {"type" : "string", "index" : "not_analyzed"},
                     title: {"type" : "string", "fields": {"raw": {"type": "string","index": "not_analyzed"}}},
                     context: {"type" : "string"},
+                    requestId: {"type" : "string"},
                     type: {"type" : "string", "index" : "not_analyzed"},
                     isAdult: {"type" : "boolean", "index" : "not_analyzed"},
                     isApproved: {"type" : "boolean", "index" : "not_analyzed"},

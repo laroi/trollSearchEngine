@@ -3,11 +3,17 @@
     float:right;
     margin-right:50px;
 }
+#reply-input {
+    display: none;
+}
 #head-container{
     padding-top:10px;
 }
 .logut {
     display:none;
+}
+.req-det-img-cont {
+    margin-bottom:10px;
 }
 .check-content {
     padding-left:18%!important;

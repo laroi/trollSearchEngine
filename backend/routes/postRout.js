@@ -146,6 +146,13 @@ var routes = function () {
             return Promise.resolve()
         }
     };
+    let updateRequestOnResponse = (requestId, postId) => {
+        let updateObj = {"$set": {"status":"R", "postId": postId}}
+        return Req.update({requestId: requestId}, updateObj)
+        .then((data)=> {
+            return elastic.updateRequestOnResponse(requestId, postId)
+        })
+    }
     post = function(req, res) {
         var _id = req.body._id || undefined,
             user = req.body.user,
@@ -162,6 +169,7 @@ var routes = function () {
             createdAt = req.body.createdAt,
             lastModified = req.body.lastModified,
             context = req.body.context,
+            requestId = req.body.requestId,
             obj = {},
             postObj;
         if (req.body.image && req.body.user && req.body.type) {
@@ -182,6 +190,7 @@ var routes = function () {
                 obj.createdAt = createdAt;
                 obj.lastModified = lastModified;
                 obj.context = context;
+                obj.requestId = requestId;
                 obj.isApproved = false;
                 postObj = new Post(obj);
                 postObj.save(function(saveErr, saveData) {
@@ -190,7 +199,18 @@ var routes = function () {
                         obj.id = saveData.id
                         elastic.putDoc(obj, function(err, data) {
                             if(!err) {
-                                res.status(201).send(saveData);
+                                if (requestId) {
+                                    updateRequestOnResponse(requestId, saveData._id)
+                                    .then(()=> {
+                                        res.status(201).send(saveData);                                    
+                                    })
+                                    .catch((err) => {
+                                        console.error(err);
+                                        res.status(500).send();
+                                    })
+                                } else {
+                                    res.status(201).send(saveData);
+                                }
                             } else {
                                 console.error(JSON.stringify(err))
                                 res.status(500).send({err: 'Could not save post'});

@@ -11,7 +11,8 @@ var request = new Schema({
     description: {type: String},
     link: {type: String},
     isApproved:{type: Boolean, default: false},
-    status:{type: String, default : 'P'}, //P -> Pending, 'I' -> Inactive
+    status:{type: String, default : 'P'}, //P -> Pending, 'I' -> Inactive, R -> Resolved
+    postId:{type: String},
     image: {
         url : {type: String },
         thumb : {type: String },

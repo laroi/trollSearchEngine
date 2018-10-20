@@ -6,6 +6,7 @@ var mongoose = require('mongoose'),
 var post = new Schema({
     user: {type: String},
     title: {type: String},
+    requestId:{type: String},
     type: {type: String, required: true},
     isAdult: {type: Boolean, required: true},
     likes: [],

@@ -1,5 +1,6 @@
 var express = require('express');
 var mongoose = require('mongoose');
+mongoose.Promise = require('bluebird');
 var bodyParser = require('body-parser');
 var http = require('http');
 var methodOverride = require('method-override');

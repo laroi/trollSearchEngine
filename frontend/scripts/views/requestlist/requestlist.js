@@ -5,20 +5,22 @@ define([
 '../../controllers/userController',
 '../../collections/requestCollection',
 '../editrequest/editrequest',
+'../requestdetail/requestdetail',
+'../respond/respond',
  'text!./requestlist.html'
-], function (request, store, url, user, requestCollection, editRequestView, html) {
+], function (request, store, url, user, requestCollection, editRequestView, requestDetailView, respondView, html) {
      var source   = $(html).html(),
         template = Handlebars.compile(source),
-        render;
+        render,
+        replyId;
         var updateUi = function () {
         }
         var gotoHome = function () {
             url.navigate('landing');
         }
-        let sendRequest = (e) => {
-
-
-
+        let triggerInputFile = (e) => {
+            replyId = $(e.target).parent().parent().parent().parent().parent().attr('id'); 
+            $('#reply-input').click();
         }
         let editRequest = (e) => {
             let id = $(e.target).parent().parent().parent().parent().parent().attr('id');
@@ -35,6 +37,10 @@ define([
                 console.error('error in deleting request '+ id,  err);
                 toastr.error('Deleteing request failed.', 'FTM Says')
             })
+        };
+        let showRequestDetail = (e) => {
+            let requestId = $(e.target).parent().parent().attr('id');
+            requestDetailView.render(requestId);
         }
         Handlebars.registerHelper('pageLink', function(total, limit, current) {
             var accum = '',
@@ -62,21 +68,28 @@ define([
             accum += '<li class="' + classNameNext + '"><span class="page-next page-link" aria-label="Next"><span aria-hidden="true">&raquo;</span><span class="sr-only">Next</span></span></li>'
             return accum;
         });
-        Handlebars.registerHelper('requestRepliable', function(isOwner) {
+        Handlebars.registerHelper('requestRepliable', function(isOwner, page) {
             if (isOwner || store.get('userType') === 'admin') {
-                return '<div class="pan-btn-cont"><div class="fas fa-reply pan-btn"></div></div>';
+                let className = 'reply-request';
+                page === 'det' ? className = 'det-reply-request' : 'reply-request';
+                return '<div class="pan-btn-cont"><div class="fas fa-reply pan-btn reply-request"></div></div>';
             }
             return '';
         })
-        Handlebars.registerHelper('requestEditable', function(isOwner) {
+        Handlebars.registerHelper('requestEditable', function(isOwner, page) {
             if (isOwner || store.get('userType') === 'admin') {
-                return '<div class="pan-btn-cont"><div class="far fa-edit pan-btn edit-request"></div></div>';
+                let className = 'edit-request';
+                page === 'det' ? className = 'det-edit-request' : 'edit-request';
+                return '<div class="pan-btn-cont"><div class="far fa-edit pan-btn '+className+'"></div></div>';
+                
             }
             return '';
         })
-        Handlebars.registerHelper('requestDeletable', function(isOwner) {
+        Handlebars.registerHelper('requestDeletable', function(isOwner, page) {
             if (isOwner || store.get('userType') === 'admin') {
-                return '<div class="pan-btn-cont"><div class="far fa-trash-alt pan-btn delete-request"></div></div>';
+                let className = 'delete-request';
+                page === 'det' ? className = 'det-delete-request' : 'delete-request';
+                return '<div class="pan-btn-cont"><div class="far fa-trash-alt pan-btn '+className+'"></div></div>';
             }
             return '';
         })
@@ -195,8 +208,25 @@ define([
                     $('#request-contents').empty().append(html);
                     $('#request-contents').show();
                     $('#post-contents').hide();
-                    $('.edit-request').on('click', editRequest)
-                    $('.delete-request').on('click', deleteRequest);
+                    $('.edit-request').off('click').on('click', editRequest)
+                    $('.delete-request').off('click').on('click', deleteRequest);
+                    $('#request-contents').children('.panel-cont').children('.page-cont').children('.elem-cont').children('.panel').children('.panel-body').children('.thumbImgCont').on('click', showRequestDetail)
+                    $('.reply-request').on('click', triggerInputFile);
+                    $("#reply-input").change(function(){
+                        let input = $(this)[0],
+                        imageData = undefined;
+                        if (input.files && input.files[0]) {
+                            var reader = new FileReader();
+                            reader.onload = function (e) {
+                                imageData = e.target.result;
+                                imageData = {type: input.files[0].type.split('/')[1], image:imageData.replace(/^data:image\/(png|jpg|jpeg);base64,/, "")};
+                                imageData.name = input.files[0].name || '';
+                                $('#detail-cont').modal('hide');
+                                respondView.render(e.target.result, replyId);
+                            }
+                            reader.readAsDataURL(input.files[0]);
+                        }
+                    });
                     requestCollection.getRequestUserDetails()
                     .then(()=> {
                         $('#request-contents').children('.panel-cont').children('.page-cont').children('.elem-cont').children('.panel').children('.panel-body').each((index, element)=> {

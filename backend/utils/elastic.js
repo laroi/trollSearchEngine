@@ -62,6 +62,7 @@ var elastic = function () {
                         user:{"type" : "string", "index" : "not_analyzed"},
                         title: {"type" : "string", "fields": {"raw": {"type": "string","index": "not_analyzed"}}},
                         context: {"type" : "string"},
+                        requestId: {"type" : "string"},
                         type: {"type" : "string", "index" : "not_analyzed"},
                         isAdult: {"type" : "boolean", "index" : "not_analyzed"},
                         isApproved: {"type" : "boolean", "index" : "not_analyzed"},
@@ -169,6 +170,7 @@ var elastic = function () {
                     requestDescription: {"type" : "string", "index" : "not_analyzed"},
                     requestLink: {"type" : "string", "index" : "not_analyzed"},
                     requestStatus: {"type" : "string", "index" : "not_analyzed"},
+                    requestPostId: {"type" : "string", "index" : "not_analyzed"},
                     requestIsApproved: {"type" : "boolean", "index" : "not_analyzed"},
                     requestImage: {"type" : "object",
                         "properties" : {
@@ -264,6 +266,7 @@ var elastic = function () {
                 comments: doc.comments,
                 event: doc.event,
                 context : doc.context,
+                requestId: doc.requestId,
                 isApproved: doc.isApproved,
                 createdAt: doc.createdAt,
                 lastModified: doc.lastModified
@@ -290,23 +293,6 @@ var elastic = function () {
             index: 'trolls',
             id: doc.id,
             type: 'post',
-            /*body: {
-                userId: doc.userId,
-                title: doc.title,
-                type: doc.type,
-                isAdult: doc.isAdult,
-                imageUrl: doc.imageUrl,
-                descriptions: doc.descriptions,
-                tags: doc.tags,
-                movie: doc.movie,
-                language: doc.language,
-                actors: doc.actors,
-                characters: doc.characters,
-                comments: doc.comments,
-                event: doc.event,
-                lastModified: doc.lastModified,
-                createdAt: doc.createdAt
-            }*/
             body: body
         }, function (error, response) {
             if (!error) {
@@ -766,6 +752,24 @@ var elastic = function () {
             //callback(error, response.aggregations.requests.hits);
             callback(error, response.hits);
         });
+    }
+    let updateRequestOnResponse = (requestId, postId) => {
+        return new Promise((resolve, reject)=>{
+            client.update({
+                index: 'trolls',
+                id: requsetId,
+                type: 'request',
+                body: {
+                    doc: {"status":"R", "requestPostId": postId}
+                }
+            }, function(err, data){
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(data);
+                }
+            });
+        }) 
     }
     return {
         init: init,

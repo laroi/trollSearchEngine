@@ -14,11 +14,15 @@ define([
         requestObject,
         imageData;
         Handlebars.registerHelper('ifEquals', function(arg1, arg2, options) {
-            if ((typeof(arg1==="string")) && (typeof(arg1==="string"))) {
-                arg1 = arg1.toLowerCase().trim();
-                arg2 = arg2.toLowerCase().trim();
+            if(arg1 && arg2) {
+                if ((typeof(arg1==="string")) && (typeof(arg1==="string"))) {
+                    arg1 = arg1.toLowerCase().trim();
+                    arg2 = arg2.toLowerCase().trim();
+                }
+                return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
+            } else {
+                return false;
             }
-            return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
         });
 
 

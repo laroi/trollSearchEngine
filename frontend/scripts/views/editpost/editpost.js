@@ -1,5 +1,5 @@
 define([
- 'text!./create.html',
+ 'text!./editpost.html',
  'scripts/controllers/requestController',
  'scripts/controllers/storeController',
  'scripts/collections/userCollection'
@@ -34,9 +34,9 @@ define([
                   });
               }
     };
-        var createNew = function (post) {
+        var editPost = function () {
             var render;
-            render = function (image) {
+            render = function (post) {
              var tags,
                 actors,
                 characters;
@@ -49,7 +49,7 @@ define([
                     userCollection.getLang(function(langErr, langData){
                         if (!contErr && ! langErr) {
                             //var html = template({post: post, contexts: contData, langs: langData, isAdmin: store.get('userType') === 'admin' ? true : false});
-                            var html = template({imageData: image, contexts: contData, langs: langData, isAdmin: store.get('userType') === 'admin' ? true : false});
+                            var html = template({post: post, contexts: contData, langs: langData, isAdmin: store.get('userType') === 'admin' ? true : false});
                             $('#createModel').empty().append(html);
                             $.material.init();
                             $('#create-new-form').modal({show: false}); 
@@ -195,5 +195,5 @@ define([
                 render: render
             }
         }
-    return createNew();
+    return editPost();
 })

@@ -15,23 +15,24 @@
             </div>
       </div>
       <div class="modal-footer">
-         {{#if post.isStarred}}
-                    <div class="pan-btn star-btn starred"></div>
-                {{else}}
-                    <div class="far fa-star pan-btn star-btn star"></div>
-                {{/if}}
-                <div class="pan-btn-cont">
-                    <a href="/api/image/{{this._id}}" > <div class="far fa-arrow-alt-circle-down pan-btn download"></div></a>
-                    <div class="pan-count down-count">{{downloads}}</div>
-                </div>
-                <div class="pan-btn-cont">
-                    {{#if post.isLiked}}
-                        <div class="pan-btn fav faved"></div>
-                    {{else}}
-                        <div class="far fa-heart pan-btn fav favorite"></div>            
-                    {{/if}}
-                    <div class='pan-count fav-count'>{{likes.length}}</div>
-                </div> 
+         {{#if isStarred}}
+           <div class="pan-btn far fa-star star-btn starred"></div>
+        {{else}}
+            <div class="pan-btn far fa-star star-btn star"></div>
+        {{/if}}
+
+        <div class="pan-btn-cont">
+            <a href="/api/image/{{this._id}}" > <div class="far fa-arrow-alt-circle-down pan-btn download"></div></a>
+            <div class="pan-count down-count">{{downloads}}</div>
+        </div>
+        <div class="pan-btn-cont">
+            {{#if isLiked}}
+                <div class="far fa-heart pan-btn fav faved"></div>
+            {{else}}
+                <div class="far fa-heart pan-btn fav favorite"></div>            
+            {{/if}}
+            <div class='pan-count fav-count'>{{likes.length}}</div>
+        </div> 
       </div>
     </div>
   </div>

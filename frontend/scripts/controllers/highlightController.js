@@ -51,7 +51,6 @@ define(['./storeController'], function (store) {
                     html +=  getHighlight('search_term', sKey, search_term[sKey] );
                 });
             }
-            console.log(filterKeys)
             filterKeys.forEach(function(key) {
                 if (filterExclusions.indexOf(key) < 0) {
                     if (key!== 'username') {

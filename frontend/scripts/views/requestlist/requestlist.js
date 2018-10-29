@@ -26,17 +26,36 @@ define([
             let id = $(e.target).parent().parent().parent().parent().parent().attr('id');
             editRequestView.render(id);
         }
-        let deleteRequest = (e) => {
-            let id = $(e.target).parent().parent().parent().parent().parent().attr('id');
-            requestCollection.deleteRequestById(id)
-            .then(()=>{
-                $('#'+id).parent().parent().remove();
-                toastr.success('Your request is deleted!', 'FTM Says')
-            })
-            .catch((err)=> {
-                console.error('error in deleting request '+ id,  err);
-                toastr.error('Deleteing request failed.', 'FTM Says')
-            })
+        let deleteRequest = (id) => {
+            return function () {
+                requestCollection.deleteRequestById(id)
+                .then(()=>{
+                    $('#detail-cont').modal('hide');
+                    $('#'+id).parent().parent().remove();
+                    toastr.success('Your request is deleted!', 'FTM Says')
+                })
+                .catch((err)=> {
+                    console.error('error in deleting request '+ id,  err);
+                    toastr.error('Deleteing request failed.', 'FTM Says')
+                })
+            }
+        }
+        let confirmDelete = (e) => {
+		let id = $(e.target).parent().parent().parent().parent().parent().attr('id'); 
+            $.confirm({
+                title: 'Confirm Delete!',
+                content: 'Simple confirm!',
+                buttons: {
+                    cancel: function () {
+                    },
+                    delete: {
+                        text: 'Delete',
+                        btnClass: 'btn-red',
+                        keys: ['enter'],
+                        action: deleteRequest(id)
+                    }
+                }
+            });
         };
         let showRequestDetail = (e) => {
             let requestId = $(e.target).parent().parent().attr('id');
@@ -209,7 +228,7 @@ define([
                     $('#request-contents').show();
                     $('#post-contents').hide();
                     $('.edit-request').off('click').on('click', editRequest)
-                    $('.delete-request').off('click').on('click', deleteRequest);
+                    $('.delete-request').off('click').on('click', confirmDelete);
                     $('#request-contents').children('.panel-cont').children('.page-cont').children('.elem-cont').children('.panel').children('.panel-body').children('.thumbImgCont').on('click', showRequestDetail)
                     $('.reply-request').on('click', triggerInputFile);
                     $("#reply-input").change(function(){

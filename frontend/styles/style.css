@@ -6,6 +6,9 @@
 #reply-input {
     display: none;
 }
+#create-input {
+    display: none;
+}
 #head-container{
     padding-top:10px;
 }

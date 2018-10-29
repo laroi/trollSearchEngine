@@ -168,6 +168,8 @@ define(['scripts/controllers/requestController', 'scripts/controllers/storeContr
 				            postObj.isLiked = postObj.isLiked && postObj.isLiked.userId ? true : false;
 				            if (stars.indexOf(post._id) > -1) {
 				                postObj.isStarred = true;
+				            } else {
+				                postObj.isStarred = false;
 				            }
 				            posts.push(postObj)
                         });
@@ -195,7 +197,7 @@ define(['scripts/controllers/requestController', 'scripts/controllers/storeContr
             } else {
                 request.get('/api/post/'+id, function (err, post) {
                     if (!err) {
-                        post = post[0];
+                        //post = post[0];
                         var postObj = new PostModel({
                         _id : post._id,
                         user: post.user,

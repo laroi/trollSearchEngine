@@ -199,38 +199,7 @@ requirejs.config({
             let showLogin = (e) => {
                 loginView.render();
             };
-            /*var fblogin = function(e){
-                FB.getLoginStatus(function(response) {                 
-                      if (response.status === 'connected') {
-                        user.setToken(response.authResponse, function(err, data){
-                            if (!err && data) {
-                                enableFeatures();
-                                $('#request').on('click', showRequest);                                
-                            } else {
-                                console.error('Some error happened ', err);
-                                toastr.error('Could not authenticate you', 'Torller Says')
-                            }
-                        });
-                      } else {
-                        disableFeatures();
-                        FB.login(function(res) {
-                            if (res.status === 'connected') {
-                               user.setToken(response.authResponse, function(err, data){
-                                    if (!err && data) {
-                                        enableFeatures();
-                                        $('#request').on('click', showRequest);
-                                    } else {                                    
-                                        console.error('Some error happened ', err);
-                                        toastr.error('Could not authenticate you', 'Troller Says')                                 
-                                    }
-                                });
-                            }
-                        
-                        }, {scope: 'email,user_likes'});
-                      }
-                });
-
-            }*/
+            
             let showAbout = (e) => {
                 aboutView.render();
             }
@@ -278,29 +247,27 @@ requirejs.config({
                     enableAllFilters();
                 }
             });
-        /*window.fbAsyncInit = function() {
-            FB.init({
-              //appId      : '307608189577094', //Prod
-              appId        : '307608722910374', //test
-              cookie     : true,
-              xfbml      : true,
-              version    : 'v2.8'
-            });
-            FB.AppEvents.logPageView();   
-          };
+            let triggerInputFile = (e) => {
 
-          (function(d, s, id){
-             var js, fjs = d.getElementsByTagName(s)[0];
-             if (d.getElementById(id)) {return;}
-             js = d.createElement(s); js.id = id;
-             js.src = "//connect.facebook.net/en_US/sdk.js";
-             fjs.parentNode.insertBefore(js, fjs);
-           }(document, 'script', 'facebook-jssdk'));*/
-
-            //var html   = $(header).html();
-            //console.log()
+            }
             $('#about_us').on('click', showAbout);
-            $('#create').on('click', createNewView.render);
+            $('#create').off('click').on('click', (e)=> { $('#create-input').trigger('click')});
+            $('#create-input').on('click', (e)=> { e.stopPropagation();})
+            $("#create-input").change(function(){
+                let input = $(this)[0],
+                imageData = undefined;
+                if (input.files && input.files[0]) {
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        imageData = e.target.result;
+                        imageData = {type: input.files[0].type.split('/')[1], image:imageData.replace(/^data:image\/(png|jpg|jpeg);base64,/, "")};
+                        imageData.name = input.files[0].name || '';
+                        $('#detail-cont').modal('hide');
+                        createNewView.render(e.target.result);
+                    }
+                    reader.readAsDataURL(input.files[0]);
+                }
+            });
             crossroads.bypassed.add(function(request){
                 url.navigate('landing');
             });

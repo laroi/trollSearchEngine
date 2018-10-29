@@ -49,7 +49,8 @@ define([
          }
         }
         var gotoHome = function () {
-            url.navigate('requestList');
+                 $('#request-meme').modal('hide');
+//            url.navigate('requestList');
         }
         let sendRequest = (e) => {
             var validate = function(){
@@ -97,6 +98,7 @@ define([
                 requestCollection.updateRequestById(data)
                 .then(()=> {
                     toastr.success('Request Edited!', 'FTM Says')
+                    gotoHome();
                 })
                 .catch((err)=> {
                     console.error('[UPDATE REQUEST] ', err);

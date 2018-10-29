@@ -124,7 +124,7 @@ define(['scripts/controllers/requestController', 'scripts/controllers/storeContr
                 if (postData.request) {
                     
                 } else {*/
-                    requestController.get('/api/requests?from='+requestData.from, function (err, status, data) {
+                    requestController.get('/api/requests?from='+requestData.from, function (err, data) {
                         let hits = []
                         if (data && Array.isArray(data.hits) && data.hits.length > 0) {
                             hits = data.hits
@@ -217,9 +217,24 @@ define(['scripts/controllers/requestController', 'scripts/controllers/storeContr
             })
          }
          let updateRequestById = (data) => {
-           var requestObj = new RequestModel(data);
-           console.log(requestObj);
-           return requestObj.save();
+            return new Promise((resolve, reject)=>{
+               var requestObj = new RequestModel(data);
+               requestObj.save()
+               .then(()=> {
+                    getRequestById(data._id, (err, requestModel) => {
+                        if (!err) {
+                            requestModel = Object.assign(requestModel, data)
+                            resolve();
+                        } else {
+                            reject(err);
+                        }
+                    })
+               })
+               .catch((err) => {
+                    reject(err);
+               })           
+            })
+           
          }
         return  {
            getAllRequests: getAllRequests,

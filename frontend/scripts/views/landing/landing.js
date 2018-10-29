@@ -9,8 +9,9 @@ define([
  'text!./landing.html',
   'text!../components/head_context.html',
   'text!../components/head_lang.html',
- '../create/create'
-], function (request, store, url, user, highlight, postCollection, userCollection, html, contextHtml, langHtml, create) {
+ '../create/create',
+  '../editpost/editpost'
+], function (request, store, url, user, highlight, postCollection, userCollection, html, contextHtml, langHtml, create, editPostView) {
      var source   = $(html).html(),
         template = Handlebars.compile(source),
         render;
@@ -62,19 +63,41 @@ define([
         var editPost = function(e) {
             var id = $(e.target).parent().parent().attr('id');
             postCollection.getPostById(id, function (err, post) {
-                create.render(undefined, post);                
+                editPostView.render(post);                
             });
         }
-        var deletePost = function (e) {
-            var id = $(e.target).parent().parent().attr('id');
-            var url = '/api/post/'+id;
-            request.del(url, function (err, data) {
-                if (!err) {
-                   toastr.success('Post removed!', 'FTM Says')
-                   $('#'+id).remove();
-                }
-            })
+		let deletePost = (id) => {
+            return function () {
+				var url = '/api/post/'+id;
+				request.del(url, function (err, data) {
+					if (!err) {
+					   toastr.success('Post removed!', 'FTM Says')
+					   $('#'+id).remove();
+					} else {
+						console.error('error in deleting request '+ id,  err);
+						toastr.error('Deleteing request failed.', 'FTM Says');
+					}
+				})               
+            }
         }
+        let confirmDelete = (e) => {
+            var id = $(e.target).parent().parent().attr('id');
+            $.confirm({
+                title: 'Confirm Delete!',
+                content: 'Simple confirm!',
+                buttons: {
+                    cancel: function () {
+                    },
+                    delete: {
+                        text: 'Delete',
+                        btnClass: 'btn-red',
+                        keys: ['enter'],
+                        action: deletePost(id)
+                    }
+                }
+            });
+        };
+
         var search = function() {
             var search_term = $('#basic-search').val().trim();
             if (search_term) {
@@ -495,7 +518,7 @@ define([
                         checkFilters();
                         highlight.highlight();
                         $('.edit').off('click').on('click', editPost);
-                        $('.delete').off('click').on('click', deletePost);                    
+                        $('.delete').off('click').on('click', confirmDelete);                    
                         $('.btn-basic-search').off().on('click', search)
                         $('.page-nav').off('click').on('click', paginate)
                         $('.btn-apply-filter').off('click').on('click', applyFilter);

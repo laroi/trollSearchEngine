@@ -4,7 +4,7 @@ define(['scripts/controllers/requestController', 'scripts/controllers/storeContr
         let lang = [];
         getContext = (callback) => {            
             if (context.length < 1) {
-                request.get('/api/contexts', function (contErr, status, contData) {
+                request.get('/api/contexts', function (contErr, contData) {
                     if (!contErr && Array.isArray(contData) && contData.length > 0) {
                         contData = contData.map(_=> " "+_.capitalize()+ " ");
                         context = contData
@@ -21,7 +21,7 @@ define(['scripts/controllers/requestController', 'scripts/controllers/storeContr
         }
         getLang = (callback) => {            
             if (lang.length < 1) {
-                request.get('/api/langs', function (langErr, status, langData) {
+                request.get('/api/langs', function (langErr, langData) {
                     if (!langErr) {
                         langData = langData.map(_=> " "+_.capitalize()+ " ");
                         lang = langData

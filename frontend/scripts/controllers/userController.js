@@ -19,7 +19,7 @@ define(['./requestController', './storeController'], function (request, store) {
     }
     var updateUser = function (updateObj, callback) {
         var url = '/api/user/'+store.get('userId');
-        request.put(url, updateObj, undefined, function(err, data) {
+        request.put(url, updateObj, function(err, data) {
             callback(err, data);
         })
     };

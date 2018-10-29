@@ -116,6 +116,7 @@ define([
             var render;
             render = function (id) {
                 postCollection.getPostById(id, function(err, post) {
+                    console.log(post)
                     if (!err && post) {
                         if (post.height && post.width) {
                             let containerWidth = $(window).width() - 68;

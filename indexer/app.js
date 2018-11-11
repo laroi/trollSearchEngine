@@ -21,9 +21,6 @@ var toB = new TransformToBulk(function getIndexTypeId (doc) {
     if (doc.title) {
         doc.titleSuggest = {input: doc.title}
     }
-    if (doc.event && doc.event.title) {
-        doc.eventSuggest = {input: doc.event.title}
-    }
     if (doc.movie) {
         doc.movieSuggest = {input: doc.movie}
     }
@@ -124,8 +121,6 @@ var putMapping = function () {
                     title: {"type" : "string", "fields": {"raw": {"type": "string","index": "not_analyzed"}}},
                     context: {"type" : "string"},
                     requestId: {"type" : "string"},
-                    type: {"type" : "string", "index" : "not_analyzed"},
-                    isAdult: {"type" : "boolean", "index" : "not_analyzed"},
                     isApproved: {"type" : "boolean", "index" : "not_analyzed"},
                     image: {"type" : "object",
                         "properties" : {
@@ -161,12 +156,6 @@ var putMapping = function () {
                     language: {"type" : "string"},
                     actors: {"type" : "string"},
                     characters: {"type" : "string"},
-                    event: {
-                        properties:{
-                            title: {"type" : "string"},
-                            link: {"type" : "string"}
-                            }
-                    },
                     createdAt: {"type" : "date"},
                     lastModified: {"type": "date"},
                     titleSuggest: {
@@ -191,13 +180,6 @@ var putMapping = function () {
                         max_input_length: 50
                     },
                     characterSuggest: {
-                        type: "completion",
-                        analyzer: "simple",
-                        preserve_separators: true,
-                        preserve_position_increments: true,
-                        max_input_length: 50
-                    },
-                    eventSuggest: {
                         type: "completion",
                         analyzer: "simple",
                         preserve_separators: true,

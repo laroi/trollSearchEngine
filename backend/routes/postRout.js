@@ -74,11 +74,11 @@ var routes = function () {
         return new Promise((resolve, reject)=> {
             var filename = uuid.v1();
             var fileLoc = uploadPath + filename;
-            var base64Data = image.image;
+            var base64Data = image;
             var size = undefined;
-            base64Data = base64Data.replace(/^data:image\/png;base64,/,'')
+            base64Data = base64Data.replace(/^data:image\/[a-z]+;base64,/, "");
             base64data = new Buffer(base64Data,'base64')
-            var saveThumb = function (fileName) {
+            let saveThumb = function (fileName) {
                 return new Promise((resolve, reject) => {
                     gm(uploadPath+fileName)
                     .setFormat('jpg')
@@ -95,7 +95,6 @@ var routes = function () {
                       });
                 })
             }
-
             gm(base64data)
             .setFormat('jpg')
             .write(fileLoc + '.jpg', function(err){
@@ -109,9 +108,11 @@ var routes = function () {
                         resolve({filename: filename, size: size})
                     })
                     .catch((err)=> {
+                        console.log('err in saving thumb')
                         reject(err);
                     })
                 } else {
+                    console.log('err in writing img')
                     reject(err)
                 }
             })
@@ -157,28 +158,23 @@ var routes = function () {
         var _id = req.body._id || undefined,
             user = req.body.user,
             title = req.body.title,
-            type = req.body.type,
-            isAdult = req.body.isAdult,
             description = req.body.description,
             tags = req.body.tags,
             movie = req.body.movie,
             language = req.body.language,
             characters = req.body.characters,
             actors = req.body.actors,
-            event = {title : req.body.event.title, link: req.body.event.link},
             createdAt = req.body.createdAt,
             lastModified = req.body.lastModified,
             context = req.body.context,
             requestId = req.body.requestId,
             obj = {},
             postObj;
-        if (req.body.image && req.body.user && req.body.type) {
+        if (req.body.image && req.body.user) {
             saveImage(req.body.image, postUploadPath)
             .then((fileinfo) => {
                 obj.user= user;
                 obj.title = title;
-                obj.type = type;
-                obj.isAdult = isAdult;
                 obj.description = description;
                 obj.tags = tags;
                 obj.movie = movie;
@@ -186,7 +182,6 @@ var routes = function () {
                 obj.language = language;
                 obj.actors = actors;
                 obj.characters = characters;
-                obj.event = event;
                 obj.createdAt = createdAt;
                 obj.lastModified = lastModified;
                 obj.context = context;
@@ -205,25 +200,25 @@ var routes = function () {
                                         res.status(201).send(saveData);                                    
                                     })
                                     .catch((err) => {
-                                        console.error(err);
+                                        console.error('Error in updating reponse', err);
                                         res.status(500).send();
                                     })
                                 } else {
                                     res.status(201).send(saveData);
                                 }
                             } else {
-                                console.error(JSON.stringify(err))
+                                console.error('Error in saving doc in ES', JSON.stringify(err))
                                 res.status(500).send({err: 'Could not save post'});
                             }
                         });
                     } else {
-                        console.error(JSON.stringify(saveErr))
+                        console.error('Error in saving doc in mongodb', JSON.stringify(saveErr))
                         res.status(500).send({err: 'Could not save post'});
                     }
                 });
             })
             .catch((err)=> {
-                console.error(JSON.stringify(err));
+                console.error('Error in saving image', JSON.stringify(err));
                 res.status(500).send({err: 'could not save post'})
             })
         } else {
@@ -235,20 +230,16 @@ var routes = function () {
     },
     getPosts = function (req, res) {
         var title = req.body.title,
-            type = req.body.type,
             userId = req.body.userId,
             tags = req.body.tag,
             movie = req.body.movie,
-            group = req.body.group,
             language = req.body.language,
             characters = req.body.character,
             actors = req.body.actor,
             search = req.body.search,
-            event = req.body.event,
             from = req.body.from,
             unApproved = req.body.isApproved,
             order = req.body.order,
-            isAdult = req.body.isAdult,
             context = req.body.context,
             isFavorite =  req.body.isFavorite;
             opts = {};
@@ -261,26 +252,15 @@ var routes = function () {
                 opts.advanced.movie = movie;
                 opts.advanced.characters = characters;
                 opts.advanced.actors = actors;
-                opts.advanced.event = event;
-            }
-            if (group) {
-                opts.group = group;
             }
             if (isFavorite === null) {
                 opts.ids = [""];
-
             }
             else if (isFavorite) {
                 opts.ids = isFavorite.split(',');
             }
-            if (type) {
-                opts.type = type;
-            }
             if (userId) {
                 opts.advanced.userId = userId;
-            }
-            if (isAdult) {
-                opts.isAdult = isAdult;
             }
             if (context) {
                 opts.context = context;
@@ -333,7 +313,7 @@ var routes = function () {
                 doc = req.body,
                 id = doc._id;
                 doc.isApproved = doc.isApproved === 'true' ? true : false;
-                if (req.body.user && req.body.type) {
+                if (req.body.user) {
                     updateImage(req.body.image, postUploadPath, post.image.url)
                     .then((fileinfo)=> {
                         if (doc.title) {
@@ -341,9 +321,6 @@ var routes = function () {
                         }
                         if (fileinfo && fileinfo.filename) {
                             updateObj.image = {url: '/images/'+fileinfo.filename + '.jpg', thumb: '/images/thumb/'+ fileinfo.filename + '.jpg', type: 'jpg', size: fileinfo.size};
-                        }
-                        if (doc.type) {
-                            updateObj.type = doc.type
                         }
                         if (doc.description) {
                             updateObj.description = doc.description
@@ -362,16 +339,6 @@ var routes = function () {
                         }
                         if (doc.characters) {
                             updateObj.characters = doc.characters
-                        }
-                        if (doc.event && doc.event.title) {
-                            updateObj.event = {}
-                            updateObj['event']['title'] = doc.event.title
-                        }
-                        if (doc.event && doc.event.link) {
-                            if (!updateObj.event) {
-                               updateObj.event = {}
-                            }
-                            updateObj['event']['link'] = doc.event.link
                         }
                         if (doc.context) {
                             updateObj.context = doc.context

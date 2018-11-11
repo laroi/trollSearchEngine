@@ -39,10 +39,6 @@ define(['./storeController'], function (store) {
                     hash += '&se_character=';
                     hash += search_term.character;
                 }
-                if (search_term.event) {
-                    hash += '&se_event=';
-                    hash += search_term.event;
-                }
             }        
             if(filterKeys.length > 0) {
                 filterKeys.forEach(function(key) {

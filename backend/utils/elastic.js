@@ -63,8 +63,6 @@ var elastic = function () {
                         title: {"type" : "string", "fields": {"raw": {"type": "string","index": "not_analyzed"}}},
                         context: {"type" : "string"},
                         requestId: {"type" : "string"},
-                        type: {"type" : "string", "index" : "not_analyzed"},
-                        isAdult: {"type" : "boolean", "index" : "not_analyzed"},
                         isApproved: {"type" : "boolean", "index" : "not_analyzed"},
                         image: {"type" : "object",
                             "properties" : {
@@ -94,12 +92,6 @@ var elastic = function () {
                         language: {"type" : "string"},
                         actors: {"type" : "string"},
                         characters: {"type" : "string"},
-                        event: {
-                            properties:{
-                                title: {"type" : "string"},
-                                link: {"type" : "string"}
-                                }
-                        },
                         createdAt: {"type" : "date"},
                         lastModified: {"type": "date"},
                         titleSuggest: {
@@ -124,13 +116,6 @@ var elastic = function () {
                             max_input_length: 50
                         },
                         characterSuggest: {
-                            type: "completion",
-                            analyzer: "simple",
-                            preserve_separators: true,
-                            preserve_position_increments: true,
-                            max_input_length: 50
-                        },
-                        eventSuggest: {
                             type: "completion",
                             analyzer: "simple",
                             preserve_separators: true,
@@ -251,8 +236,6 @@ var elastic = function () {
     var body = {
                 user: doc.user,
                 title: doc.title,
-                type: doc.type,
-                isAdult : doc.isAdult,
                 image: doc.image,
                 descriptions: doc.descriptions,
                 tags: doc.tags,
@@ -264,7 +247,6 @@ var elastic = function () {
                 views : doc.views || 0,
                 characters: doc.characters,
                 comments: doc.comments,
-                event: doc.event,
                 context : doc.context,
                 requestId: doc.requestId,
                 isApproved: doc.isApproved,
@@ -347,10 +329,6 @@ var elastic = function () {
                 must_array.push({ "match": { "characters": options.advanced.characters }});
                 sort.push({"_score": {"order": "desc"}});
             }
-            if (options.advanced.event) {
-                must_array.push({ "match": { "event.title": options.advanced.event }});
-                sort.push({"_score": {"order": "desc"}});
-            }
         } else if (options.search){
             should_array.push({ "match": { "user": options.search}});
             should_array.push({ "match": { "title": options.search }});
@@ -358,7 +336,6 @@ var elastic = function () {
             should_array.push({ "match": { "movie": options.search }});
             should_array.push({ "match": { "actors": options.search }});
             should_array.push({ "match": { "characters": options.search }});
-            should_array.push({ "match": { "event.title": options.search }});
             minScore = 0.5;
             sort.push({
                 "_score": {
@@ -375,23 +352,11 @@ var elastic = function () {
         if (options.ids && options.ids.length > 0) {
                 must_array.push({ "terms": { "_id": options.ids }});
         }
-        if (options.group) {
-            must_array.push({ "match": { "group": options.group }});
-        }
-        if (options.type) {
-            must_array.push({ "match": { "type": options.type }});
-        }
-        if (options.isAdult) {
-            must_array.push({ "match": { "isAdult": options.isAdult }});
-        }
         if (options.context) {
             must_array.push({ "match": { "context": options.context }});
         }
         if (options.language) {
             must_array.push({ "match": { "language": options.language }});
-        }
-        if (options.type) {
-            must_array.push({ "match": { "type": options.type }});
         }
         if (options.unApproved) {
             must_array.push({ "match": { "isApproved": false }});
@@ -446,7 +411,6 @@ var elastic = function () {
             tag: 'tagSuggest',
             actor: 'actorSuggest',
             character: 'characterSuggest',
-            event: 'eventSuggest',
             movie: 'movieSuggest'
         },
         suggestObj = {
@@ -545,8 +509,6 @@ var elastic = function () {
         var body = {
             user: doc.user,
             title: doc.title,
-            type: doc.type,
-            isAdult : doc.isAdult,
             image: doc.image,
             descriptions: doc.descriptions,
             tags: doc.tags,
@@ -559,16 +521,12 @@ var elastic = function () {
             characters: doc.characters,
             comments: doc.comments,
             context : doc.context,
-            event: doc.event,
             isApproved: doc.isApproved,
             createdAt: doc.createdAt,
             lastModified: doc.lastModified
         }
         if (doc.title) {
             body.titleSuggest = {input: doc.title}
-        }
-        if (doc.event && doc.event.title) {
-            body.eventSuggest = {input: doc.event.title}
         }
         if (doc.movie) {
             body.movieSuggest = {input: doc.movie}
@@ -658,7 +616,6 @@ var elastic = function () {
                 requestTitle: doc.title,
                 requestLink: doc.link,
                 requestStatus: doc.status,
-
             }
             if (doc.movie) {
                 body.requestMovieSuggest = {input: doc.movie}

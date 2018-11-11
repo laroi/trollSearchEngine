@@ -1,22 +1,5 @@
 define(['./requestController', './storeController'], function (request, store) {
 
-
-    var regNewUser = function(userId, token, callback) {
-        var url = 'https://graph.facebook.com/me?fields=id,name,picture,email,gender&access_token=' + token;
-        request.get(url, function(err, data) {
-            var postData = {
-                fbId: data.id,
-                name: data.name,
-                picture: data.picture.data.url,
-                gender: data.gender,
-                email: data.email,
-                accessToken: token
-            };
-            request.post('/api/user', postData, function(err, status, data){
-                callback(err, data);
-            });
-        })
-    }
     var updateUser = function (updateObj, callback) {
         var url = '/api/user/'+store.get('userId');
         request.put(url, updateObj, function(err, data) {
@@ -108,7 +91,6 @@ define(['./requestController', './storeController'], function (request, store) {
     
     return {
         setToken: setToken,
-        regNewUser: regNewUser,
         updateUser: updateUser,
         disableFeatures: disableFeatures,
         enableFeatures:enableFeatures,

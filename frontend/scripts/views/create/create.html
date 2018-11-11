@@ -8,85 +8,57 @@
         </button>
         <h4 class="modal-title">Create</h4>
       </div>
-      <div class="modal-body">
-        <div class="top-cont">
-            <div class="create-left">
-                <div class="form-group">
-                   <div class="form-group label-floating">
-                    <label for="title" class="control-label">Title</label>
-                    <input type="text" class="form-control" id="title" value="{{post.title}}">
-                  </div>
+  <div class="modal-body" style="overflow:hidden">
+        <div class="top-cont" style="overflow:hidden">
+            <div class = "top-left col-md-8">
+            <div class="form-group">
+               <div class="form-group label-floating">
+                <label for="title" class="control-label">Title</label>
+                <input type="text" class="form-control" id="title" value="">
+              </div>
+            </div>
+            
+            <div class="form-group">
+                <div class="form-group label-floating">
+                    <label for="movie" class="control-label">Movie</label>
+                    <input type="text" class="form-control" id="movie" value="">
                 </div>
-                <div class="form-group">
-                    <div class="form-group label-floating">
-                        <label for="movie" class="control-label">Movie</label>
-                        <input type="text" class="form-control" id="movie" value="{{post.movie}}">
-                    </div>
-                </div>
-                <div class ="row">
-                <div class="form-group col-md-6">
-                      <label for="language" class="col-md-4 control-label">Language</label>
-                      <div class="col-md-8">
-                        <select id="language" class="language form-control">
-                            <option>Select</option>  
-                            {{#each langs}}
-                              <option value="{{this}}">{{this}}</option>                        
-                            {{/each}}
-                        </select>
-                      </div>
-                </div>
-                <div class="form-group col-md-6 ">
-                  <label for="context" class="col-md-4 control-label">Context</label>
+            </div>
+          
+          <div class="form-group">
+                  <label for="language" class="col-md-4 control-label">Language</label>
                   <div class="col-md-8">
-                    <select id="context" class="context form-control">
-                    <option>Select</option>  
-                    {{#each contexts}}
-                      <option value="{{this}}">{{this}}</option>                        
-                    {{/each}}
+                    <select id="language" class="language form-control">
+                        <option>Select</option>  
+                        {{#each langs}}
+                          <option value="{{this}}">{{this}}</option>                        
+                        {{/each}}
                     </select>
                   </div>
-                 </div>
+            </div>  
+            
+            <div class="form-group">
+                <label for="context" class="col-md-4 control-label">Context</label>
+                <div class="col-md-8">
+                    <select id="context" class="context form-control">
+                        <option>Select</option>  
+                        {{#each contexts}}
+                            <option value="{{this}}">{{this}}</option>                        
+                        {{/each}}
+                    </select>
                 </div>
-                <div class="form-group row">
-                    <div class="col-md-6">
-                        <div class="form-group label-floating">
-                            <label for="event-title" class="control-label">Event Title</label>
-                            <input type="text" class="form-control" id="event-title" disabled="disabled" value="{{post.event.title}}">
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group label-floating">
-                            <label for="event-link" class="control-label">Event Link</label>
-                            <input type="text" class="form-control" id="event-link" disabled="disabled" value="{{post.event.link}}">
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="create-right col-xs-4 col-md-4 col-lg-4">
-                <div class="img-preview-cont">
-                    <img class="img-preview" width="100%" height="100%" src="{{imageData}}">
-                </div>
+            </div>          
+        </div>
+        
+        <div class="create-right col-xs-4 col-md-4 col-lg-4">
+            <div class="img-preview-cont">
+                <img class="img-preview" width="100%" height="100%" src="{{imageData}}">
             </div>
         </div>
-        <div class="row form-group">
-            <div class="row form-inline">
-              <div class="form-group">
-                <div class="col-md-offset-2 col-md-10">
-                  <div class="togglebutton">
-                  <label><input type="checkbox" disabled="disabled" checked="checked" id="isClean" {{#if post.isClean}}checked{{/if}}> Clean</label>
-                  </div>
-                </div>
-              </div>
-              <div class="form-group">
-                <div class="col-md-offset-2 col-md-10">
-                  <div class="togglebutton">
-                  <label><input type="checkbox" disabled="disabled" id="isAdult"> Adult</label>
-                  </div>
-                </div>
-              </div>
-          </div>
-        </div>
-        <div class="form-group row">
+
+      </div>
+        
+         <div class="form-group row">
           <label for="example-text-input" class="col-xs-2 col-form-label">Tags</label>
           <div class="col-xs-10">
             <input type="text" value="" id="tags">
@@ -104,6 +76,8 @@
             <input type="text" value="" id="characters">
           </div>
         </div>
+        
+        
       </div> <!--model body-->
       <div class="modal-footer">
         {{#approvable post.isApproved}}{{/approvable}}

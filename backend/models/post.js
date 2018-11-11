@@ -7,8 +7,6 @@ var post = new Schema({
     user: {type: String},
     title: {type: String},
     requestId:{type: String},
-    type: {type: String, required: true},
-    isAdult: {type: Boolean, required: true},
     likes: [],
     views: {type: Number, default:0},
     downloads: {type: Number, default:0},
@@ -22,12 +20,10 @@ var post = new Schema({
     },
     context:{type: String},
     tags:[String],
-    group:{type: String},
     movie: {type: String},
     language: {type: String},
     actors:[String],
     characters:[String],
-    event: {type: Object},
     comments:[String],
     dates: {createdAt: {type: Date}, lastUpdated:{type: Date, default: Date.now}}
 });

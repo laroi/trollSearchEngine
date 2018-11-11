@@ -36,7 +36,7 @@ define([
     };
         var editPost = function () {
             var render;
-            render = function (post) {
+            render = function (post, callback) {
              var tags,
                 actors,
                 characters;
@@ -64,7 +64,7 @@ define([
                                     if ($('#movie').val() == '') {
                                         isValidate = false
                                     }
-                                    if(!(post && post._id) && imageData == ''){
+                                    if(!(post && post._id)){
                                         isValidate = false;
                                     }
                                     return isValidate;
@@ -76,8 +76,6 @@ define([
                                             title: $('#title').val().trim(),
                                             image: imageData,
                                             user: store.get('userId'),
-                                            type:$("#isClean").is(":checked")?'clean':'default',
-                                            isAdult: $("#isAdult").is(":checked")?true:false,
                                             description:'',
                                             tags:$("#tags").val().trim() ? $("#tags").val().trim().split(','):[],
                                             movie: $("#movie").val().trim(),
@@ -85,10 +83,6 @@ define([
                                             context:$("#context").val().trim() === 'Select' ? '' : $("#context").val().trim(),
                                             actors:$("#actors").val().trim() ? $("#actors").val().trim().split(','): [],
                                             characters:$("#characters").val().trim()? $("#characters").val().trim().split(',') : [],
-                                            event :{
-                                                title:$("#event-title").val().trim(),
-                                                link :$("#event-link").val().trim(),
-                                            },
                                             createdAt: date.toISOString(),
 				                            lastModified: date.toISOString()
                                         }
@@ -97,24 +91,21 @@ define([
                                                 postData.isApproved = true;
                                             }
                                         }
-                                        if (post && post._id) {
-                                            url += '/'+ post._id;
-                                            postData._id = post._id;
-                                            request.putImage(url, postData, function(err, data) {
-                                                callback(err, data)
-                                            });                                
-                                        } else {
-                                            request.postImage(url, postData, function(err, data) {
-                                                callback(err, data)
-                                            });
-                                        }
+
+                                        url += '/'+ post._id;
+                                        postData._id = post._id;
+                                        request.putImage(url, postData, function(err, data) {
+                                            callback(err, data)
+                                        });                                
+
                                 }
                                 if (validate()) {
                                     save(function(err, data) {
                                         
                                         if (!err) {
                                             $('#create-new-form').modal( 'hide' ).data( 'bs.modal', null );
-                                            toastr.success('Your post is submitted for verification!', 'FTM Says')
+                                            toastr.success('Your post is submitted for verification!', 'FTM Says');
+                                            callback();
                                         } else {
                                             console.error(err);
                                             toastr.error('Uploading failed.', 'FTM Says')

@@ -178,13 +178,6 @@ requirejs.config({
                   },
                   afterSelect: afterSelect($('#se_character'))
             });
-            $('#se_event').typeahead({
-                source: getSuggestion('event'),
-                  updater: function(item) {
-                    return item;
-                  },
-                  afterSelect: afterSelect($('#se_event'))
-            });
             var isUserLoggedIn = function() {
                 var acessKey = store.get('accessKey'),
                 isLoggedIn = false;

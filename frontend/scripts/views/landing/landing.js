@@ -63,7 +63,20 @@ define([
         var editPost = function(e) {
             var id = $(e.target).parent().parent().attr('id');
             postCollection.getPostById(id, function (err, post) {
-                editPostView.render(post);                
+                editPostView.render(post, function () {
+                    postCollection.removePostById(id)
+                    .then((post)=> {
+                        $('#'+id).parent().parent().remove();
+                         $('.page-cont').masonry({
+                          itemSelector: '.elem-cont',
+                          isAnimated: true
+                        });
+                        console.log(post);
+                    })
+                    .catch((err)=> {
+                        console.error('[UPDATE AFTER EDIT] ', err);
+                    });                                        
+                });                
             });
         }
 		let deletePost = (id) => {
@@ -72,7 +85,18 @@ define([
 				request.del(url, function (err, data) {
 					if (!err) {
 					   toastr.success('Post removed!', 'FTM Says')
-					   $('#'+id).remove();
+					   postCollection.removePostById(id)
+                        .then((post)=> {
+                            console.log(post);
+                            $('#'+id).parent().parent().remove();
+                             $('.page-cont').masonry({
+                              itemSelector: '.elem-cont',
+                              isAnimated: true
+                            });
+                        })
+                        .catch((err)=> {
+                            console.error('[UPDATE AFTER EDIT] ', err);
+                        });
 					} else {
 						console.error('error in deleting request '+ id,  err);
 						toastr.error('Deleteing request failed.', 'FTM Says');
@@ -110,8 +134,6 @@ define([
         let enableFilters = () => {
             $('.language-list').prop('disabled', false);
             $('.context-list').prop('disabled', false);
-            $('.isPlain').prop('disabled', false);
-            $('.isAdult').prop('disabled', false);
             $('.isFavorite').prop('disabled', false);
             $('.isMine').prop('disabled', false);
             if (store.get('userType') === 'admin') {
@@ -126,7 +148,6 @@ define([
             se_movie = $('#se_movie').val().trim(),
             se_actor = $('#se_actor').val().trim(),
             se_character = $('#se_character').val().trim(),
-            se_event = $('#se_event').val().trim(),
             advSearchTerm = {};
             if (se_tag) {
                 advSearchTerm.tag = se_tag;                
@@ -143,9 +164,7 @@ define([
             if (se_character) {
                 advSearchTerm.character = se_character;                
             }
-            if (se_event) {
-                advSearchTerm.event = se_event;                
-            }
+
             if (Object.keys(advSearchTerm).length > 0) {
                 store.set('search_term', advSearchTerm);
                 $('.dropdown.open').removeClass('open');
@@ -190,8 +209,6 @@ define([
                 postData.request = true;
                 filtObj.request = true;
                 filtObj.context = undefined;
-                filtObj.isPlain = undefined;
-                filtObj.isAdult = undefined;
                 filtObj.isApproved = undefined;
                 filtObj.isFavorite = undefined;
                 filtObj.userId = undefined;
@@ -222,14 +239,6 @@ define([
                     postData.context = query.context;
                     filtObj.context = query.context;
                 }
-                if (query.isPlain) {
-                    postData.isPlain = query.isPlain;
-                    filtObj.isPlain = query.isPlain;
-                }
-                if (query.isAdult) {
-                    postData.isAdult = query.isAdult
-                    filtObj.isAdult = query.isAdult;
-                }
                 if (query.isApproved && store.get('userType') === 'admin') {
                     postData.isApproved = query.isApproved
                     filtObj.isApproved = true;
@@ -254,8 +263,6 @@ define([
         var applyFilter = function (e) {
             var f_lang = $('.language-list').val(),
             f_context=$('.context-list').val(),
-            isPlain = $('.isPlain').is(':checked'),
-            isAdult = $('.isAdult').is(':checked'),
             isFavorite = $('.isFavorite').is(':checked'),
             isMine = $('.isMine').is(':checked'),
             isApproved = $('.isApproved').is(':checked'),
@@ -264,8 +271,6 @@ define([
             if (isRequest) {
                 filtObj.request = true;
                 filtObj.context = undefined;
-                filtObj.isPlain = undefined;
-                filtObj.isAdult = undefined;
                 filtObj.isApproved = undefined;
                 filtObj.isFavorite = undefined;
                 filtObj.userId = undefined;
@@ -274,12 +279,6 @@ define([
             } else {
                 if (f_lang && f_lang !== "0") {
                     filtObj.lang = f_lang;
-                }
-                if (isPlain) {
-                    filtObj.isPlain = isPlain;
-                }
-                if (isAdult) {
-                    filtObj.isAdult = isAdult;
                 }
                 if (isFavorite) {
                     filtObj.isFavorite = isFavorite;
@@ -308,15 +307,10 @@ define([
                     movie: '#se_movie',
                     actor: '#se_actor',
                     character: '#se_character',
-                    event: '#se_event',
-                    group: '.group-list',
-                    isPlain: '.isPlain',
-                    isAdult: '.isAdult',
                     isFavorite: '.isFavorite',
 //                    userId: '.isMine'                    
                 }
-                $('.se-control').val('');
-                $('.group-list').prop('selectedIndex', 0);                
+                $('.se-control').val('');            
                 $('.fi-input').prop('checked', false);
                 $('#basic-search').val('');
                 seTerms = store.get('search_term') || {};

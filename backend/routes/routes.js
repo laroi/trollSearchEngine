@@ -62,21 +62,6 @@ var verifytoken = function (token, callback) {
         }
     });
 }
-/*
-var init = function () {
-    //production
-    //var appTokenUrl = 'https://graph.facebook.com/oauth/access_token?client_id=307608189577094&client_secret=abbe305279c252a30352d4c2591a5360&grant_type=client_credentials';
-    //dev
-    var appTokenUrl = 'https://graph.facebook.com/oauth/access_token?client_id=307608722910374&client_secret=6dec5610c25fa4cc814aa30c130d0a39&grant_type=client_credentials';
-    request.get(appTokenUrl, function(err, data) {
-        if (!err) {
-            facebook_app_access = JSON.parse(data.body).access_token;
-            console.log('Got Access token ' + facebook_app_access);
-        } else {
-            console.error('error in getting access token');
-        }
-    });
-}();*/
 let saveThumb = function (fileName) {
     return new Promise((resolve, reject)=> {
         gm(profImageUploadPath+fileName)
@@ -170,59 +155,6 @@ var routes = function () {
             res.status(400).send({err:"Parameters required"});
         }
     };
-    /*
-    addUser = function(req, res) {
-        var userObj = {
-            fbId : req.body.fbId,
-            name : req.body.name,
-            email : req.body.email,
-            phone : req.body.phone,
-            gender : req.body.gender,
-            type: 'user'
-        };
-        var options = { upsert: true, new: true, setDefaultsOnInsert: true };
-        var updMatch = {};
-        var downloadImage = function(uri, filename, callback){
-          request.head(uri, function(err, res, body){
-            console.log('content-type:', res.headers['content-type']);
-            console.log('content-length:', res.headers['content-length']);
-            console.log(filename);
-            request(uri)
-            .on('error', function(err) { console.error('error in uploda', err)})
-            .pipe(fs.createWriteStream(filename))
-            .on('close', callback)            
-          });
-        };
-        downloadImage(req.body.picture, profImageUploadPath+req.body.fbId+'.jpg', function(err, data){
-                console.log('prof image creations', err, data)        
-            userObj.picture = '/images/profile/thumb/'+req.body.fbId+'.jpg';
-            if (userObj.email) {
-                updMatch = {email: userObj.email}
-            } else {
-                updMatch = {fbId: userObj.fbId}
-            }
-            User.findOneAndUpdate(updMatch, userObj, options, function(err, user) {
-                if (!err) {
-                    if (userObj.email) { 
-                        createAccesstoken(undefined, user._id, req.body.email, user.type, req.body.accessToken, function(accessErr, data) {
-                            if(!accessErr) {
-                                console.log('user created ', JSON.stringify(data));
-                                res.status(200).send({user: user, token: data});
-                            } else {
-                                console.error(JSON.stringify(accessErr))
-                                res.status(500).send();
-                            }                            
-                        });
-                    } else {
-                        res.status(400).send();
-                    }
-                } else {
-                    console.error(JSON.stringify(err))
-                    res.status(500).send();
-                }
-            });
-        })
-    };*/
     login = function (req, res) {
             var email,
             password;
@@ -299,48 +231,6 @@ var routes = function () {
             }
         })
     }
-    /*
-    verifyFaceToken = function(req, res) {
-        if (!req.body.authResponse) {
-            res.status(400).send();
-            return;
-        }
-        var authResp = req.body.authResponse;
-        var url = 'https://graph.facebook.com/debug_token?input_token='+authResp.accessToken + '&access_token='+facebook_app_access;
-        logger.log(1, 'verify fb token', 'Verifying FB token ', 'route.js', getIp(req), url)
-        request.get(url, function(checkErr, checkData) {
-            if (!checkErr) {
-                var body = checkData.body
-                body = JSON.parse(body);
-                if (body.data && body.data.is_valid && authResp.userID===body.data.user_id) {
-                    logger.log(1, 'verify fb token', 'Got user verified from FB ', 'route.js', getIp(req), undefined)
-                    User.findOne({fbId: authResp.userID}, function(userErr, userData){
-                        if (!userErr && userData && userData.email) {
-                            logger.log(1, 'verify fb token', 'Found user in db ', 'route.js', getIp(req), userData)
-                            createAccesstoken(undefined, userData._id, userData.email, userData.type, authResp.accessToken, function(err, data) {
-                                if(!err) {
-                                    logger.log(1, 'verify fb token', 'Access token created after verification ', 'route.js', getIp(req), data)
-                                    res.status(200).send({user: '/user/' + userData._id});
-                                } else {
-                                    logger.log(3, 'verify fb token', 'Could not create access token ', 'route.js', getIp(req), err)
-                                    res.status(500).send();
-                                }
-                            }) ;    
-                        } else {
-                            logger.log(3, 'verify fb token', 'Error in fiding user in DB ', 'route.js', getIp(req), {err: checkErr, data: userData})
-                            res.status(404).send();
-                        }
-                    });
-                } else {
-                    logger.log(3, 'verify fb token', 'Facebook validation negative', 'route.js', getIp(req), body)
-                    res.status(401).send();
-                }
-            } else {
-                logger.log(3, 'verify fb token', 'Facebook validation failed', 'route.js', getIp(req), checkErr)
-                res.status(500).send();
-            }
-        });
-    };*/
     logout = function (req, res) {};
     var getUserDetail = function (req, res) {
         let id = req.params.id;
@@ -517,8 +407,6 @@ var routes = function () {
         login: login,
         updatePassword: updatePassword,
         verifyUser: verifyUser,
- //       verifyFaceToken: verifyFaceToken,
- //       addUser: addUser,
         getUserDetail: getUserDetail,
         getUserShortDetails: getUserShortDetails,
         updateUser: updateUser,

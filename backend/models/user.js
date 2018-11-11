@@ -10,7 +10,6 @@ var user = new Schema({
     password: {type: String},
     date: {type: Date, default: Date.now},
     type: {type: String, default: 'user'},
-    fbId: String,
     name: String,
     picture : {full: {type: String}, thumb: {type: String}},
     phone : String,

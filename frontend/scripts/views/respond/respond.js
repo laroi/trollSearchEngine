@@ -36,7 +36,7 @@ define([
                         if (!contErr && ! langErr) {
                             var html = template({imageData: imageData, contexts: contData, langs: langData, isAdmin: store.get('userType') === 'admin' ? true : false});
                             $('#createModel').empty().append(html);
-                            $('.img-preview').attr('src', imageData);
+                            //$('.img-preview').attr('src', imageData);
                             $.material.init();
                             $('#create-new-form').modal({show: false}); 
                             var uploadMeme = function (e) {

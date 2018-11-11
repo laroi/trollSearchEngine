@@ -64,7 +64,7 @@ define([
                                     if ($('#movie').val() == '') {
                                         isValidate = false
                                     }
-                                    if(!(post && post._id) && imageData == ''){
+                                    if(image == ''){
                                         isValidate = false;
                                     }
                                     return isValidate;
@@ -74,10 +74,8 @@ define([
                                     var url = '/api/post',
                                         postData = {
                                             title: $('#title').val().trim(),
-                                            image: imageData,
+                                            image: image,
                                             user: store.get('userId'),
-                                            type:$("#isClean").is(":checked")?'clean':'default',
-                                            isAdult: $("#isAdult").is(":checked")?true:false,
                                             description:'',
                                             tags:$("#tags").val().trim() ? $("#tags").val().trim().split(','):[],
                                             movie: $("#movie").val().trim(),
@@ -85,10 +83,6 @@ define([
                                             context:$("#context").val().trim() === 'Select' ? '' : $("#context").val().trim(),
                                             actors:$("#actors").val().trim() ? $("#actors").val().trim().split(','): [],
                                             characters:$("#characters").val().trim()? $("#characters").val().trim().split(',') : [],
-                                            event :{
-                                                title:$("#event-title").val().trim(),
-                                                link :$("#event-link").val().trim(),
-                                            },
                                             createdAt: date.toISOString(),
 				                            lastModified: date.toISOString()
                                         }

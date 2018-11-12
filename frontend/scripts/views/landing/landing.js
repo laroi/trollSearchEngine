@@ -6,12 +6,13 @@ define([
 '../../controllers/highlightController',
 '../../collections/postCollection',
 '../../collections/userCollection',
- 'text!./landing.html',
-  'text!../components/head_context.html',
-  'text!../components/head_lang.html',
- '../create/create',
-  '../editpost/editpost'
-], function (request, store, url, user, highlight, postCollection, userCollection, html, contextHtml, langHtml, create, editPostView) {
+'text!./landing.html',
+'text!../components/head_context.html',
+'text!../components/head_lang.html',
+'text!../components/indElement.html',
+'../create/create',
+'../editpost/editpost'
+], function (request, store, url, user, highlight, postCollection, userCollection, html, contextHtml, langHtml, indElement, create, editPostView) {
      var source   = $(html).html(),
         template = Handlebars.compile(source),
         render;
@@ -59,7 +60,12 @@ define([
             return options.fn(this)
           }
           return options.inverse(this)
-        })
+        });
+        let getDOMelem = (post) => {
+            let source   = $(indElement).html(),
+                template = Handlebars.compile(source);
+            return template({post: post});
+        }
         var editPost = function(e) {
             var id = $(e.target).parent().parent().attr('id');
             postCollection.getPostById(id, function (err, post) {
@@ -67,11 +73,16 @@ define([
                     postCollection.removePostById(id)
                     .then((post)=> {
                         $('#'+id).parent().parent().remove();
+                        console.log('[UPDATE AFTER EDIT]', post);
+                        if (post) {
+                            let postHtml = getDOMelem(post)
+                            console.log(postHtml);
+                            $('.page-cont').append(postHtml);
+                        }
                          $('.page-cont').masonry({
                           itemSelector: '.elem-cont',
                           isAnimated: true
                         });
-                        console.log(post);
                     })
                     .catch((err)=> {
                         console.error('[UPDATE AFTER EDIT] ', err);

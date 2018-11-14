@@ -78,11 +78,14 @@ define([
                             let postHtml = getDOMelem(post)
                             console.log(postHtml);
                             $('.page-cont').append(postHtml);
+                            $('.page-cont').masonry( 'reloadItems' );
+                            $('.page-cont').masonry( 'layout' );
+                            //msnry.addItems( postHtml)
                         }
-                         $('.page-cont').masonry({
+                         /*$('.page-cont').masonry({
                           itemSelector: '.elem-cont',
                           isAnimated: true
-                        });
+                        });*/
                     })
                     .catch((err)=> {
                         console.error('[UPDATE AFTER EDIT] ', err);
@@ -98,12 +101,20 @@ define([
 					   toastr.success('Post removed!', 'FTM Says')
 					   postCollection.removePostById(id)
                         .then((post)=> {
-                            console.log(post);
                             $('#'+id).parent().parent().remove();
-                             $('.page-cont').masonry({
-                              itemSelector: '.elem-cont',
-                              isAnimated: true
-                            });
+                        console.log('[UPDATE AFTER EDIT]', post);
+                        if (post) {
+                            let postHtml = getDOMelem(post)
+                            console.log(postHtml);
+                            $('.page-cont').append(postHtml);
+                            $('.page-cont').masonry( 'reloadItems' );
+                            $('.page-cont').masonry( 'layout' );
+                            //msnry.addItems( postHtml)
+                        }
+                         /*$('.page-cont').masonry({
+                          itemSelector: '.elem-cont',
+                          isAnimated: true
+                        });*/
                         })
                         .catch((err)=> {
                             console.error('[UPDATE AFTER EDIT] ', err);
@@ -497,12 +508,10 @@ define([
                             $('#post-contents').empty().append(html);
                             
                             //$('.page-cont').imagesLoaded(function () {
-                                $('.page-cont').masonry({
-                                  // options
-                                  itemSelector: '.elem-cont',
-                                  isAnimated: true
-                                });
-                            //})
+                            $('.page-cont').masonry({
+                              itemSelector: '.elem-cont',
+                              isAnimated: true
+                            })
                             postCollection.getPostUserDetails()
                             .then(()=> {
                                 $('#post-contents').children('.panel-cont').children('.page-cont').children('.elem-cont').children('.panel').children('.panel-body').each((index, element)=> {

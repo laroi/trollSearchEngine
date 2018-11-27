@@ -274,14 +274,76 @@ var routes = function () {
             opts.from = from;
             opts.order = order;
             console.log('searching ', opts);
-        elastic.getDocs(opts, function(err, data) {
-            if (!err) {
-                res.status(200).send(data)
-            } else {
-                console.error(JSON.stringify(err));
-                res.status(500).send({'errr': 'could not get data'})
-            }
+        elastic.getDocs(opts)
+        .then((hits)=> {
+            res.status(200).send(hits)
         })
+        .catch((err) => {
+            console.error(JSON.stringify(err));
+            res.status(500).send({'errr': 'could not get data'})
+        });
+    },
+    getUpdatePosts = function (req, res) {
+        let title = req.body.title,
+            userId = req.body.userId,
+            tags = req.body.tag,
+            movie = req.body.movie,
+            language = req.body.language,
+            characters = req.body.character,
+            actors = req.body.actor,
+            search = req.body.search,
+            from = req.body.from,
+            unApproved = req.body.isApproved,
+            order = req.body.order,
+            context = req.body.context,
+            isFavorite =  req.body.isFavorite,
+            nextVal,
+            opts = {};
+            if (search) {
+                opts.search = search;
+            } else {
+                opts.advanced = {};
+                opts.advanced.title = title;
+                opts.advanced.tags = tags;
+                opts.advanced.movie = movie;
+                opts.advanced.characters = characters;
+                opts.advanced.actors = actors;
+            }
+            if (isFavorite === null) {
+                opts.ids = [""];
+            }
+            else if (isFavorite) {
+                opts.ids = isFavorite.split(',');
+            }
+            if (userId) {
+                opts.advanced.userId = userId;
+            }
+            if (context) {
+                opts.context = context;
+            }
+            if (language) {
+                opts.language = language;
+            }
+            if (req.isAdmin && unApproved) {
+                opts.unApproved = unApproved;
+            }
+            opts.from = from;
+            opts.order = order;
+            console.log('searching ', opts);
+        elastic.getDocs(opts)
+        .then((hits)=> {
+            nextVal = hits.hits[0]
+            opts.from = 0;
+            return elastic.getDocs(opts)
+            //res.status(200).send(hits)
+        })
+        .then((hits)=> {
+            res.status(200).send({next: nextVal, latest: hits.hits[0], total: hits.total})
+        })
+        .catch((err) => {
+            console.error(JSON.stringify(err));
+            res.status(500).send({'errr': 'could not get data'})
+        });
     },
     getPost = function (req, res) {
         var id = req.params.id
@@ -821,6 +883,7 @@ var routes = function () {
         test: test,
         post: post,
         getPost: getPost,
+        getUpdatePosts: getUpdatePosts,
         getPosts: getPosts,
         updatePost: updatePost,
         downloadImage: downloadImage,

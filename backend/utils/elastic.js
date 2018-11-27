@@ -286,125 +286,131 @@ var elastic = function () {
         });
     };
     var getDocs = function(options, callback) {
-        var isAdvancedSearch = function (opts) {
-            var opt;
-            for (opt in opts) {
-                if (opts[opt]) {
-                    return true
-                }
-            }
-            return false;
-        }
-        var should_array = [],
-            must_array = [],
-            sort =[],
-            minScore = undefined,
-            body = {};
-        if (options.advanced && isAdvancedSearch(options.advanced)) {
-            if (options.advanced.userId) {
-                must_array.push({ "match": { "user": options.advanced.userId }});
-                sort.push({"_score": {"order": "desc"}});
-            }
-            if (options.advanced.title) {
-                must_array.push({ "match": { "title": options.advanced.title }});
-                sort.push({"_score": {"order": "desc"}});
-            }
-            if (options.advanced.tags) {
-                must_array.push({ "match": { "tags": options.advanced.tags }});
-                sort.push({"_score": {"order": "desc"}});
-            }
-            if (options.advanced.movie) {
-                must_array.push({ "match": { "movie": options.advanced.movie }});
-                sort.push({"_score": {"order": "desc"}});
-            }
-            if (options.advanced.language) {
-                must_array.push({ "match": { "language": options.advanced.language }});
-                sort.push({"_score": {"order": "desc"}});
-            }
-            if (options.advanced.actors) {
-                must_array.push({ "match": { "actors": options.advanced.actors }});
-                sort.push({"_score": {"order": "desc"}});
-            }
-            if (options.advanced.characters) {
-                must_array.push({ "match": { "characters": options.advanced.characters }});
-                sort.push({"_score": {"order": "desc"}});
-            }
-        } else if (options.search){
-            should_array.push({ "match": { "user": options.search}});
-            should_array.push({ "match": { "title": options.search }});
-            should_array.push({ "match": { "tags": options.search }});
-            should_array.push({ "match": { "movie": options.search }});
-            should_array.push({ "match": { "actors": options.search }});
-            should_array.push({ "match": { "characters": options.search }});
-            minScore = 0.5;
-            sort.push({
-                "_score": {
-                   "order": "desc"
-                }
-             });
-        } else {
-            sort.push({
-                    "lastModified": {
-                       "order": options.order || "desc"
+        return new Promise((resolve, reject) => {
+            var isAdvancedSearch = function (opts) {
+                var opt;
+                for (opt in opts) {
+                    if (opts[opt]) {
+                        return true
                     }
-                 })
-        }
-        if (options.ids && options.ids.length > 0) {
-                must_array.push({ "terms": { "_id": options.ids }});
-        }
-        if (options.context) {
-            must_array.push({ "match": { "context": options.context }});
-        }
-        if (options.language) {
-            must_array.push({ "match": { "language": options.language }});
-        }
-        if (options.unApproved) {
-            must_array.push({ "match": { "isApproved": false }});
-        } else {
-            must_array.push({ "match": { "isApproved": true }});
-        }
-        body = {
-            aggs : {
-                posts:{
-                   top_hits:{
-                     size:10
-                   }
-                 }
-            },
-            query: {
-                bool: {
-                    must:must_array,
-                    should:should_array
                 }
-              },
-               "from" : options.from || 0,
-               "size" : 10,
-               "sort" : sort
-        };
-        if (minScore) {
-            body.min_score = minScore;
-        }
-        console.log('sort ', sort);
-        if (should_array.length > 0) {
-            body.query.bool.should = should_array
-        }
-        if (should_array.length > 0) {
-            body.query.bool.must = must_array
-        }
-        console.log('options\n');
-        console.log(JSON.stringify(options));
-        console.log('options Ends\n');
-        console.log('Search Query\n');
-        console.log(JSON.stringify(body));
-        console.log('Search Query Ends\n');
-        client.search({
-            index: 'trolls',
-            type: 'post',
-            body: body
-        }, function (error, response) {
-            callback(error, response.hits);
+                return false;
+            }
+            var should_array = [],
+                must_array = [],
+                sort =[],
+                minScore = undefined,
+                body = {};
+            if (options.advanced && isAdvancedSearch(options.advanced)) {
+                if (options.advanced.userId) {
+                    must_array.push({ "match": { "user": options.advanced.userId }});
+                    sort.push({"_score": {"order": "desc"}});
+                }
+                if (options.advanced.title) {
+                    must_array.push({ "match": { "title": options.advanced.title }});
+                    sort.push({"_score": {"order": "desc"}});
+                }
+                if (options.advanced.tags) {
+                    must_array.push({ "match": { "tags": options.advanced.tags }});
+                    sort.push({"_score": {"order": "desc"}});
+                }
+                if (options.advanced.movie) {
+                    must_array.push({ "match": { "movie": options.advanced.movie }});
+                    sort.push({"_score": {"order": "desc"}});
+                }
+                if (options.advanced.language) {
+                    must_array.push({ "match": { "language": options.advanced.language }});
+                    sort.push({"_score": {"order": "desc"}});
+                }
+                if (options.advanced.actors) {
+                    must_array.push({ "match": { "actors": options.advanced.actors }});
+                    sort.push({"_score": {"order": "desc"}});
+                }
+                if (options.advanced.characters) {
+                    must_array.push({ "match": { "characters": options.advanced.characters }});
+                    sort.push({"_score": {"order": "desc"}});
+                }
+            } else if (options.search){
+                should_array.push({ "match": { "user": options.search}});
+                should_array.push({ "match": { "title": options.search }});
+                should_array.push({ "match": { "tags": options.search }});
+                should_array.push({ "match": { "movie": options.search }});
+                should_array.push({ "match": { "actors": options.search }});
+                should_array.push({ "match": { "characters": options.search }});
+                minScore = 0.5;
+                sort.push({
+                    "_score": {
+                       "order": "desc"
+                    }
+                 });
+            } else {
+                sort.push({
+                        "lastModified": {
+                           "order": options.order || "desc"
+                        }
+                     })
+            }
+            if (options.ids && options.ids.length > 0) {
+                    must_array.push({ "terms": { "_id": options.ids }});
+            }
+            if (options.context) {
+                must_array.push({ "match": { "context": options.context }});
+            }
+            if (options.language) {
+                must_array.push({ "match": { "language": options.language }});
+            }
+            if (options.unApproved) {
+                must_array.push({ "match": { "isApproved": false }});
+            } else {
+                must_array.push({ "match": { "isApproved": true }});
+            }
+            body = {
+                aggs : {
+                    posts:{
+                       top_hits:{
+                         size:10
+                       }
+                     }
+                },
+                query: {
+                    bool: {
+                        must:must_array,
+                        should:should_array
+                    }
+                  },
+                   "from" : options.from || 0,
+                   "size" : 10,
+                   "sort" : sort
+            };
+            if (minScore) {
+                body.min_score = minScore;
+            }
+            console.log('sort ', sort);
+            if (should_array.length > 0) {
+                body.query.bool.should = should_array
+            }
+            if (should_array.length > 0) {
+                body.query.bool.must = must_array
+            }
+            console.log('options\n');
+            console.log(JSON.stringify(options));
+            console.log('options Ends\n');
+            console.log('Search Query\n');
+            console.log(JSON.stringify(body));
+            console.log('Search Query Ends\n');
+            client.search({
+                index: 'trolls',
+                type: 'post',
+                body: body
+            }, function (error, response) {
+                if (!error) {
+                    resolve(response.hits)
+                } else {
+                    reject(error)
+                }
+            });
         });
-    }
+    };
     var getSuggestions = function(options, callback) {
         var fieldMap = {
             title: 'titleSuggest',

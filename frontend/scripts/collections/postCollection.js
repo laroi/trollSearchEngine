@@ -81,27 +81,32 @@ define(['scripts/controllers/requestController', 'scripts/controllers/storeContr
         let getPostUserDetails = () => {
             return new Promise((resolve, reject)=> {
                 let users = posts.map((_)=>_.user);
-                request._post('/api/users', {users: users})
-                .then((data)=> {
-                    data.map((datum)=> {
-                        for (let i = 0; i < posts.length; i+= 1) {
-                            if (posts[i].user === datum._id) {
-                                posts[i].username = datum.name;
-                                posts[i].userimg = datum.picture;
-                            }
-                        }                        
+                if (Array.isArray(users) && users.length > 0) {
+                    request._post('/api/users', {users: users})
+                    .then((data)=> {
+                        data.map((datum)=> {
+                            for (let i = 0; i < posts.length; i+= 1) {
+                                if (posts[i].user === datum._id) {
+                                    posts[i].username = datum.name;
+                                    posts[i].userimg = datum.picture;
+                                }
+                            }                        
+                        })
+                        resolve(posts)
                     })
-                    resolve(posts)
-                })
-                .catch((err)=> {
-                    reject(err);
-                })
+                    .catch((err)=> {
+                        reject(err);
+                    })
+                } else {
+                    resolve([]);
+                }
             })
         }
         getAllPosts = function (postData, force, callback) {
             if (!checkIfCached(postData) || force) {
                 updateCache(postData);
                 request.post('/api/posts', postData, function (err, status, data) {
+                    console.log(data);
                     let hits = []
                     if (data && Array.isArray(data.hits) && data.hits.length > 0) {
                         hits = data.hits
@@ -166,47 +171,62 @@ define(['scripts/controllers/requestController', 'scripts/controllers/storeContr
                 tempCache.from = tempfrom + limit;
                 tempCache.limit = 1;
                 console.log(tempCache);
-                request.post('/api/posts', tempCache, function (err, status, data) {
+                request.post('/api/updatedposts', tempCache, function (err, status, data) {
                     if (!err) {
-                        let hits = data.hits;
-                        let stars = store.get('stars') || [];
-                        if (Array.isArray(hits) && hits.length > 0) {
-                             hits.forEach(function (post) {
-                                let postObj = new PostModel({
-                                    _id : post._id,
-                                    user: post._source.user,
-                                   	title: post._source.title,
-                                    views: post._source.views,
-                                    likes: post._source.likes,
-                                    downloads: post._source.downloads,
-                                    imageUrl: post._source.image.url,
-                                    thumbUrl: post._source.image.thumb,
-                                    height : post._source.image.size ? post._source.image.size.height : 0,
-                                    width: post._source.image.size ? post._source.image.size.width : 0,
-			                        description: post._source.description,
-			                        tags: post._source.tags,
-			                        movie: post._source.movie,
-			                        language: post._source.language,
-			                        actors: post._source.actors,
-			                        isApproved : post._source.isApproved,
-			                        characters: post._source.characters,
-			                        context : post._source.context
-			                    });
-			                    if (store.get('userId') === post._source.user) {
-			                       postObj.isOwner = true; 
-			                    }
-			                    postObj.isLiked = post._source.likes.find(function(like){return like.userId === store.get('userId')})
-			                    postObj.isLiked = postObj.isLiked && postObj.isLiked.userId ? true : false;
-			                    if (stars.indexOf(post._id) > -1) {
-			                        postObj.isStarred = true;
-			                    } else {
-			                        postObj.isStarred = false;
-			                    }
-			                    resolve(postObj);
-                            });
-                        } else {
-                            resolve(undefined);
+                        let total = data.total;
+                        let post;
+                        let next = data.next;
+                        let latest = data.latest;
+                        let nextIndex;
+                        let latestIndex;
+                        if (next) {
+                            nextIndex = posts.findIndex(_ => _._id === next._id);
                         }
+                        if (latest) {
+                            latestIndex = posts.findIndex(_ => _._id === latest._id);
+                        }
+                        if (nextIndex < 0 && next) {
+                            post = next;
+                        }
+                        if (latestIndex < 0 && latest)  {
+                            post = latest;
+                        }
+                        if (post) {
+                            let stars = store.get('stars') || [];
+                            let postObj = new PostModel({
+                                _id : post._id,
+                                user: post._source.user,
+                               	title: post._source.title,
+                                views: post._source.views,
+                                likes: post._source.likes,
+                                downloads: post._source.downloads,
+                                imageUrl: post._source.image.url,
+                                thumbUrl: post._source.image.thumb,
+                                height : post._source.image.size ? post._source.image.size.height : 0,
+                                width: post._source.image.size ? post._source.image.size.width : 0,
+	                            description: post._source.description,
+	                            tags: post._source.tags,
+	                            movie: post._source.movie,
+	                            language: post._source.language,
+	                            actors: post._source.actors,
+	                            isApproved : post._source.isApproved,
+	                            characters: post._source.characters,
+	                            context : post._source.context
+	                        });
+	                        if (store.get('userId') === post._source.user) {
+	                           postObj.isOwner = true; 
+	                        }
+	                        postObj.isLiked = post._source.likes.find(function(like){return like.userId === store.get('userId')})
+	                        postObj.isLiked = postObj.isLiked && postObj.isLiked.userId ? true : false;
+	                        if (stars.indexOf(post._id) > -1) {
+	                            postObj.isStarred = true;
+	                        } else {
+	                            postObj.isStarred = false;
+	                        }
+	                        resolve({post: postObj, total: total});
+	                    } else {
+	                        resolve();
+	                    }
                     } else {
                         reject(err);
                     }
@@ -218,8 +238,8 @@ define(['scripts/controllers/requestController', 'scripts/controllers/storeContr
             return getUpdatedPost()
             .then((postObj)=> {
                 posts = posts.filter(_=>_.id !== id);
-                if (postObj) {
-                    posts.push(postObj);
+                if (postObj.post) {
+                    posts.push(postObj.post);
                 }
                 return postObj;
             })

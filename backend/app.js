@@ -176,6 +176,7 @@ app.put('/request/:id', isAuthenticated(false), postRoute.updateRequest);
 
 /*Post Routes*/
 app.post('/posts', listAuth, postRoute.getPosts);
+app.post('/updatedposts', listAuth, postRoute.getUpdatePosts);
 app.get('/post/:id', postRoute.getPost);
 app.delete('/post/:id', isAuthenticated(), postRoute.deletePost);
 app.put('/post/:id', isAuthenticated(false), postRoute.updatePost);

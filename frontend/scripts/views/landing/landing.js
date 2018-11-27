@@ -82,10 +82,6 @@ define([
                             $('.page-cont').masonry( 'layout' );
                             //msnry.addItems( postHtml)
                         }
-                         /*$('.page-cont').masonry({
-                          itemSelector: '.elem-cont',
-                          isAnimated: true
-                        });*/
                     })
                     .catch((err)=> {
                         console.error('[UPDATE AFTER EDIT] ', err);
@@ -104,8 +100,7 @@ define([
                             $('#'+id).parent().parent().remove();
                         console.log('[UPDATE AFTER EDIT]', post);
                         if (post) {
-                            let postHtml = getDOMelem(post)
-                            console.log(postHtml);
+                            let postHtml = getDOMelem(post.post)
                             $('.page-cont').append(postHtml);
                             $('.page-cont').masonry( 'reloadItems' );
                             $('.page-cont').masonry( 'layout' );

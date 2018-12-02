@@ -10,9 +10,10 @@ define([
 'text!../components/head_context.html',
 'text!../components/head_lang.html',
 'text!../components/indElement.html',
+'text!../components/pagination.html',
 '../create/create',
 '../editpost/editpost'
-], function (request, store, url, user, highlight, postCollection, userCollection, html, contextHtml, langHtml, indElement, create, editPostView) {
+], function (request, store, url, user, highlight, postCollection, userCollection, html, contextHtml, langHtml, indElement,indPage, create, editPostView) {
      var source   = $(html).html(),
         template = Handlebars.compile(source),
         render;
@@ -63,8 +64,13 @@ define([
         });
         let getDOMelem = (post) => {
             let source   = $(indElement).html(),
+                pageSource = $(indPage).html(),
+                pageTemplate = Handlebars.compile(pageSource),
                 template = Handlebars.compile(source);
-            return template({post: post});
+             let from = parseInt((store.get('from')|| 0), 10),
+                 limit = parseInt((store.get('limit')|| 10), 10),
+                 current = (from  + limit)/limit;
+            return {post: template({post: post.post}), pagination: pageTemplate({total: post.total, limit: limit, current: current})};
         }
         var editPost = function(e) {
             var id = $(e.target).parent().parent().attr('id');
@@ -75,11 +81,12 @@ define([
                         $('#'+id).parent().parent().remove();
                         console.log('[UPDATE AFTER EDIT]', post);
                         if (post) {
-                            let postHtml = getDOMelem(post)
-                            console.log(postHtml);
-                            $('.page-cont').append(postHtml);
-                            $('.page-cont').masonry( 'reloadItems' );
-                            $('.page-cont').masonry( 'layout' );
+                            let html = getDOMelem(post)
+                            console.log(html);
+                            $('.page-cont').append(html.post);
+                            $('.pagination').empty().html(html.pagination)
+                            $('.page-cont').masonry('reloadItems');
+                            $('.page-cont').masonry('layout');
                             //msnry.addItems( postHtml)
                         }
                     })
@@ -100,10 +107,12 @@ define([
                             $('#'+id).parent().parent().remove();
                         console.log('[UPDATE AFTER EDIT]', post);
                         if (post) {
-                            let postHtml = getDOMelem(post.post)
-                            $('.page-cont').append(postHtml);
-                            $('.page-cont').masonry( 'reloadItems' );
-                            $('.page-cont').masonry( 'layout' );
+                            let html = getDOMelem(post)
+                            console.log(html);
+                            $('.page-cont').append(html.post);
+                            $('.pagination').empty().html(html.pagination)
+                            $('.page-cont').masonry('reloadItems');
+                            $('.page-cont').masonry('layout');
                             //msnry.addItems( postHtml)
                         }
                          /*$('.page-cont').masonry({

@@ -275,6 +275,7 @@ var elastic = function () {
             index: 'trolls',
             id: doc.id,
             type: 'post',
+            refresh:true,
             body: body
         }, function (error, response) {
             if (!error) {
@@ -368,7 +369,7 @@ var elastic = function () {
                 aggs : {
                     posts:{
                        top_hits:{
-                         size:10
+                         size:options.size || 10
                        }
                      }
                 },
@@ -379,7 +380,7 @@ var elastic = function () {
                     }
                   },
                    "from" : options.from || 0,
-                   "size" : 10,
+                   "size" : options.size || 10,
                    "sort" : sort
             };
             if (minScore) {
@@ -550,6 +551,7 @@ var elastic = function () {
         client.update({
             index: 'trolls',
             id: id,
+            refresh:true,
             type: 'post',
             body: {
                 doc: body
@@ -565,6 +567,7 @@ var elastic = function () {
           index: 'trolls',
           type: 'post',
           id: id,
+          refresh:true,
         }, function (error, response) {
            callback(error, response)
         });
@@ -572,6 +575,7 @@ var elastic = function () {
     var deleteRequestDoc = function (id, callback) {
         client.delete({
           index: 'trolls',
+          refresh:true,
           type: 'request',
           id: id,
         }, function (error, response) {
@@ -602,6 +606,7 @@ var elastic = function () {
         client.update({
             index: 'trolls',
             id: id,
+            refresh:true,
             type: 'request',
             body: {
                 doc: body
@@ -635,6 +640,7 @@ var elastic = function () {
             index: 'trolls',
             id: doc.id,
             type: 'request',
+            refresh: true,
             body: body
         }, function (error, response) {
             if (!error) {
@@ -721,6 +727,7 @@ var elastic = function () {
             client.update({
                 index: 'trolls',
                 id: requsetId,
+                refresh:true,
                 type: 'request',
                 body: {
                     doc: {"status":"R", "requestPostId": postId}
@@ -734,6 +741,7 @@ var elastic = function () {
             });
         }) 
     }
+  
     return {
         init: init,
         putDoc: putDoc,

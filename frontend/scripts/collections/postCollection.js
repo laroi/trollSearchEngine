@@ -168,7 +168,7 @@ define(['scripts/controllers/requestController', 'scripts/controllers/storeContr
             return new Promise((resolve, reject) => {
                 tempCache =  Object.assign({}, cachedVals);
                 let tempfrom  = parseInt(tempCache.from, 10);
-                tempCache.from = tempfrom + limit;
+                tempCache.from = ((tempfrom + limit) - 1);
                 tempCache.limit = 1;
                 console.log(tempCache);
                 request.post('/api/updatedposts', tempCache, function (err, status, data) {
@@ -225,7 +225,7 @@ define(['scripts/controllers/requestController', 'scripts/controllers/storeContr
 	                        }
 	                        resolve({post: postObj, total: total});
 	                    } else {
-	                        resolve();
+	                        resolve(false);
 	                    }
                     } else {
                         reject(err);
@@ -238,7 +238,7 @@ define(['scripts/controllers/requestController', 'scripts/controllers/storeContr
             return getUpdatedPost()
             .then((postObj)=> {
                 posts = posts.filter(_=>_.id !== id);
-                if (postObj.post) {
+                if (postObj && postObj.post) {
                     posts.push(postObj.post);
                 }
                 return postObj;

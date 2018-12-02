@@ -328,16 +328,20 @@ var routes = function () {
                 opts.unApproved = unApproved;
             }
             opts.from = from;
+            opts.size = 1;
             opts.order = order;
-            console.log('searching ', opts);
+            console.log('[UPDATED POSTS] ', opts);
         elastic.getDocs(opts)
         .then((hits)=> {
             nextVal = hits.hits[0]
+            console.log('nextVal ', JSON.stringify(hits))
             opts.from = 0;
+            console.log('[UPDATED POSTS] ', opts);
             return elastic.getDocs(opts)
             //res.status(200).send(hits)
         })
-        .then((hits)=> {
+        .then(async(hits)=> {
+            console.log('latest ', JSON.stringify(hits))
             res.status(200).send({next: nextVal, latest: hits.hits[0], total: hits.total})
         })
         .catch((err) => {

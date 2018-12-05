@@ -87,6 +87,18 @@ define([
                             $('.pagination').empty().html(html.pagination)
                             $('.page-cont').masonry('reloadItems');
                             $('.page-cont').masonry('layout');
+                            postCollection.getPostUserDetails([post.user])
+                            .then((data)=> {
+                                if (data && Array.isArray(data)) {
+                                    postCollection.getPostById(post._id, (err, post)=> {
+                                        if (_post) {
+                                        $('#'+ _post._id).children('.bottom-panel').children('.button-panel').children('.row1').children('.user').children('.user-img').attr('src', _post.userimg.thumb)
+                                        }
+                                    })
+                                } else if (data) {
+                                    $('#'+ post._id).children('.bottom-panel').children('.button-panel').children('.row1').children('.user').children('.user-img').attr('src', data.picture)
+                                } 
+                            })
                             //msnry.addItems( postHtml)
                         }
                     })
@@ -517,15 +529,19 @@ define([
                               isAnimated: true
                             })
                             postCollection.getPostUserDetails()
-                            .then(()=> {
-                                $('#post-contents').children('.panel-cont').children('.page-cont').children('.elem-cont').children('.panel').children('.panel-body').each((index, element)=> {
-                                    console.log($(element).attr('id'));
-                                    postCollection.getPostById($(element).attr('id'), (err, post)=> {
-                                        if (post) {
-                                        $(element).children('.bottom-panel').children('.button-panel').children('.row1').children('.user').children('.user-img').attr('src', post.userimg.thumb)
-                                        }
-                                    }) 
-                                })
+                            .then((data)=> {
+                                if (data && Array.isArray(data)) { 
+                                    $('#post-contents').children('.panel-cont').children('.page-cont').children('.elem-cont').children('.panel').children('.panel-body').each((index, element)=> {
+                                        console.log($(element).attr('id'));
+                                        postCollection.getPostById($(element).attr('id'), (err, post)=> {
+                                            if (post) {
+                                            $(element).children('.bottom-panel').children('.button-panel').children('.row1').children('.user').children('.user-img').attr('src', post.userimg.thumb)
+                                            }
+                                        }) 
+                                    })
+                                } else {
+                                
+                                }
                             })
                             loadContext();
                             loadLangs();

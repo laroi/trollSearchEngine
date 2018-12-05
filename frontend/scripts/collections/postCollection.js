@@ -78,9 +78,11 @@ define(['scripts/controllers/requestController', 'scripts/controllers/storeContr
                 cachedVals.userId = postData.userId || undefined;
                 cachedVals.language = postData.language || undefined;
         }
-        let getPostUserDetails = () => {
+        let getPostUserDetails = (users) => {
             return new Promise((resolve, reject)=> {
-                let users = posts.map((_)=>_.user);
+                if (!users) {
+                    users = posts.map((_)=>_.user);
+                }
                 if (Array.isArray(users) && users.length > 0) {
                     request._post('/api/users', {users: users})
                     .then((data)=> {
@@ -91,8 +93,13 @@ define(['scripts/controllers/requestController', 'scripts/controllers/storeContr
                                     posts[i].userimg = datum.picture;
                                 }
                             }                        
-                        })
-                        resolve(posts)
+                        });
+                        //If there is only one user, send only user data instead of all the posts
+                        if (Array.isArray(users) && users.length === 1) {
+                            resolve(data[0]);
+                        } else {
+                            resolve(posts);
+                        }
                     })
                     .catch((err)=> {
                         reject(err);

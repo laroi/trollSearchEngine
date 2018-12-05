@@ -3,17 +3,19 @@ define(['scripts/controllers/requestController', 'scripts/controllers/storeContr
     var date = new Date();
     var post = function(inPost) {
     var like = function(user, email, callback) {
+        let that = this;
         request.put('/api/post/'+this._id+'/like',{user: user, email:email}, function(err, data) {
-            this.isLiked = true;
-            this.lkes += 1;
+            that.isLiked = true;
+            that.likes.push({userId: store.get('userId')});
             callback(err, data)
         });
      };
      var unlike = function (user, callback) {
+        let that = this;
         request.put('/api/post/'+this._id+'/unlike',{user: user}, function(err, data) {
-            this.isLiked = false;
-            this.lkes -= 1;
-            callback(err, datam)
+            that.isLiked = false;
+            that.likes.splice(that.likes.findIndex(_=> _.userId === store.get('userId')), 1);
+            callback(err, data)
         })
      };
         var save = function () {

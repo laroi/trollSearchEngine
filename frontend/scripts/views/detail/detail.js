@@ -58,13 +58,18 @@ define([
             }
             user.updateUser({stars: updatedStar}, function(err, data) {
                 if (!err) {
-                    if ($(e.target).hasClass('star')) {
-                        $(e.target).removeClass('star');
-                        $(e.target).addClass('starred');
-                    } else if ($(e.target).hasClass('starred')) {
-                        $(e.target).addClass('star');
-                        $(e.target).removeClass('starred');
+                    let element = $("#"+postId+".panel-body").children('.bottom-panel').children('.button-panel').children('.row1').children('.pan-btn-cont').children('.star-btn');
+                    let processUpdate = (el) => { 
+                        if ($(el).hasClass('star')) {
+                            $(el).removeClass('star');
+                            $(el).addClass('starred');
+                        } else if ($(e.target).hasClass('starred')) {
+                            $(el).addClass('star');
+                            $(el).removeClass('starred');
+                        }
                     }
+                    processUpdate(e.target)
+                    processUpdate(element)
                 } else {
                     store.set('stars', prevStars);
                     toastr.error('Could not perform the action, verify you are logged in.', 'FTM Says')
@@ -75,14 +80,19 @@ define([
             var postId = $(e.target).parent().parent().parent().attr('id');
             var processCallback = function (err, data) {
                 if (!err) {
-                    if ($(e.target).hasClass('faved')) {
-                        $(e.target).removeClass('faved');
-                        $(e.target).addClass('favorite');
-                    } else if ($(e.target).hasClass('favorite')) {
-                        $(e.target).removeClass('favorite');
-                        $(e.target).addClass('faved');
+                    let element = $("#"+postId+".panel-body").children('.bottom-panel').children('.button-panel').children('.row1').children('.pan-btn-cont').children('.fav');
+                    let processUpdate = (el) => {
+                        if ($(el).hasClass('faved')) {
+                            $(el).removeClass('faved');
+                            $(el).addClass('favorite');
+                        } else if ($(el).hasClass('favorite')) {
+                            $(el).removeClass('favorite');
+                            $(el).addClass('faved');
+                        }
+                        $(el).next().empty().html(data.likes);
                     }
-                    $(e.target).next().empty().html(data.likes);
+                    processUpdate(e.target);
+                    processUpdate(element);
                 } else {
                     console.error(err);
                     toastr.error('Could not perform the action, verify you are logged in.', 'FTM Says')

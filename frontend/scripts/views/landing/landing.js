@@ -540,7 +540,7 @@ define([
                                         }) 
                                     })
                                 } else {
-                                
+                                    $('.pan-btn').children('.user-img').attr('src', data.picture.thumb)
                                 }
                             })
                             loadContext();

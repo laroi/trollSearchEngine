@@ -55,7 +55,6 @@ define([
         Handlebars.registerHelper('getThumbHeight', function(post) {
             return 150 * (post.height/post.width)
         })
-        
         Handlebars.registerHelper('ifeq', (isOwner, options) => {
           if (isOwner || store.get('userType') === 'admin') {
             return options.fn(this)
@@ -70,6 +69,7 @@ define([
              let from = parseInt((store.get('from')|| 0), 10),
                  limit = parseInt((store.get('limit')|| 10), 10),
                  current = (from  + limit)/limit;
+                console.log('total ', post.total, ' limit ', limit, ' current ', current)
             return {post: template({post: post.post}), pagination: pageTemplate({total: post.total, limit: limit, current: current})};
         }
         var editPost = function(e) {
@@ -87,7 +87,7 @@ define([
                             $('.pagination').empty().html(html.pagination)
                             $('.page-cont').masonry('reloadItems');
                             $('.page-cont').masonry('layout');
-                            postCollection.getPostUserDetails([post.user])
+                            postCollection.getPostUserDetails([post.post.user])
                             .then((data)=> {
                                 if (data && Array.isArray(data)) {
                                     postCollection.getPostById(post._id, (err, post)=> {
@@ -96,7 +96,7 @@ define([
                                         }
                                     })
                                 } else if (data) {
-                                    $('#'+ post._id).children('.bottom-panel').children('.button-panel').children('.row1').children('.user').children('.user-img').attr('src', data.picture)
+                                    $('#'+ post.post._id).children('.bottom-panel').children('.button-panel').children('.row1').children('.user').children('.user-img').attr('src', data.picture.thumb)
                                 } 
                             })
                             //msnry.addItems( postHtml)

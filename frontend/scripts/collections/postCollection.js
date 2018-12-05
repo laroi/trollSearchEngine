@@ -58,8 +58,8 @@ define(['scripts/controllers/requestController', 'scripts/controllers/storeContr
             }
             return isCached;
         }
-        let updateCache =(postData) => {        
-            cachedVals.from = postData.from || undefined; 
+        let updateCache =(postData) => {
+            cachedVals.from = postData.from || undefined;
                 cachedVals.search = postData.search || undefined;
                 cachedVals.title = postData.title || undefined;
                 cachedVals.tag = postData.tag || undefined;
@@ -74,7 +74,7 @@ define(['scripts/controllers/requestController', 'scripts/controllers/storeContr
                     cachedVals.isFavorite = null;
                 } else {
                     cachedVals.isFavorite = postData.isFavorite;
-                }                
+                }
                 cachedVals.userId = postData.userId || undefined;
                 cachedVals.language = postData.language || undefined;
         }
@@ -92,7 +92,7 @@ define(['scripts/controllers/requestController', 'scripts/controllers/storeContr
                                     posts[i].username = datum.name;
                                     posts[i].userimg = datum.picture;
                                 }
-                            }                        
+                            }
                         });
                         //If there is only one user, send only user data instead of all the posts
                         if (Array.isArray(users) && users.length === 1) {
@@ -150,7 +150,7 @@ define(['scripts/controllers/requestController', 'scripts/controllers/storeContr
 			                context : post._source.context
 			            });
 			            if (store.get('userId') === post._source.user) {
-			               postObj.isOwner = true; 
+			               postObj.isOwner = true;
 			            }
 			            postObj.isLiked = post._source.likes.find(function(like){return like.userId === store.get('userId')})
 			            postObj.isLiked = postObj.isLiked && postObj.isLiked.userId ? true : false;
@@ -221,7 +221,7 @@ define(['scripts/controllers/requestController', 'scripts/controllers/storeContr
 	                            context : post._source.context
 	                        });
 	                        if (store.get('userId') === post._source.user) {
-	                           postObj.isOwner = true; 
+	                           postObj.isOwner = true;
 	                        }
 	                        postObj.isLiked = post._source.likes.find(function(like){return like.userId === store.get('userId')})
 	                        postObj.isLiked = postObj.isLiked && postObj.isLiked.userId ? true : false;
@@ -238,7 +238,7 @@ define(['scripts/controllers/requestController', 'scripts/controllers/storeContr
                         reject(err);
                     }
                 });
-            });            
+            });
         };
         //To replace an edited or deleted post. accepts Id of deleted/edited post, returns the next post
         removePostById = (id) => {
@@ -284,7 +284,7 @@ define(['scripts/controllers/requestController', 'scripts/controllers/storeContr
 				        context : post.context
 				    });
 				    if (store.get('userId') === post.user) {
-				       postObj.isOwner = true; 
+				       postObj.isOwner = true;
 				    }
 			        stars = store.get('stars') || [];
 				    postObj.isLiked = post.likes.find(function(like){return like.userId === store.get('userId')})
@@ -306,7 +306,6 @@ define(['scripts/controllers/requestController', 'scripts/controllers/storeContr
            removePostById : removePostById,
            getPostUserDetails: getPostUserDetails
         };
-        
     };
     return post()
 });

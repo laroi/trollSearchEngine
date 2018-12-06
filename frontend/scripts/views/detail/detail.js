@@ -58,12 +58,12 @@ define([
             }
             user.updateUser({stars: updatedStar}, function(err, data) {
                 if (!err) {
-                    let element = $("#"+postId+".panel-body").children('.bottom-panel').children('.button-panel').children('.row1').children('.pan-btn-cont').children('.star-btn');
+                    let element = $("#"+postId+".panel-body").children('.bottom-panel').children('.button-panel').children('.row1').children('.star-btn');
                     let processUpdate = (el) => { 
                         if ($(el).hasClass('star')) {
                             $(el).removeClass('star');
                             $(el).addClass('starred');
-                        } else if ($(e.target).hasClass('starred')) {
+                        } else if ($(el).hasClass('starred')) {
                             $(el).addClass('star');
                             $(el).removeClass('starred');
                         }

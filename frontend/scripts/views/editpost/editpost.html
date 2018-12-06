@@ -31,7 +31,7 @@
                     <select id="language" class="language form-control">
                         <option>Select</option>  
                         {{#each langs}}
-                          <option value="{{this}}">{{this}}</option>                        
+                          <option value="{{this}}" {{#ifEquals this ../post.language}}selected="selected"{{/ifEquals}}>{{this}}</option>                        
                         {{/each}}
                     </select>
                   </div>
@@ -43,7 +43,7 @@
                     <select id="context" class="context form-control">
                         <option>Select</option>  
                         {{#each contexts}}
-                            <option value="{{this}}">{{this}}</option>                        
+                            <option value="{{this}}" {{#ifEquals this ../post.context}}selected="selected"{{/ifEquals}}>{{this}}</option>                        
                         {{/each}}
                     </select>
                 </div>

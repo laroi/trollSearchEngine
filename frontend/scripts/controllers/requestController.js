@@ -23,6 +23,51 @@ define(['../config/config', './storeController'], function (config, store) {
             }
         }); 
     };
+    let getImage = (url, filename) => {
+        return fetch(url)
+        .then(function(res){
+          return res.blob()
+        })
+        .then(function(blob){
+            var a = document.createElement('a');
+            var url = window.URL.createObjectURL(blob);
+            a.href = url;
+            a.download = filename+'.jpg';
+            a.click(); 
+            window.URL.revokeObjectURL(url);
+            return
+        })
+        .catch((err) =>  {
+            return Promise.reject(err)
+        })
+        /*return new Promise ((resolve, reject)=> {
+            $.ajax({
+                url: url,
+                method: 'GET',
+                xhrFields: {
+                    responseType: 'blob'
+                },
+                beforeSend: function (xhr){
+                    if (store.get('accessKey')) {
+                        xhr.setRequestHeader('Authorization', store.get('accessKey'));
+                    }
+                },
+                success: function (data) {
+                    var a = document.createElement('a');
+                    var url = window.URL.createObjectURL(data);
+                    a.href = url;
+                    console.log(url);
+                    //a.download = 'myfile.pdf';
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    resolve()
+                },
+                error: function(xhr, status, err) {
+                    reject(getErrMsg(xhr.responseText), xhr.status);
+                }
+            });
+        })*/    
+    }
     del = function (url, callback) {
         $.ajax({
             url: url, 
@@ -41,7 +86,7 @@ define(['../config/config', './storeController'], function (config, store) {
             }
         }); 
     }
-    getImage = function (url, callback) {
+    /*getImage = function (url, callback) {
         $.ajax({
             url: url, 
             method: 'GET',
@@ -57,7 +102,7 @@ define(['../config/config', './storeController'], function (config, store) {
                 callback(getErrMsg(xhr.responseText));
             }
         }); 
-    } 
+    } */
     post = function (url, postdata,  callback) {
         $.ajax({
             url: url, 

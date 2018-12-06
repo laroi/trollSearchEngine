@@ -72,6 +72,16 @@ define([
                 console.log('total ', post.total, ' limit ', limit, ' current ', current)
             return {post: template({post: post.post}), pagination: pageTemplate({total: post.total, limit: limit, current: current})};
         }
+        let downloadImage = (e) => {
+            let id = $(e.target).attr('data-post');
+            request.getImage('/api/image/'+id, id)
+            .then(()=> {
+                postCollection.getPostById(id, function(err, post){
+                    post.downloads += 1;
+                    $(e.target).next().empty().html(post.downloads)
+                })
+            })
+        }
         var editPost = function(e) {
             var id = $(e.target).parent().parent().attr('id');
             postCollection.getPostById(id, function (err, post) {
@@ -552,6 +562,7 @@ define([
                         checkFilters();
                         highlight.highlight();
                         $('.edit').off('click').on('click', editPost);
+                        $('.pan-btn.download').on('click', downloadImage);
                         $('.delete').off('click').on('click', confirmDelete);                    
                         $('.btn-basic-search').off().on('click', search)
                         $('.page-nav').off('click').on('click', paginate)

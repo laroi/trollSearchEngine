@@ -14,8 +14,8 @@ define([
         var editPost = function(e) {
             var id = $(e.target).parent().parent().parent().parent().attr('id');
             postCollection.getPostById(id, (err, post) => {
-                create.render(undefined, post);    
-            });                        
+                create.render(undefined, post);
+            });
         }
         var deletePost = function (e) {
             var id = $(e.target).parent().parent().parent().attr('id');
@@ -28,7 +28,7 @@ define([
             })
         }
         var updateUi = function () {
-         $('#detail-cont').modal({show: true}); 
+         $('#detail-cont').modal({show: true});
         }
         var processStar = function (e) {
             var postId = $(e.target).parent().parent().attr('id'),
@@ -59,7 +59,7 @@ define([
             user.updateUser({stars: updatedStar}, function(err, data) {
                 if (!err) {
                     let element = $("#"+postId+".panel-body").children('.bottom-panel').children('.button-panel').children('.row1').children('.star-btn');
-                    let processUpdate = (el) => { 
+                    let processUpdate = (el) => {
                         if ($(el).hasClass('star')) {
                             $(el).removeClass('star');
                             $(el).addClass('starred');
@@ -106,9 +106,7 @@ define([
                 postCollection.getPostById(postId, (err, post)=> {
                     post.like(store.get('userId'), (store.get('username') || store.get('email')), processCallback)
                 })
-                
             }
-            
         };
         var processUserClick = function (e) {
             var postId = $(e.target).parent().parent().parent().parent().parent().attr('id');
@@ -121,6 +119,18 @@ define([
         };
         var gotoHome = function () {
             url.navigate('landing');
+        }
+        let downloadImage = (e) => {
+            let id = $(e.target).attr('data-post');
+            request.getImage('/api/image/'+id, id)
+            .then(()=> {
+                postCollection.getPostById(id, function(err, post){
+                    post.downloads += 1;
+                    $(e.target).next().empty().html(post.downloads)
+                    let element = $("#"+id+".panel-body").children('.bottom-panel').children('.button-panel').children('.row1').children('.pan-btn-cont').children('.download').children('.down-count').empty().html(post.downloads);
+
+                })
+            })
         }
         var detailView = function () {
             var render;
@@ -136,14 +146,15 @@ define([
                         $('#detailModel').empty().append(html);
                         updateUi();
                         $('.edit').on('click', editPost);
-                        $('.delete').on('click', deletePost);                    
+                        $('.delete').on('click', deletePost);
                         $('.fav').on('click', processLike);
                         $('.star-btn').on('click', processStar);
+                        $('.pan-btn.download').on('click', downloadImage);
                         $('#detail-cont').on('hidden.bs.modal', gotoHome)
                     } else {
                         toastr.error('We seems to have a problem. Please check your internet connection.', 'FTM Says')
                     }
-                });                
+                });
             }
             return {
                 render: render

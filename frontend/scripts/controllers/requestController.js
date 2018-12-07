@@ -24,6 +24,9 @@ define(['../config/config', './storeController'], function (config, store) {
         }); 
     };
     let getImage = (url, filename) => {
+        if (!url) {
+            return Promise.reject('No url');
+        }
         return fetch(url)
         .then(function(res){
           return res.blob()

@@ -97,6 +97,7 @@ define([
                             $('.pagination').empty().html(html.pagination)
                             $('.page-cont').masonry('reloadItems');
                             $('.page-cont').masonry('layout');
+                            $('.total_count').empty().html(post.total + ' memes found');
                             postCollection.getPostUserDetails([post.post.user])
                             .then((data)=> {
                                 if (data && Array.isArray(data)) {
@@ -107,15 +108,15 @@ define([
                                     })
                                 } else if (data) {
                                     $('#'+ post.post._id).children('.bottom-panel').children('.button-panel').children('.row1').children('.user').children('.user-img').attr('src', data.picture.thumb)
-                                } 
+                                }
                             })
                             //msnry.addItems( postHtml)
                         }
                     })
                     .catch((err)=> {
                         console.error('[UPDATE AFTER EDIT] ', err);
-                    });                                        
-                });                
+                    });
+                });
             });
         }
 		let deletePost = (id) => {
@@ -135,6 +136,8 @@ define([
                             $('.pagination').empty().html(html.pagination)
                             $('.page-cont').masonry('reloadItems');
                             $('.page-cont').masonry('layout');
+                            $('.total_count').empty().html(post.total + ' memes found');
+
                             //msnry.addItems( postHtml)
                         }
                          /*$('.page-cont').masonry({
@@ -149,7 +152,7 @@ define([
 						console.error('error in deleting request '+ id,  err);
 						toastr.error('Deleteing request failed.', 'FTM Says');
 					}
-				})               
+				})
             }
         }
         let confirmDelete = (e) => {
@@ -185,7 +188,7 @@ define([
             $('.isFavorite').prop('disabled', false);
             $('.isMine').prop('disabled', false);
             if (store.get('userType') === 'admin') {
-                $('.isApproved').prop('disabled', false);            
+                $('.isApproved').prop('disabled', false);
             }
             $('#basic-search').prop('disabled', false);
             $('.isRequest').prop('checked', false)
@@ -198,19 +201,19 @@ define([
             se_character = $('#se_character').val().trim(),
             advSearchTerm = {};
             if (se_tag) {
-                advSearchTerm.tag = se_tag;                
+                advSearchTerm.tag = se_tag;
             }
             if (se_title) {
-                advSearchTerm.title = se_title;                
+                advSearchTerm.title = se_title;
             }
             if (se_movie) {
-                advSearchTerm.movie = se_movie;                
+                advSearchTerm.movie = se_movie;
             }
             if (se_actor) {
-                advSearchTerm.actor = se_actor;                
+                advSearchTerm.actor = se_actor;
             }
             if (se_character) {
-                advSearchTerm.character = se_character;                
+                advSearchTerm.character = se_character;
             }
 
             if (Object.keys(advSearchTerm).length > 0) {
@@ -223,20 +226,20 @@ define([
         var paginate = function(e){
             var current = parseInt($(e.target).text(), 10);
             //var limit = store.get('limit');
-            var limit = store.get('limit');
+            var limit = parseInt(store.get('limit'), 10);
             store.set('from', (((current - 1) * limit)));
             url.navigate('landing');
         };
         var navNext = function(e){
             if (!$(e.target).closest('.page-item').hasClass('disabled')) {
                 var from = store.get('from');
-                var limit = store.get('limit');
+                var limit = parseInt(store.get('limit'), 10);
                 store.set('from', ((parseInt(from, 10) + 1) * limit));
                 url.navigate('landing');
             }
         };
         var navPrev = function(e){
-            if (!$(e.target).closest('.page-item').hasClass('disabled')) {        
+            if (!$(e.target).closest('.page-item').hasClass('disabled')) {
                 var from = store.get('from');
                 var limit = store.get('limit');
                 store.set('from', ((parseInt(from, 10) - 1) * limit));
@@ -306,7 +309,7 @@ define([
                 }
             }
             store.set('filters', filtObj);
-            return postData;    
+            return postData;
         }
         var applyFilter = function (e) {
             var f_lang = $('.language-list').val(),
@@ -341,7 +344,7 @@ define([
                 if (store.get('userType') === 'admin' && isApproved) {
                     filtObj.isApproved = false;
                 }
-                store.set('filters', filtObj);                
+                store.set('filters', filtObj);
                 store.set('from', 0);
                 url.navigate('landing');
             }
@@ -356,9 +359,9 @@ define([
                     actor: '#se_actor',
                     character: '#se_character',
                     isFavorite: '.isFavorite',
-//                    userId: '.isMine'                    
+//                    userId: '.isMine'
                 }
-                $('.se-control').val('');            
+                $('.se-control').val('')
                 $('.fi-input').prop('checked', false);
                 $('#basic-search').val('');
                 seTerms = store.get('search_term') || {};
@@ -368,11 +371,11 @@ define([
                 });
                 Object.keys(fiTerms).forEach(function(fi) {
                     if (fi === 'lang') {
-                       $('.language-list').val(fiTerms[fi]); 
+                       $('.language-list').val(fiTerms[fi]);
                     }
                     if (fi === 'context') {
-                       $('.context-list').val(fiTerms[fi]); 
-                    }                    
+                       $('.context-list').val(fiTerms[fi]);
+                    }
                     else {
                         $(mapping[fi]).prop('checked', true);
                     }
@@ -387,7 +390,7 @@ define([
         }
         var cancelFilter = function(e) {
             var type = $(this).parent().attr('data-type').trim(),
-                key = $(this).parent().attr('data-key').trim();               
+                key = $(this).parent().attr('data-key').trim();
                 console.log(type, key);
                 var storage = store.get(type);
                 delete storage[key];
@@ -400,7 +403,6 @@ define([
                 updatedStar,
                 prevStars = stars = store.get('stars') || [],
                 star;
-                
             star = function (postId) {
                 stars.push(postId);
                 return stars;
@@ -452,12 +454,11 @@ define([
                 postCollection.getPostById(postId, (err, post) => {
                     post.unlike(store.get('userId'), processCallback)
                 })
-            } else if ($(e.target).hasClass('favorite')) {           
+            } else if ($(e.target).hasClass('favorite')) {
                 postCollection.getPostById(postId, (err, post) =>{
                     post.like(store.get('userId'), (store.get('username') || store.get('email')), processCallback);
                 })
             }
-            
         };
 
         var processUserClick = function (e) {
@@ -498,12 +499,12 @@ define([
             // image content more popup
             if (!$(e.target).hasClass('more')) {
                  $('.row2').hide();
-            }            
+            }
         }
         var thumbClick = function (e) {
             var postId = $(this).parent().attr('id')
             store.set('postId', postId);
-            url.navigate('detail'); 
+            url.navigate('detail');
         };
 
         var showMore = (e) => {
@@ -530,9 +531,7 @@ define([
                     postCollection.getAllPosts(postData, query.force, function(err, posts) {
                         if (posts !== undefined) {
                             var html = template({posts: posts});
-                            
                             $('#post-contents').empty().append(html);
-                            
                             //$('.page-cont').imagesLoaded(function () {
                             $('.page-cont').masonry({
                               itemSelector: '.elem-cont',
@@ -540,14 +539,14 @@ define([
                             })
                             postCollection.getPostUserDetails()
                             .then((data)=> {
-                                if (data && Array.isArray(data)) { 
+                                if (data && Array.isArray(data)) {
                                     $('#post-contents').children('.panel-cont').children('.page-cont').children('.elem-cont').children('.panel').children('.panel-body').each((index, element)=> {
                                         console.log($(element).attr('id'));
                                         postCollection.getPostById($(element).attr('id'), (err, post)=> {
                                             if (post) {
                                             $(element).children('.bottom-panel').children('.button-panel').children('.row1').children('.user').children('.user-img').attr('src', post.userimg.thumb)
                                             }
-                                        }) 
+                                        })
                                     })
                                 } else {
                                     $('.pan-btn').children('.user-img').attr('src', data.picture.thumb)
@@ -555,7 +554,7 @@ define([
                             })
                             loadContext();
                             loadLangs();
-                            updateUi();                        
+                            updateUi();
                         }
                         $('#request-contents').hide()
                         $('#post-contents').show()
@@ -563,11 +562,11 @@ define([
                         highlight.highlight();
                         $('.edit').off('click').on('click', editPost);
                         $('.pan-btn.download').on('click', downloadImage);
-                        $('.delete').off('click').on('click', confirmDelete);                    
+                        $('.delete').off('click').on('click', confirmDelete);
                         $('.btn-basic-search').off().on('click', search)
                         $('.page-nav').off('click').on('click', paginate)
                         $('.btn-apply-filter').off('click').on('click', applyFilter);
-                        $('#advanced-search').off('click').on('click', advancedSearch);                        
+                        $('#advanced-search').off('click').on('click', advancedSearch);
                         $('.hl-close').off('click').on('click', cancelFilter);
                         $('.star-btn').off('click').on('click', processStar);
                         $('.fav').off('click').on('click', processLike);
@@ -579,10 +578,10 @@ define([
                         $('body').off('click').on('click', closeAllPops);
                         $('#logout').off('click').on('click', logout);
                     });
-                }           
+                }
             }
             return {
-                render: render
+                render: render,
             }
         }
         return landingView();

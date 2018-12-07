@@ -92,16 +92,23 @@ requirejs.config({
                         })
                         /**/
                        c = c.filter(function(obj, pos, arr) {
-                                return arr.map(function(mapObj) {return mapObj['text']}).indexOf(obj['text']) === pos;
-                                
-                                })
+                            return arr.map(function(mapObj) {return mapObj['text']}).indexOf(obj['text']) === pos;
+                        })
                         response(c);
                       }
                     });
                   }
         };
         var afterSelect  = function (element) {
-            return function(item) { var item = item.text || item; element.val(item.replace(/<b>/g, '').replace(/<\/b>/g, '')).change(); }
+            return function(item) {
+                var item = item.text || item;
+                element.val(item.replace(/<b>/g, '').replace(/<\/b>/g, '')).change();
+                if (element.attr('id') !== 'basic-search') {
+                    $('#advanced-search').click();
+                } else {
+                    $('.btn-basic-search').click();
+                }
+            }
         }
         if (!Array.prototype.find) {
           Array.prototype.find = function (callback, thisArg) {
@@ -192,7 +199,6 @@ requirejs.config({
             let showLogin = (e) => {
                 loginView.render();
             };
-            
             let showAbout = (e) => {
                 aboutView.render();
             }
@@ -240,9 +246,7 @@ requirejs.config({
                     enableAllFilters();
                 }
             });
-            let triggerInputFile = (e) => {
 
-            }
             $('#about_us').on('click', showAbout);
             $('#create').off('click').on('click', (e)=> { $('#create-input').trigger('click')});
             $('#create-input').on('click', (e)=> { e.stopPropagation();})
@@ -273,8 +277,6 @@ requirejs.config({
                crossroads.parse(window.location.hash)
             };
             crossroads.parse(window.location.hash)
-            //
-            
         })
 
         });
@@ -287,7 +289,7 @@ if (!('serviceWorker' in navigator)) {
     navigator.serviceWorker.register('service-worker.js')
     .then(function() {
         console.log('Registered');
-        init()    
+        init()
     })
     .catch(function(error) {
         console.log('Registration failed:', error);

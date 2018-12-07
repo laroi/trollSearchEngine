@@ -450,6 +450,7 @@ var routes = function () {
     downloadImage = function (req, res){
         let postId = req.params.id;
         let imgSize = undefined;
+       req.connection.setTimeout(100000); //100 seconds
         Post.findById(postId, function(err, post){
             if (!err) {
                 var fileName = post.image.url.split('/')[2]
@@ -458,7 +459,7 @@ var routes = function () {
                     if (!statErr) {
                         res.writeHead(200, {
                             'Content-Type': 'image/'+post.image.type,
-                            'Content-Length': statData.size,
+//                            'Content-Length': statData.size,
                             'Access-Control-Allow-Origin': '*',
                             'Content-Disposition': 'attachment; filename='+fileName
                         });
@@ -668,7 +669,7 @@ var routes = function () {
             logger.log(1, 'delete request', 'Deleting request  ' + requestId , 'postRoute.js', getIp(req), undefined);
             var tok = req.query.accessToken || req.headers['authorization'];
             isOwner(Req, requestId, tok, function (err, docData) {
-                if (!err) {                    
+                if (!err) {
                     Req.remove({_id: new ObjectID(requestId)}, function(err, data){
                         if (!err) {
                             elastic.deleteRequestDoc(requestId, function (delErr, delInfo) {
@@ -761,7 +762,7 @@ var routes = function () {
                 obj.user= user;
                 obj.link = link;
                 obj.language = language;
-                obj.title = title;                
+                obj.title = title;
                 obj.description = description;
                 obj.movie = movie;
                 reqObj = new Req(obj);

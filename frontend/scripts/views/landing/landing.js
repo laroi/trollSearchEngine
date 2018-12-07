@@ -246,8 +246,6 @@ define([
                 url.navigate('landing');
             }
         };
-        checkFilters = () => {
-        };
         let setFilters = (query) => {
             let filtObj = {};
             let postData = {};
@@ -464,10 +462,9 @@ define([
         var processUserClick = function (e) {
             var postId = $(e.target).parent().parent().parent().parent().parent().attr('id');
             postCollection.getPostById(postId, function(err, post) {
-                var poster = post.user;
                 var storage = store.get('filters') || {};
-                storage.userId = poster.id;
-                storage.username = poster.name;
+                storage.userId = post.user;
+                storage.username = post.username;
                 store.set('filters', storage);
                 console.log(store.get('filters'));
                 url.navigate('landing');

@@ -78,6 +78,22 @@ var routes = function () {
             var size = undefined;
             base64Data = base64Data.replace(/^data:image\/[a-z]+;base64,/, "");
             base64data = new Buffer(base64Data,'base64')
+            let saveWebP = () => {
+                return new Promise ((resolve, reject) => {
+                    gm(imgPath)
+                      .quality(50)
+                      .toBuffer('webp', (err, buffer) => {
+                        fs.writeFile(fileLoc +'.webp', buffer, function (err) {
+                        if (!err) {
+                            resolve();
+                        } else {
+                            console.error('could not resize', err)
+                            reject(err);
+                        }
+                      })
+                  }) 
+                })
+            };
             let saveThumb = function (fileName) {
                 return new Promise((resolve, reject) => {
                     gm(uploadPath+fileName)
@@ -100,7 +116,10 @@ var routes = function () {
             .write(fileLoc + '.jpg', function(err){
                 if (!err) {
                     console.log('image saved')
-                    saveThumb(filename+'.jpg')
+                    saveWebP()
+                    .then(()=> {
+                        return saveThumb(filename+'.jpg')
+                    })
                     .then(()=> {
                         return getImageSize(fileLoc + '.jpg')
                     })
@@ -178,7 +197,13 @@ var routes = function () {
                 obj.description = description;
                 obj.tags = tags;
                 obj.movie = movie;
-                obj.image = {url: '/images/'+fileinfo.filename + '.jpg', thumb: '/images/thumb/'+ fileinfo.filename + '.jpg', type: 'jpg', size: fileinfo.size};
+                obj.image = {
+                    url: '/images/'+fileinfo.filename + '.jpg', 
+                    thumb: '/images/thumb/'+ fileinfo.filename + '.jpg',
+                    weburl:  '/images/'+fileinfo.filename + '.webp',  
+                    type: 'jpg',
+                    size: fileinfo.size,
+                };
                 obj.language = language;
                 obj.actors = actors;
                 obj.characters = characters;

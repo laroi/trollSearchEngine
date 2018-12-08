@@ -27,11 +27,38 @@ define([
                 }
             })
         }
+        let showBuffs = (e) => {
+            if ($('.detail-more-details').css('display') !== 'none') {
+                $('.detail-more-details').css('display', 'none')
+            } else {
+                $('.detail-more-details').css('display', 'block')
+            }
+        }
         var updateUi = function () {
-         $('#detail-cont').modal({show: true});
+        var animInClass = "fade-scale";
+var animOutClass = "bounceInRight";
+            let modal = $('#detail-cont');
+                modal.on('show.bs.modal', function () {
+                    var closeModalBtns = modal.find('button[data-custom-dismiss="modal"]');
+                    closeModalBtns.on('click', function() {
+                    modal.on('webkitAnimationEnd transitionend oanimationend msAnimationEnd animationend', function( evt ) {
+                      modal.modal('hide');
+                    });
+                    modal.removeClass(animInClass).addClass(animOutClass);
+                    //
+                })
+            })
+            modal.on('hidden.bs.modal', function ( evt ) {
+                var closeModalBtns = modal.find('button[data-custom-dismiss="modal"]');
+                modal.removeClass(animOutClass)
+                modal.off('webkitAnimationEnd oanimationend msAnimationEnd animationend')
+                closeModalBtns.off('click');
+                gotoHome();
+            })
+            $('#detail-cont').modal({show: true});
         }
         var processStar = function (e) {
-            var postId = $(e.target).parent().parent().attr('id'),
+            var postId = $(e.target).parent().parent().parent().attr('id'),
                 unStar,
                 updatedStar,
                 prevStars,
@@ -77,7 +104,7 @@ define([
             });
         }
         var processLike = function (e) {
-            var postId = $(e.target).parent().parent().parent().attr('id');
+            var postId = $(e.target).parent().parent().parent().parent().attr('id');
             var processCallback = function (err, data) {
                 if (!err) {
                     let element = $("#"+postId+".panel-body").children('.bottom-panel').children('.button-panel').children('.row1').children('.pan-btn-cont').children('.fav');
@@ -109,7 +136,7 @@ define([
             }
         };
         var processUserClick = function (e) {
-            var postId = $(e.target).parent().parent().parent().parent().parent().attr('id');
+            var postId = $(e.target).parent().parent().parent().parent().parent().parent().attr('id');
             var poster = postCollection.getPostById(postId).user;
             var storage = store.get('filters') || {};
             storage.userId = poster.id;
@@ -127,7 +154,7 @@ define([
                 postCollection.getPostById(id, function(err, post){
                     post.downloads += 1;
                     $(e.target).next().empty().html(post.downloads)
-                    let element = $("#"+id+".panel-body").children('.bottom-panel').children('.button-panel').children('.row1').children('.pan-btn-cont').children('.download').children('.down-count').empty().html(post.downloads);
+                    $("#"+id+".panel-body").children('.bottom-panel').children('.button-panel').children('.row1').children('.pan-btn-cont').children('.download').next('.down-count').empty().html(post.downloads);
 
                 })
             })
@@ -150,7 +177,8 @@ define([
                         $('.fav').on('click', processLike);
                         $('.star-btn').on('click', processStar);
                         $('.pan-btn.download').on('click', downloadImage);
-                        $('#detail-cont').on('hidden.bs.modal', gotoHome)
+                        //$('#detail-cont').on('hidden.bs.modal', gotoHome);
+                        $('.more').off('click').on('click', showBuffs)
                     } else {
                         toastr.error('We seems to have a problem. Please check your internet connection.', 'FTM Says')
                     }

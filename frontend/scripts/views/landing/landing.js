@@ -242,7 +242,7 @@ define([
             if (!$(e.target).closest('.page-item').hasClass('disabled')) {
                 var from = store.get('from');
                 var limit = store.get('limit');
-                store.set('from', ((parseInt(from, 10) - 1) * limit));
+                store.set('from', parseInt(from, 10)  - (limit));
                 url.navigate('landing');
             }
         };
@@ -555,7 +555,6 @@ define([
                         }
                         $('#request-contents').hide()
                         $('#post-contents').show()
-                        checkFilters();
                         highlight.highlight();
                         $('.edit').off('click').on('click', editPost);
                         $('.pan-btn.download').on('click', downloadImage);

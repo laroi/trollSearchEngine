@@ -1,11 +1,11 @@
 <script id="entry-template" type="text/x-handlebars-template">
 
-<div class="modal" id="detail-cont" tabindex="-1" role="dialog">
+<div class="modal fade-scale" id="detail-cont" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
     <div class="modal-content" id={{_id}}>
       <div class="modal-header">
         <span class="modal-title"><b>{{title}}</b></span>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <button type="button" class="close" data-custom-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
@@ -15,23 +15,35 @@
             </div>
       </div>
       <div class="modal-footer">
-         {{#if isStarred}}
-           <div class="pan-btn far fa-star star-btn starred"></div>
-        {{else}}
-            <div class="pan-btn far fa-star star-btn star"></div>
-        {{/if}}
-
-        <div class="pan-btn-cont">
-            <div class="far fa-arrow-alt-circle-down pan-btn download" data-post= {{this._id}}></div>
-            <div class="pan-count down-count">{{downloads}}</div>
-        </div>
-        <div class="pan-btn-cont">
-            {{#if isLiked}}
-                <div class="far fa-heart pan-btn fav faved"></div>
+            <div class="detail-footer-right">
+             {{#if isStarred}}
+               <div class="pan-btn far fa-star star-btn starred"></div>
             {{else}}
-                <div class="far fa-heart pan-btn fav favorite"></div>
+                <div class="pan-btn far fa-star star-btn star"></div>
             {{/if}}
-            <div class='pan-count fav-count'>{{likes.length}}</div>
+
+            <div class="pan-btn-cont">
+                <div class="far fa-arrow-alt-circle-down pan-btn download" data-post= {{this._id}}></div>
+                <div class="pan-count down-count">{{downloads}}</div>
+            </div>
+            <div class="pan-btn-cont">
+                {{#if isLiked}}
+                    <div class="far fa-heart pan-btn fav faved"></div>
+                {{else}}
+                    <div class="far fa-heart pan-btn fav favorite"></div>
+                {{/if}}
+                <div class='pan-count fav-count'>{{likes.length}}</div>
+            </div>
+        </div>
+        <div class="detail-footer-left">
+            <div class="more">Details for buffs</div>
+        </div>
+            <div class="detail-more-details">
+            <div class="det-elem"><b>Movie : </b>{{movie}} ({{language}})</div>
+            <div class="det-elem"><b>Context: </b>{{context}}</div>
+            <div class="det-elem"><b>Actors : </b>{{actors}}</div>
+            <div class="det-elem"><b>Characters : </b>{{characters}}</div>
+            <div class="det-elem"><b>Tags : </b>{{tags}}</div>
         </div>
       </div>
     </div>

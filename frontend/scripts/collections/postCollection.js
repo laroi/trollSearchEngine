@@ -272,7 +272,7 @@ define(['scripts/controllers/requestController', 'scripts/controllers/storeContr
                         views: post.views,
                         likes: post.likes,
                         downloads: post.downloads,
-                        imageUrl: post.image.url,
+                        imageUrl: post.image.weburl || post.image.url,
                         thumbUrl: post.image.thumb,
 				        description: post.description,
 				        tags: post.tags,

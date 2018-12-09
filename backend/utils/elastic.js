@@ -68,6 +68,7 @@ var elastic = function () {
                             "properties" : {
                                 "url" : {"type" : "string", "index" : "not_analyzed"},
                                 "thumb" : {"type" : "string", "index" : "not_analyzed"},
+                                "weburl" : {"type" : "string", "index" : "not_analyzed"},
                                 "type" : {"type" : "string", "index" : "not_analyzed"}
                             }
                         },
@@ -160,6 +161,7 @@ var elastic = function () {
                     requestImage: {"type" : "object",
                         "properties" : {
                             "url" : {"type" : "string", "index" : "not_analyzed"},
+                            "weburl" : {"type" : "string", "index" : "not_analyzed"},
                             "thumb" : {"type" : "string", "index" : "not_analyzed"},
                             "type" : {"type" : "string", "index" : "not_analyzed"}
                         }

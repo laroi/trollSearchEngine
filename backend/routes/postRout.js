@@ -98,17 +98,17 @@ var routes = function () {
                 return new Promise((resolve, reject) => {
                     gm(uploadPath+fileName)
                     .setFormat('jpg')
-                    .resize('100')
-                    .gravity('Center')
-                    .write(uploadPath+'thumb/'+fileName, function (err) {
+                    .resize('150')
+                    .toBuffer('webp', (err, buffer) => {
+                        fs.writeFile(uploadPath+'thumb/'+fileName, buffer, function (err) {
                         if (!err) {
-                             console.log('Created thumbile for filename')
-                              resolve()
+                            resolve();
                         } else {
-                            console.error('could not resize '+ uploadPath+fileName, err);
-                            reject(err)
+                            console.error('could not resize', err)
+                            reject(err);
                         }
-                      });
+                      })
+                  })
                 })
             }
             gm(base64data)
@@ -118,7 +118,7 @@ var routes = function () {
                     console.log('image saved')
                     saveWebP()
                     .then(()=> {
-                        return saveThumb(filename+'.jpg')
+                        return saveThumb(filename+'.webp')
                     })
                     .then(()=> {
                         return getImageSize(fileLoc + '.jpg')
@@ -199,7 +199,7 @@ var routes = function () {
                 obj.movie = movie;
                 obj.image = {
                     url: '/images/'+fileinfo.filename + '.jpg', 
-                    thumb: '/images/thumb/'+ fileinfo.filename + '.jpg',
+                    thumb: '/images/thumb/'+ fileinfo.filename + '.webp',
                     weburl:  '/images/'+fileinfo.filename + '.webp',  
                     type: 'jpg',
                     size: fileinfo.size,
@@ -411,7 +411,13 @@ var routes = function () {
                             updateObj.title = doc.title
                         }
                         if (fileinfo && fileinfo.filename) {
-                            updateObj.image = {url: '/images/'+fileinfo.filename + '.jpg', thumb: '/images/thumb/'+ fileinfo.filename + '.jpg', type: 'jpg', size: fileinfo.size};
+                            updateObj.image = {
+                                url: '/images/'+fileinfo.filename + '.jpg', 
+                                thumb: '/images/thumb/'+ fileinfo.filename + '.webp',
+                                weburl:  '/images/'+fileinfo.filename + '.webp',  
+                                type: 'jpg',
+                                size: fileinfo.size,
+                            }
                         }
                         if (doc.description) {
                             updateObj.description = doc.description
@@ -763,7 +769,13 @@ var routes = function () {
                     obj.movie = movie;
                     obj.title = title;
                     obj.language = language;
-                    obj.image = {url: '/requests/images/'+fileinfo.filename + '.jpg', thumb: '/requests/images/thumb/'+fileinfo.filename + '.jpg', type: 'jpg', size: fileinfo.size};
+                    obj.image = {
+                        url: '/requests/images/'+fileinfo.filename + '.jpg',
+                        weburl: '/requests/images/'+fileinfo.filename + '.webp',
+                        thumb: '/requests/images/thumb/'+fileinfo.filename + '.webp',
+                        type: 'jpg', 
+                        size: fileinfo.size
+                    };
                     reqObj = new Req(obj);
                     reqObj.save(function(saveErr, saveData) {
                         if (!saveErr) {
@@ -881,6 +893,15 @@ var routes = function () {
                     }
                     if (doc.language) {
                         updateObj.language = doc.language
+                    }
+                    if (fileinfo && fileinfo.filename) {
+                        updateObj.image = {
+                            url: '/requests/images/'+fileinfo.filename + '.jpg',
+                            weburl: '/requests/images/'+fileinfo.filename + '.webp',
+                            thumb: '/requests/images/thumb/'+fileinfo.filename + '.webp',
+                            type: 'jpg', 
+                            size: fileinfo.size
+                        }
                     }
                     updateObj.dates = {lastUpdated : new Date().toISOString()};
                     Req.update({_id: id}, {$set: updateObj}, function(err, numAffected) {

@@ -77,6 +77,7 @@ var putRequestMapping = function () {
                     requestImage: {"type" : "object",
                         "properties" : {
                             "url" : {"type" : "string", "index" : "not_analyzed"},
+                            "weburl" : {"type" : "string", "index" : "not_analyzed"},
                             "thumb" : {"type" : "string", "index" : "not_analyzed"},
                             "type" : {"type" : "string", "index" : "not_analyzed"}
                         }
@@ -125,6 +126,7 @@ var putMapping = function () {
                     image: {"type" : "object",
                         "properties" : {
                             "url"   : {"type" : "string", "index" : "not_analyzed"},
+                            "weburl"   : {"type" : "string", "index" : "not_analyzed"},
                             "type"  : {"type" : "string", "index" : "not_analyzed"},
                             "thumb" : {"type" : "string", "index" : "not_analyzed"},
                             "size"  : {"type" : "object","properties" :

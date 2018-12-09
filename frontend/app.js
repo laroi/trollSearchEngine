@@ -1,38 +1,22 @@
 let init = () => {
-requirejs.config({
-            //By default load any module IDs from js/lib
-            baseUrl: '.',
-            //except, if the module ID starts with "app",
-            //load it from the js/app directory. paths
-            //config is relative to the baseUrl, and
-            //never includes a ".js" extension since
-            //the paths config could be for a directory.
-            waitSeconds : 0,
-            paths: {
-                app: 'app',
-                crossroads: 'libs/crossroads.min',
-                $: 'libs/jquery.min',
-                jQuery: 'ibs/jquery.min',
-                signals: 'libs/signals',
-                text: 'libs/text'
-            }
-        });  
-/*requirejs([
-'text!views/components/search.html',
-'text!views/components/mainHeader.html',
-], (search, header)=> {
-    var headerTemplate = Handlebars.compile($(header).html());
-    var searchTemplate = Handlebars.compile($(search).html());
-    $(document).ready(function(){
-            $('#content').append(headerTemplate());
-            $('.drop-form').html(searchTemplate());
-            $.material.init();
-            $("#s1").dropdown({"optionClass": "withripple"});
-            $('.dropdown-menu').click(function(e) {
-                e.stopPropagation();
-            });
-    })
-})*/
+    requirejs.config({
+        //By default load any module IDs from js/lib
+        baseUrl: '.',
+        //except, if the module ID starts with "app",
+        //load it from the js/app directory. paths
+        //config is relative to the baseUrl, and
+        //never includes a ".js" extension since
+        //the paths config could be for a directory.
+        waitSeconds : 0,
+        paths: {
+            app: 'app',
+            crossroads: 'libs/crossroads.min',
+            $: 'libs/jquery.min',
+            jQuery: 'ibs/jquery.min',
+            signals: 'libs/signals',
+            text: 'libs/text'
+        }
+    });  
         // Start the main app logic.
         requirejs([
             'scripts/views/landing/landing',
@@ -49,7 +33,7 @@ requirejs.config({
         function (landingView, detailView, url, user, store, createNewView, requestView, requestListView, aboutView, loginView) {
         String.prototype.capitalize = function() {
             return this.charAt(0).toUpperCase() + this.slice(1);
-        }
+        };
         var getSuggestion = function (field) {
             var url = '/api/suggestions?field='+field+'&query=';
                 return function( request, response ) {
@@ -280,7 +264,7 @@ requirejs.config({
         })
 
         });
-}
+};
 
 if (!('serviceWorker' in navigator)) {
     console.log('Service worker not supported');

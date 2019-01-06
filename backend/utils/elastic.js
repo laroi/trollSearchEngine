@@ -59,23 +59,23 @@ var elastic = function () {
                 type: 'post',
                 body:{
                     properties: {
-                        user:{"type" : "string", "index" : "not_analyzed"},
-                        title: {"type" : "string", "fields": {"raw": {"type": "string","index": "not_analyzed"}}},
-                        context: {"type" : "string"},
-                        requestId: {"type" : "string"},
-                        isApproved: {"type" : "boolean", "index" : "not_analyzed"},
+                        user:{"type" : "text", "index" : false},
+                        title: {"type" : "text", "fields": {"raw": {"type": "text","index": false}}},
+                        context: {"type" : "text"},
+                        requestId: {"type" : "text"},
+                        isApproved: {"type" : "boolean", "index" : false},
                         image: {"type" : "object",
                             "properties" : {
-                                "url" : {"type" : "string", "index" : "not_analyzed"},
-                                "thumb" : {"type" : "string", "index" : "not_analyzed"},
-                                "weburl" : {"type" : "string", "index" : "not_analyzed"},
-                                "type" : {"type" : "string", "index" : "not_analyzed"}
+                                "url" : {"type" : "text", "index" : false},
+                                "thumb" : {"type" : "text", "index" : false},
+                                "weburl" : {"type" : "text", "index" : false},
+                                "type" : {"type" : "text", "index" : false}
                             }
                         },
-                        descriptions: {"type" : "string"},
+                        descriptions: {"type" : "text"},
                         likes: {
                             properties:{
-                                userId: {"type": "string", "index" : "not_analyzed"},
+                                userId: {"type": "text", "index" : false},
                                 time:  {"type": "date"}
                             }
                         },
@@ -83,16 +83,16 @@ var elastic = function () {
                         downloads: {"type": "integer"},
                         comments:{
                             properties:{
-                                userId: {"type": "string", "index" : "not_analyzed"},
-                                comment:  {"type": "string"},
+                                userId: {"type": "text", "index" : false},
+                                comment:  {"type": "text"},
                                 createdAt: {"type": "date"}
                             }
                         },
-                        tags: {"type" : "string"},
-                        movie: {"type" : "string", "fields": {"raw": {"type": "string","index": "not_analyzed"}}},
-                        language: {"type" : "string"},
-                        actors: {"type" : "string"},
-                        characters: {"type" : "string"},
+                        tags: {"type" : "text"},
+                        movie: {"type" : "text", "fields": {"raw": {"type": "text","index": false}}},
+                        language: {"type" : "text"},
+                        actors: {"type" : "text"},
+                        characters: {"type" : "text"},
                         createdAt: {"type" : "date"},
                         lastModified: {"type": "date"},
                         titleSuggest: {
@@ -150,20 +150,20 @@ var elastic = function () {
             type: 'requests',
             body:{
                 properties: {
-                    requestUser: {"type" : "string", "index" : "not_analyzed"},
-                    requestmovie:{"type" : "string", "index" : "not_analyzed"},
-                    requestTitle: {"type" : "string"},
-                    requestDescription: {"type" : "string", "index" : "not_analyzed"},
-                    requestLink: {"type" : "string", "index" : "not_analyzed"},
-                    requestStatus: {"type" : "string", "index" : "not_analyzed"},
-                    requestPostId: {"type" : "string", "index" : "not_analyzed"},
-                    requestIsApproved: {"type" : "boolean", "index" : "not_analyzed"},
+                    requestUser: {"type" : "text", "index" : false},
+                    requestmovie:{"type" : "text", "index" : false},
+                    requestTitle: {"type" : "text"},
+                    requestDescription: {"type" : "text", "index" : false},
+                    requestLink: {"type" : "text", "index" : false},
+                    requestStatus: {"type" : "text", "index" : false},
+                    requestPostId: {"type" : "text", "index" : false},
+                    requestIsApproved: {"type" : "boolean", "index" : false},
                     requestImage: {"type" : "object",
                         "properties" : {
-                            "url" : {"type" : "string", "index" : "not_analyzed"},
-                            "weburl" : {"type" : "string", "index" : "not_analyzed"},
-                            "thumb" : {"type" : "string", "index" : "not_analyzed"},
-                            "type" : {"type" : "string", "index" : "not_analyzed"}
+                            "url" : {"type" : "text", "index" : false},
+                            "weburl" : {"type" : "text", "index" : false},
+                            "thumb" : {"type" : "text", "index" : false},
+                            "type" : {"type" : "text", "index" : false}
                         }
                     },
                     requestCreatedAt: {"type" : "date"},
@@ -503,7 +503,7 @@ var elastic = function () {
         }
         console.log('\n' + JSON.stringify(suggestObj) + '\n')
         client.search({
-            index: 'trolls',
+            index: 'requests',
             type: 'request',
             body: suggestObj
         }, function (error, response) {
@@ -576,7 +576,7 @@ var elastic = function () {
     }
     var deleteRequestDoc = function (id, callback) {
         client.delete({
-          index: 'trolls',
+          index: 'requests',
           refresh:true,
           type: 'request',
           id: id,
@@ -606,7 +606,7 @@ var elastic = function () {
         body.requestLastUpdated = doc.dates.lastUpdated;
         console.log("es body\n", body)
         client.update({
-            index: 'trolls',
+            index: 'requests',
             id: id,
             refresh:true,
             type: 'request',
@@ -639,7 +639,7 @@ var elastic = function () {
             body.requestCreateAt = doc.dates.createdAt;
             body.requestLastUpdated = doc.dates.lastUpdated
         client.create({
-            index: 'trolls',
+            index: 'requests',
             id: doc.id,
             type: 'request',
             refresh: true,
@@ -715,7 +715,7 @@ var elastic = function () {
         console.log(JSON.stringify(body));
         console.log('Search Query Ends\n');
         client.search({
-            index: 'trolls',
+            index: 'requests',
             type: 'request',
             body: body
         }, function (error, response) {
@@ -727,7 +727,7 @@ var elastic = function () {
     let updateRequestOnResponse = (requestId, postId) => {
         return new Promise((resolve, reject)=>{
             client.update({
-                index: 'trolls',
+                index: 'requests',
                 id: requsetId,
                 refresh:true,
                 type: 'request',

@@ -43,7 +43,12 @@ deleteIndex = function (indexName) {
                 console.log('deleted index')
                 resolve(data)
             } else {
-                reject(data);
+                if (err.status !== 404) {
+                    reject(data);
+                } else {
+                    console.log('No Index ', indexName, ' found. But that\'s okay')
+                    resolve()
+                }
             }
         })
     })
@@ -52,7 +57,7 @@ createIndex = function (indexName) {
     return new Promise(function (resolve, reject) {
         client.indices.create({index: indexName}, function (err, data) {
             if (!err) {
-                console.log('created index')
+                console.log('created index', indexName)
                 resolve(data)
             } else {
                 reject(data);
@@ -63,23 +68,23 @@ createIndex = function (indexName) {
 var putRequestMapping = function () {
     return new Promise((resolve, reject) => {
         client.indices.putMapping({
-            index: 'trolls',
+            index: 'requests',
             type: 'request',
             body:{
                 properties: {
-                    requestUser: {"type" : "string", "index" : "not_analyzed"},
-                    requestMovie:{"type" : "string", "index" : "not_analyzed"},
-                    requestTitle: {"type" : "string"},
-                    requestDescription: {"type" : "string", "index" : "not_analyzed"},
-                    requestLink: {"type" : "string", "index" : "not_analyzed"},
-                    requestStatus: {"type" : "string", "index" : "not_analyzed"},
-                    requestIsApproved: {"type" : "boolean", "index" : "not_analyzed"},
+                    requestUser: {"type" : "text"},
+                    requestMovie:{"type" : "text"},
+                    requestTitle: {"type" : "text"},
+                    requestDescription: {"type" : "text"},
+                    requestLink: {"type" : "text"},
+                    requestStatus: {"type" : "text"},
+                    requestIsApproved: {"type" : "boolean"},
                     requestImage: {"type" : "object",
                         "properties" : {
-                            "url" : {"type" : "string", "index" : "not_analyzed"},
-                            "weburl" : {"type" : "string", "index" : "not_analyzed"},
-                            "thumb" : {"type" : "string", "index" : "not_analyzed"},
-                            "type" : {"type" : "string", "index" : "not_analyzed"}
+                            "url" : {"type" : "text"},
+                            "weburl" : {"type" : "text"},
+                            "thumb" : {"type" : "text"},
+                            "type" : {"type" : "text"}
                         }
                     },
                     requestCreatedAt: {"type" : "date"},
@@ -118,29 +123,29 @@ var putMapping = function () {
             type: 'post',
             body:{
                 properties: {
-                    user: {"type" : "string", "index" : "not_analyzed"},
-                    title: {"type" : "string", "fields": {"raw": {"type": "string","index": "not_analyzed"}}},
-                    context: {"type" : "string"},
-                    requestId: {"type" : "string"},
-                    isApproved: {"type" : "boolean", "index" : "not_analyzed"},
+                    user: {"type" : "text"},
+                    title: {"type" : "text", "fields": {"raw": {"type": "text"}}},
+                    context: {"type" : "text"},
+                    requestId: {"type" : "text"},
+                    isApproved: {"type" : "boolean"},
                     image: {"type" : "object",
                         "properties" : {
-                            "url"   : {"type" : "string", "index" : "not_analyzed"},
-                            "weburl"   : {"type" : "string", "index" : "not_analyzed"},
-                            "type"  : {"type" : "string", "index" : "not_analyzed"},
-                            "thumb" : {"type" : "string", "index" : "not_analyzed"},
+                            "url"   : {"type" : "text"},
+                            "weburl"   : {"type" : "text"},
+                            "type"  : {"type" : "text"},
+                            "thumb" : {"type" : "text"},
                             "size"  : {"type" : "object","properties" :
                                 {
-                                "width": {"type": "long", "index" : "not_analyzed"},
-                                "height":{"type": "long", "index": "not_analyzed"}
+                                "width": {"type": "long"},
+                                "height":{"type": "long"}
                                 }
                             }
                         }
                     },
-                    descriptions: {"type" : "string"},
+                    descriptions: {"type" : "text"},
                     likes: {
                         properties:{
-                            userId: {"type": "string", "index" : "not_analyzed"},
+                            userId: {"type": "text"},
                             time:  {"type": "date"}
                         }
                     },
@@ -148,16 +153,16 @@ var putMapping = function () {
                     downloads: {"type": "integer"},
                     comments:{
                         properties:{
-                            userId: {"type": "string", "index" : "not_analyzed"},
-                            comment:  {"type": "string"},
+                            userId: {"type": "text"},
+                            comment:  {"type": "text"},
                             createdAt: {"type": "date"}
                         }
                     },
-                    tags: {"type" : "string"},
-                    movie: {"type" : "string", "fields": {"raw": {"type": "string","index": "not_analyzed"}}},
-                    language: {"type" : "string"},
-                    actors: {"type" : "string"},
-                    characters: {"type" : "string"},
+                    tags: {"type" : "text"},
+                    movie: {"type" : "text", "fields": {"raw": {"type": "text"}}},
+                    language: {"type" : "text"},
+                    actors: {"type" : "text"},
+                    characters: {"type" : "text"},
                     createdAt: {"type" : "date"},
                     lastModified: {"type": "date"},
                     titleSuggest: {
@@ -210,8 +215,14 @@ var putMapping = function () {
 MongoClient.connect(url, function(err, db) {
     console.log("Connected successfully to server");
     deleteIndex("trolls")
+    .then(()=> {
+        return deleteIndex("requests")
+    })
     .then(function () {
         return createIndex("trolls")
+    })
+    .then(()=> {
+        return createIndex("requests")
     })
     .then(putMapping)
     .then(putRequestMapping)
@@ -286,7 +297,7 @@ MongoClient.connect(url, function(err, db) {
 	            toObj.requestCreatedAt = chunk.dates.createdAt
                 }
                if (chunk.dates.lastUpadtedAt) {
-	            toObj.requestLastUpdatedAt = chunk.lastUpdatedAt
+	            toObj.requestLastUpdated = chunk.lastUpdatedAt
                 }
                 toObj._id = chunk._id;
               //this.push(toObj);

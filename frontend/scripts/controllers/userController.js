@@ -56,9 +56,12 @@ define(['./requestController', './storeController'], function (request, store) {
              $('.fb_login').hide();
              $('.logut').show();
              //$('.user-photo').attr('src', store.get('picture'));
-             $('.user-icon').removeClass('fa-user-circle')
-             $('.user-icon').removeClass('far')
-             $('.user-icon').css('background-image', 'url('+encodeURIComponent(store.get('picture').thumb)+')')
+             
+	     if (store.get('picture')) {
+		$('.user-icon').removeClass('fa-user-circle')
+             	$('.user-icon').removeClass('far')
+             	$('.user-icon').css('background-image', 'url('+encodeURIComponent(store.get('picture').thumb)+')')
+	     }
              $('.user-name').text(store.get('username'))
              $('#about_us').parent().css('border-bottom', '1px solid #555');
              //landingView.render({});       

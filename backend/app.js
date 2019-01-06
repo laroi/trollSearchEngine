@@ -9,6 +9,7 @@ var postRoute = require('./routes/postRout');
 var app = express();
 var access = require('./models/accessToken');
 var contexts = require('./models/contexts');
+var langs = require('./models/langs.js');
 var server = http.createServer(app);
 var multer  = require('multer');
 var logger = require('./utils/logger');
@@ -66,6 +67,24 @@ var addDefaultContexts = function () {
             })
         } else {
             logger.log(1, 'add context', 'context already exists', 'app.js', 'server', undefined);
+        }
+    })
+
+}();
+
+var addDefaultLangs = function () {
+    var languages = { "_id" : "langs", "langs" : [  "malayalam",  "tamil",  "hindi",  "telugu",  "english" ] };
+    langs.count({ "_id" : "langs"}, function(err, cnt) {
+        if (!err && cnt <1) {
+            langs.findOneAndUpdate({ "_id" : "langs"}, languages, {upsert: true}, function (err, data) {
+                if (!err) {
+                    logger.log(1, 'add langs', 'added default languages ', 'app.js', 'server', undefined);
+                } else {
+                    logger.log(3, 'add langs', 'error in adding default languages ', 'app.js', 'server', err);
+                }
+            })
+        } else {
+            logger.log(1, 'add langs', 'language already exists', 'app.js', 'server', undefined);
         }
     })
 
@@ -187,5 +206,5 @@ app.post('/post', isAuthenticated(false), postRoute.post)
 app.get('/image/:id', postRoute.downloadImage);
 app.get('/suggestions', postRoute.autoSuggestion);
 
-app.listen(4001);
+app.listen(3000);
 console.log("Express server listening on port 3000");

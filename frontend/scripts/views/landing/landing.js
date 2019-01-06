@@ -460,7 +460,7 @@ define([
         };
 
         var processUserClick = function (e) {
-            var postId = $(e.target).parent().parent().parent().parent().parent().attr('id');
+            var postId = $(e.target).parent().parent().parent().parent().attr('id');
             postCollection.getPostById(postId, function(err, post) {
                 var storage = store.get('filters') || {};
                 storage.userId = post.user;
@@ -540,13 +540,19 @@ define([
                                     $('#post-contents').children('.panel-cont').children('.page-cont').children('.elem-cont').children('.panel').children('.panel-body').each((index, element)=> {
                                         console.log($(element).attr('id'));
                                         postCollection.getPostById($(element).attr('id'), (err, post)=> {
-                                            if (post) {
+                                            if (post && post.userimg) {
                                             $(element).children('.bottom-panel').children('.button-panel').children('.row1').children('.user').children('.user-img').attr('src', post.userimg.thumb)
-                                            }
+                                            } else {
+						                        $(element).children('.bottom-panel').children('.button-panel').children('.row1').children('.user').addClass('far fa-user-circle')
+						                    }
                                         })
                                     })
                                 } else {
-                                    $('.pan-btn').children('.user-img').attr('src', data.picture.thumb)
+                                    if (data.picture) {
+                                        $('.pan-btn').children('.user-img').attr('src', data.picture.thumb)
+                                    } else {
+                                        $('.pan-btn.user').addClass('far fa-user-circle')
+                                    }
                                 }
                             })
                             loadContext();
@@ -566,7 +572,7 @@ define([
                         $('.hl-close').off('click').on('click', cancelFilter);
                         $('.star-btn').off('click').on('click', processStar);
                         $('.fav').off('click').on('click', processLike);
-                        $('.user-img').off('click').on('click', processUserClick);
+                        $('.pan-btn.user').off('click').on('click', processUserClick);
                         $('.page-prev').off('click').on('click', navPrev);
                         $('.page-next').off('click').on('click', navNext);
                         $('.thumbImgCont').off('click').on('click', thumbClick);

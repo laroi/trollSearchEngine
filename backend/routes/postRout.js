@@ -78,7 +78,7 @@ var routes = function () {
             var size = undefined;
             base64Data = base64Data.replace(/^data:image\/[a-z]+;base64,/, "");
             base64data = new Buffer(base64Data,'base64')
-            let saveWebP = () => {
+            let saveWebP = (imgPath) => {
                 return new Promise ((resolve, reject) => {
                     gm(imgPath)
                       .quality(50)
@@ -99,7 +99,14 @@ var routes = function () {
                     gm(uploadPath+fileName)
                     .setFormat('jpg')
                     .resize('150')
-                    .toBuffer('webp', (err, buffer) => {
+		            .write(uploadPath+'thumb/'+fileName, (err) => {
+                        if (!err) {
+                            resolve()
+                        } else {
+                            reject(err);
+                        }
+                    })
+                    /*.toBuffer('webp', (err, buffer) => {
                         fs.writeFile(uploadPath+'thumb/'+fileName, buffer, function (err) {
                         if (!err) {
                             resolve();
@@ -108,7 +115,7 @@ var routes = function () {
                             reject(err);
                         }
                       })
-                  })
+                  })*/
                 })
             }
             gm(base64data)
@@ -116,10 +123,11 @@ var routes = function () {
             .write(fileLoc + '.jpg', function(err){
                 if (!err) {
                     console.log('image saved')
-                    saveWebP()
+                    /*saveWebP(fileLoc + '.jpg')
                     .then(()=> {
                         return saveThumb(filename+'.webp')
-                    })
+                    })*/
+                    saveThumb(filename+'.jpg')
                     .then(()=> {
                         return getImageSize(fileLoc + '.jpg')
                     })
@@ -127,11 +135,11 @@ var routes = function () {
                         resolve({filename: filename, size: size})
                     })
                     .catch((err)=> {
-                        console.log('err in saving thumb')
+                        console.log('err in saving thumb', err)
                         reject(err);
                     })
                 } else {
-                    console.log('err in writing img')
+                    console.log('err in writing img ', err)
                     reject(err)
                 }
             })
@@ -199,8 +207,8 @@ var routes = function () {
                 obj.movie = movie;
                 obj.image = {
                     url: '/images/'+fileinfo.filename + '.jpg', 
-                    thumb: '/images/thumb/'+ fileinfo.filename + '.webp',
-                    weburl:  '/images/'+fileinfo.filename + '.webp',  
+                    thumb: '/images/thumb/'+ fileinfo.filename + '.jpg',
+                    //weburl:  '/images/'+fileinfo.filename + '.webp',  
                     type: 'jpg',
                     size: fileinfo.size,
                 };
@@ -413,8 +421,8 @@ var routes = function () {
                         if (fileinfo && fileinfo.filename) {
                             updateObj.image = {
                                 url: '/images/'+fileinfo.filename + '.jpg', 
-                                thumb: '/images/thumb/'+ fileinfo.filename + '.webp',
-                                weburl:  '/images/'+fileinfo.filename + '.webp',  
+                                thumb: '/images/thumb/'+ fileinfo.filename + '.jpg',
+                                //weburl:  '/images/'+fileinfo.filename + '.webp',  
                                 type: 'jpg',
                                 size: fileinfo.size,
                             }
@@ -490,9 +498,9 @@ var routes = function () {
                     if (!statErr) {
                         res.writeHead(200, {
                             'Content-Type': 'image/'+post.image.type,
-//                            'Content-Length': statData.size,
+ //                           'Content-Length': statData.size,
                             'Access-Control-Allow-Origin': '*',
-                            'Content-Disposition': 'attachment; filename='+fileName
+                            'Content-Disposition': 'attachment; filename="'+fileName+'"'
                         });
                         var readStream = fs.createReadStream(postUploadPath+fileName);
                         var getGravity = function () {
@@ -771,8 +779,8 @@ var routes = function () {
                     obj.language = language;
                     obj.image = {
                         url: '/requests/images/'+fileinfo.filename + '.jpg',
-                        weburl: '/requests/images/'+fileinfo.filename + '.webp',
-                        thumb: '/requests/images/thumb/'+fileinfo.filename + '.webp',
+                        //weburl: '/requests/images/'+fileinfo.filename + '.webp',
+                        thumb: '/requests/images/thumb/'+fileinfo.filename + '.jpg',
                         type: 'jpg', 
                         size: fileinfo.size
                     };
@@ -897,8 +905,8 @@ var routes = function () {
                     if (fileinfo && fileinfo.filename) {
                         updateObj.image = {
                             url: '/requests/images/'+fileinfo.filename + '.jpg',
-                            weburl: '/requests/images/'+fileinfo.filename + '.webp',
-                            thumb: '/requests/images/thumb/'+fileinfo.filename + '.webp',
+                            //weburl: '/requests/images/'+fileinfo.filename + '.webp',
+                            thumb: '/requests/images/thumb/'+fileinfo.filename + '.jpg',
                             type: 'jpg', 
                             size: fileinfo.size
                         }

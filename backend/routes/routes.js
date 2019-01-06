@@ -115,12 +115,12 @@ var routes = function () {
             password = req.body.password,
             phone = req.body.phone,
             name = req.body.name,
-            picture = req.body.picture;
+            picture = req.body.picture ? req.body.picture.image : undefined;
         if (req.body.email && req.body.password) {
             var verification = generateToken();
              bcrypt.genSalt(10, function(err, salt) {
                 bcrypt.hash(req.body.password, salt, function(err, hash) {
-                    uploadProfPic(picture.image)
+                    uploadProfPic(picture)
                     .then((picturePath)=> {
                         let userDetails = {'email': req.body.email, password: hash, type: 'user', 'verification': verification, 'phone': phone, name : name};
                         if (picturePath) {
@@ -345,7 +345,7 @@ var routes = function () {
     };
 
     addContext = function (req, res) {
-        var contexts = req. body.contexts;
+        var contexts = req.body.contexts;
         console.log('[add contexts]')     
         Contexts.updateById('contexts', {contexts: contexts}, function (updErr, updData) {
             if (!updErr) {
@@ -358,7 +358,7 @@ var routes = function () {
         });
     };
     addLanguage = function (req, res) {
-        var langs = req. body.langs;
+        var langs = req.body.langs;
         console.log('[add language]')
         langs.updateById('languages', {langs: langs}, function (updErr, updData) {
             if (!updErr) {

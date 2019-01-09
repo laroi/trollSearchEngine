@@ -42,7 +42,8 @@
     margin-right:25px;
 }
 .elem-cont {
-    max-width:150px!important;
+    max-width:160px!important;
+    display: inline!important;
 }
 .dropdown-menu-right {
   position:absolute;
@@ -313,7 +314,7 @@ max-width: 75%;
         padding-left:5px;
 }
 .elem-cont {
-        width:42.9%;
+        width:80%;
     }
 .user-photo {
         font-size:20px;

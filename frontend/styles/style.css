@@ -254,9 +254,10 @@ font-size:20px;
 
 }
 .page-cont{
+    text-align:center;
     min-height: 70vh;
-    margin-right:5px;
-    margin-left:5px;
+    
+    margin:0 auto;
 }
 .paginate {
     text-align:center;

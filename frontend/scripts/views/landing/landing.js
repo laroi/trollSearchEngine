@@ -532,7 +532,8 @@ define([
                             //$('.page-cont').imagesLoaded(function () {
                             $('.page-cont').masonry({
                               itemSelector: '.elem-cont',
-                              isAnimated: true
+                              isAnimated: true,
+                              fitWidth: true
                             })
                             postCollection.getPostUserDetails()
                             .then((data)=> {

@@ -35,9 +35,11 @@ define(['../config/config', './storeController'], function (config, store) {
             var a = document.createElement('a');
             var url = window.URL.createObjectURL(blob);
             a.href = url;
-            a.download = filename+'.jpg';
-            a.click(); 
-            window.URL.revokeObjectURL(url);
+            a.download = '"'+filename+'".jpg';
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            //window.URL.revokeObjectURL(url);
             return
         })
         .catch((err) =>  {

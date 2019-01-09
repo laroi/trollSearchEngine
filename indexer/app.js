@@ -316,8 +316,8 @@ MongoClient.connect(url, function(err, db) {
             var torB = new TransformToBulk(function getIndexTypeId (doc) {
                 var id = doc._id
                 delete doc._id
-                return {_id: id, _index:"trolls", _type:"request"}
-            })        
+                return {_id: id, _index:"requests", _type:"request"}
+            })
             collection.find().batchSize(10).stream().pipe(es).pipe(torB).pipe(ws).on('finish', function(){console.log("done"); resolve()})
             ws.on('close', function () {
                 console.log("request ws closed");

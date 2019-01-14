@@ -42,8 +42,7 @@
     margin-right:25px;
 }
 .elem-cont {
-    max-width:160px!important;
-    display: inline!important;
+    display: inline-block!important;
 }
 .dropdown-menu-right {
   position:absolute;
@@ -91,7 +90,7 @@
     }
 .user-boot{
     float:left;
-    padding-top: 15px;
+    padding-top: 10px;
 
 }
 
@@ -105,6 +104,9 @@
 .search-drop {
     position:absolute;
 }
+.navbar-brand {
+    padding-right:5px!important;
+}
 @media only screen and (min-width:1269px)
 {
 .container {
@@ -112,6 +114,9 @@ max-width: 75%;
     margin: 0 auto;
     height:100%;
 }
+.head-icon {
+        margin-left:15px;
+    }
 #adv-search {
         width: 325px;
         margin: 0 auto;
@@ -120,7 +125,7 @@ max-width: 75%;
     .nav-head-boot {
         width:75%;
     }
-    .filt-boot, .user-boot, #create {
+    .filt-boot, .user-boot {
         width:100px;
         float:left;
     }
@@ -219,8 +224,9 @@ max-width: 75%;
     .navbar-brand {
         padding-left:10px !important;
     }
+    
     .elem-cont {
-        width:36.7%;
+        width:47%;
     }
     .user-photo {
         font-size:20px;
@@ -230,6 +236,7 @@ max-width: 75%;
     }
     .search-caret {
         margin-top: 15px; 
+        border-width: 8px 8px 8px 8px;
     }
     .search-icon {
             font-size: 18px;
@@ -274,6 +281,9 @@ max-width: 75%;
         float:left;
         padding-left:5px;
     }
+    .elem-cont {
+        width:45%;
+    }
     .user-icon {
         font-size:20px;
     }
@@ -310,8 +320,11 @@ max-width: 75%;
 }
 @media screen and (max-width:360px) {
 #adv-search {
-        width: 56%;
+        width: 45%;
         padding-left:5px;
+}
+#btn-request-list {
+    width:25px;
 }
 .elem-cont {
         width:80%;
@@ -350,14 +363,14 @@ max-width: 75%;
 }
 @media screen and (max-width:320px) {
     #adv-search {
-            width:52%;
+            width:45%;
             padding-left:2px;
     }
     .navbar-brand {
         padding-left:5px !important;
     }
     .elem-cont {
-        width:42.9%;
+        width:80%;
     }
     .user-photo {
         font-size:20px;
@@ -390,7 +403,7 @@ max-width: 75%;
         left:-25!important;
         width:70%!important;
     }
-    .filt-boot, .user-boot, #create {
+    .filt-boot, .user-boot {
         float:left;
         width:25px;
     }

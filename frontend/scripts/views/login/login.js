@@ -11,7 +11,7 @@ define([
         template = Handlebars.compile(source);
        
         let login = () => {
-            let email = $('#login-email').val().trim(),
+                let email = $('#login-email').val().trim(),
                 password = $('#login-password').val().trim();
             if (email && password) {            
                 user.setToken(email, password, function(err, data) {

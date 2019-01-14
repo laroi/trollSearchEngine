@@ -213,7 +213,7 @@ define([
         });
         var requestListView = function () {
             var render;
-            render = function (query) {
+            render = function (isForce, query) {
                 disableFilters();
                 let from;
                 if (query) {
@@ -221,8 +221,11 @@ define([
                 } else {
                     from = 0;
                 }
+                if (!($('#btn-request-list').hasClass('isRequest'))) {
+                    $('#btn-request-list').addClass('isRequest');
+                }
                 $('.btn-apply-filter').off('click').on('click', applyFilter);
-                requestCollection.getAllRequests({from:from || 1, limit: 10}, false, (err, requests) => {
+                requestCollection.getAllRequests({from:from || 1, limit: 10}, isForce, (err, requests) => {
                     var html = template({requests: requests});
                     $('#request-contents').empty().append(html);
                     $('#request-contents').show();

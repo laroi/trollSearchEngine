@@ -35,9 +35,30 @@
 }
 #create {
     display: none;
-        margin-top: 18px;
+    margin-top: 10px;
     float: left;
     cursor:pointer;
+    width: 35px;
+    height: 30px;
+    text-align: center;
+    border: 1px solid white;
+    border-radius: 5px;
+    padding-top: 5px;
+}
+#btn-request-list {
+    margin-top: 10px;
+    float: left;
+    cursor: pointer;
+    width: 35px;
+    height: 30px;
+    text-align: center;
+    border: 1px solid white;
+    border-radius: 5px;
+    padding-top: 5px;
+}
+.isRequest {
+     color:#B6462F!important;
+    box-shadow: 2px 4px 3px 1px #575555;
 }
 .info-panel {
     float:left;
@@ -373,6 +394,8 @@ font-size:20px;
     color:white;
   }
   .user-icon {
+    padding-top: 3px;
+    padding-left: 3px;
     border-radius:15px;
     -webkit-background-size: contain;
     -moz-background-size: contain;

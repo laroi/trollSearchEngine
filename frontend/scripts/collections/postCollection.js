@@ -110,6 +110,7 @@ define(['scripts/controllers/requestController', 'scripts/controllers/storeContr
             })
         }
         getAllPosts = function (postData, force, callback) {
+            console.log('isForce', force);
             if (!checkIfCached(postData) || force) {
                 updateCache(postData);
                 request.post('/api/posts', postData, function (err, status, data) {

@@ -88,12 +88,15 @@ let init = () => {
                 var item = item.text || item;
                 element.val(item.replace(/<b>/g, '').replace(/<\/b>/g, '')).change();
                 if (element.attr('id') !== 'basic-search') {
-                    $('#advanced-search').click();
+                    //$('#advanced-search').click();
+                    landingView.advancedSearch();
                 } else {
-                    $('.btn-basic-search').click();
+                    landingView.search();
+                    //$('.btn-basic-search').click();
                 }
             }
         }
+        let prevHash;
         if (!Array.prototype.find) {
           Array.prototype.find = function (callback, thisArg) {
             "use strict";
@@ -230,8 +233,16 @@ let init = () => {
                     enableAllFilters();
                 }
             });
-
+            let logout = (e) => {
+                let accessKey = store.get('accessKey')
+                user.unsetToken(accessKey,  () => {
+                    url.navigate('landing', undefined, true);
+                    $('.open').removeClass('open');
+                    $('#login').on('click', showLogin);
+                })
+            };
             $('#about_us').on('click', showAbout);
+            $('#logout').off('click').on('click', logout);
             $('#create').off('click').on('click', (e)=> { $('#create-input').trigger('click')});
             $('#create-input').on('click', (e)=> { e.stopPropagation();})
             $("#create-input").change(function(){
@@ -249,18 +260,31 @@ let init = () => {
                     reader.readAsDataURL(input.files[0]);
                 }
             });
+            let routed = (isForce, request, data) => {
+                prevHash = request.split('?')[0];
+            }
+            let requestListHandler = () => {
+                $('#btn-request-list').off('click').on('click', (e)=> { $(e.target).toggleClass('isRequest'); landingView.applyFilter();})
+                return requestListView.render
+            };
+            crossroads.routed.add(routed);
             crossroads.bypassed.add(function(request){
                 url.navigate('landing');
             });
             crossroads.addRoute('/#post/{id}', detailView.render);
-            crossroads.addRoute('/#requests{?query}', requestListView.render);
+            crossroads.addRoute('/#requests{?query}', requestListHandler());
             crossroads.addRoute('/#{?query}', landingView.render);
             crossroads.addRoute('/#login', loginView.render);
 
             window.onhashchange = function(){
-               crossroads.parse(window.location.hash)
+                let isForce = false;                
+                if (window.location.hash.split("?")[0] !== prevHash) {
+                   console.log('Hash changed, will be forced reload');
+                   isForce = true;
+                }
+                crossroads.parse(window.location.hash, [isForce])
             };
-            crossroads.parse(window.location.hash)
+            crossroads.parse(window.location.hash, [true])
         })
 
         });

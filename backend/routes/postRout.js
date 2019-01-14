@@ -275,7 +275,9 @@ var routes = function () {
             order = req.body.order,
             context = req.body.context,
             isFavorite =  req.body.isFavorite;
+            size = req.body.limit;
             opts = {};
+            opts.size = size;
             if (search) {
                 opts.search = search;
             } else {

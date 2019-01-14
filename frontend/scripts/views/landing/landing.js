@@ -17,6 +17,7 @@ define([
      var source   = $(html).html(),
         template = Handlebars.compile(source),
         render;
+       
         Handlebars.registerHelper('tolower', function(options) {
             return options.fn(this).toLowerCase();
         });
@@ -52,8 +53,8 @@ define([
             }
             return '';
         })
-        Handlebars.registerHelper('getThumbHeight', function(post) {
-            return 150 * (post.height/post.width)
+        Handlebars.registerHelper('getThumbHeight', function(width, post) {
+            return '"'+width * (post.height/post.width) + 'px"';
         })
         Handlebars.registerHelper('ifeq', (isOwner, options) => {
           if (isOwner || store.get('userType') === 'admin') {
@@ -82,6 +83,7 @@ define([
                 })
             })
         }
+        
         var editPost = function(e) {
             var id = $(e.target).parent().parent().attr('id');
             postCollection.getPostById(id, function (err, post) {
@@ -191,7 +193,7 @@ define([
                 $('.isApproved').prop('disabled', false);
             }
             $('#basic-search').prop('disabled', false);
-            $('.isRequest').prop('checked', false)
+            //$('.isRequest').prop('checked', false)
         }
         var advancedSearch = function(e) {
             var se_title = $('#se_title').val().trim(),
@@ -315,8 +317,11 @@ define([
             isFavorite = $('.isFavorite').is(':checked'),
             isMine = $('.isMine').is(':checked'),
             isApproved = $('.isApproved').is(':checked'),
-            isRequest = $('.isRequest').is(':checked'),
+            isRequest = false, // = $('.isRequest').is(':checked'),
             filtObj = {};
+            if ($('#btn-request-list').hasClass('isRequest')) {
+                isRequest = true;
+            }
             if (isRequest) {
                 filtObj.request = true;
                 filtObj.context = undefined;
@@ -379,13 +384,7 @@ define([
                     }
                 });
         }
-        let logout = (e) => {
-            let accessKey = store.get('accessKey')
-            user.unsetToken(accessKey,  () => {
-                url.navigate('landing', undefined, true);
-                $('.open').removeClass('open');
-            })
-        }
+        
         var cancelFilter = function(e) {
             var type = $(this).parent().attr('data-type').trim(),
                 key = $(this).parent().attr('data-key').trim();
@@ -460,7 +459,7 @@ define([
         };
 
         var processUserClick = function (e) {
-            var postId = $(e.target).parent().parent().parent().parent().attr('id');
+            var postId = $(e.target).parent().parent().parent().parent().parent().attr('id');
             postCollection.getPostById(postId, function(err, post) {
                 var storage = store.get('filters') || {};
                 storage.userId = post.user;
@@ -513,28 +512,55 @@ define([
                 elem.hide();
             }
         }
+        let getWidth = () => {
+            const width = window.screen.availWidth;
+            if (width <= 360) {
+               return 80 * width * 0.01;
+            }
+            if (width <= 420) {
+               return 45 * width * 0.01;
+            }
+            if (width <= 480) {
+               return 47 * width * 0.01;
+            }    
+        }
         var landingView = function () {
             var render;
-            store.set('limit', 10);
-            render = function (query) {
+            let getLimit = () => {
+                const width = window.screen.availWidth;
+                if (width <= 360) {
+                    return 8;
+                }
+                else if (width <= 480) {
+                    return 10;
+                }
+                else {
+                    return Math.floor(((width/170)*2))
+                }
+            }
+            store.set('limit', getLimit());
+            render = function (isForce, query) {
                 // Read params from url, transform to apply in post requests
                 var from = query.from || 0;
                 let postData = setFilters(query);
+                postData.limit = store.get('limit');
                 $('#detail-cont').modal( 'hide' ).data( 'bs.modal', null );
                 if(postData.request) {
                     url.navigate('requestList');
                 } else {
                     enableFilters()
-                    postCollection.getAllPosts(postData, query.force, function(err, posts) {
+                    postCollection.getAllPosts(postData, query.force || isForce, function(err, posts) {
                         if (posts !== undefined) {
-                            var html = template({posts: posts});
+                            var html = template({posts: posts, imgWidth: getWidth() || 160});
+                            $('#request-contents').hide()
                             $('#post-contents').empty().append(html);
+                            $('#post-contents').show()
                             //$('.page-cont').imagesLoaded(function () {
-                            $('.page-cont').masonry({
-                              itemSelector: '.elem-cont',
-                              isAnimated: true,
-                              fitWidth: true
-                            })
+                              /*  $('.page-cont').masonry({
+                                  itemSelector: '.elem-cont',
+                                  isAnimated: true
+                                })*/
+                            //})
                             postCollection.getPostUserDetails()
                             .then((data)=> {
                                 if (data && Array.isArray(data)) {
@@ -542,17 +568,17 @@ define([
                                         console.log($(element).attr('id'));
                                         postCollection.getPostById($(element).attr('id'), (err, post)=> {
                                             if (post && post.userimg) {
-                                            $(element).children('.bottom-panel').children('.button-panel').children('.row1').children('.user').children('.user-img').attr('src', post.userimg.thumb)
+                                                $(element).children('.bottom-panel').children('.button-panel').children('.row1').children('.user').children('.user-img').attr('src', post.userimg.thumb)
                                             } else {
-						                        $(element).children('.bottom-panel').children('.button-panel').children('.row1').children('.user').addClass('far fa-user-circle')
-						                    }
+						                        $(element).children('.bottom-panel').children('.button-panel').children('.row1').children('.user').children('.user-img').attr('src', '/image/user.svg')
+                                            }
                                         })
                                     })
                                 } else {
                                     if (data.picture) {
                                         $('.pan-btn').children('.user-img').attr('src', data.picture.thumb)
                                     } else {
-                                        $('.pan-btn.user').addClass('far fa-user-circle')
+                                        $('.pan-btn').children('.user-img').attr('src', '/image/user.svg')
                                     }
                                 }
                             })
@@ -560,8 +586,6 @@ define([
                             loadLangs();
                             updateUi();
                         }
-                        $('#request-contents').hide()
-                        $('#post-contents').show()
                         highlight.highlight();
                         $('.edit').off('click').on('click', editPost);
                         $('.pan-btn.download').on('click', downloadImage);
@@ -573,18 +597,21 @@ define([
                         $('.hl-close').off('click').on('click', cancelFilter);
                         $('.star-btn').off('click').on('click', processStar);
                         $('.fav').off('click').on('click', processLike);
-                        $('.pan-btn.user').off('click').on('click', processUserClick);
+                        $('.user-img').off('click').on('click', processUserClick);
                         $('.page-prev').off('click').on('click', navPrev);
                         $('.page-next').off('click').on('click', navNext);
                         $('.thumbImgCont').off('click').on('click', thumbClick);
                         $('.more').off('click').on('click', showMore);
                         $('body').off('click').on('click', closeAllPops);
-                        $('#logout').off('click').on('click', logout);
+                        $('#btn-request-list').off('click').on('click', (e)=> { $(e.target).toggleClass('isRequest'); applyFilter();})
                     });
                 }
             }
             return {
                 render: render,
+                search:search,
+                advancedSearch: advancedSearch,
+                applyFilter: applyFilter
             }
         }
         return landingView();

@@ -161,7 +161,7 @@ var animOutClass = "bounceInRight";
         }
         var detailView = function () {
             var render;
-            render = function (id) {
+            render = function (isForce, id) {
                 postCollection.getPostById(id, function(err, post) {
                     console.log(post)
                     if (!err && post) {

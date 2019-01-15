@@ -9,7 +9,18 @@ define([
 ], function (request, store, url, user, requestView, html, register) {
      var source   = $(html).html(),
         template = Handlebars.compile(source);
-       
+        let moveFocus = (e) => {
+            if (e.keyCode == 13) {
+                $('#login-password').focus()
+                return false; // prevent the button click from happening
+            }
+        }
+        let keyPressLogin = (e) => {
+            if (e.keyCode == 13) {
+                login();
+                return false; // prevent the button click from happening
+            }
+        }
         let login = () => {
                 let email = $('#login-email').val().trim(),
                 password = $('#login-password').val().trim();
@@ -45,7 +56,8 @@ define([
                     //$('#login-modal').on('hidden.bs.modal', gotoHome);
                     $('#btn-login').on('click', login)
                     $('#btn-show-login').on('click', showReg);
-                   
+                    $('#login-email').on("keypress", moveFocus);
+                    $('#login-password').on("keypress", keyPressLogin);
             }
             return {
                 render: render

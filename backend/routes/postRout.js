@@ -289,7 +289,8 @@ var routes = function () {
                 opts.advanced.actors = actors;
             }
             if (isFavorite === null) {
-                opts.ids = [""];
+                res.status(200).send({"total":0,"max_score":null,"hits":[]})
+                return;
             }
             else if (isFavorite) {
                 opts.ids = isFavorite.split(',');

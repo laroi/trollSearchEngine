@@ -304,6 +304,9 @@ font-size:20px;
     margin-left:10px;
     float:left;
 }
+.request-cont {
+    width:150px;
+}
 .user-drop {
     position: absolute;
 }

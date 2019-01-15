@@ -556,10 +556,10 @@ define([
                             $('#post-contents').empty().append(html);
                             $('#post-contents').show()
                             //$('.page-cont').imagesLoaded(function () {
-                              /*  $('.page-cont').masonry({
+                                $('.page-cont').masonry({
                                   itemSelector: '.elem-cont',
                                   isAnimated: true
-                                })*/
+                                })
                             //})
                             postCollection.getPostUserDetails()
                             .then((data)=> {

@@ -514,8 +514,11 @@ define([
         }
         let getWidth = () => {
             const width = window.screen.availWidth;
+            if (width <= 320) {
+               return 45 * width * 0.01;
+            }
             if (width <= 360) {
-               return 80 * width * 0.01;
+               return 40 * width * 0.01;
             }
             if (width <= 420) {
                return 45 * width * 0.01;

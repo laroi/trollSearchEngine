@@ -254,9 +254,11 @@ define([
                         $('#request-contents').children('.panel-cont').children('.page-cont').children('.elem-cont').children('.panel').children('.panel-body').each((index, element)=> {
                             console.log($(element).attr('id'));
                             requestCollection.getRequestById($(element).attr('id'), (err, request)=> {
-                                if (request) {
+                                if (request && request.userimg) {
                                 console.log(request);
-                                $(element).children('.bottom-panel').children('.button-panel').children('.row1').children('.user').children('.user-img').attr('src', request.userimg.thumb)
+                                    $(element).children('.bottom-panel').children('.button-panel').children('.row1').children('.user').children('.user-img').attr('src', request.userimg.thumb)
+                                } else {
+                                    $(element).children('.bottom-panel').children('.button-panel').children('.row1').children('.user').children('.user-img').attr('src', '/image/user.svg')
                                 }
                             }) 
                         })

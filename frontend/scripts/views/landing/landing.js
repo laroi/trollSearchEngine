@@ -518,14 +518,17 @@ define([
                return 45 * width * 0.01;
             }
             if (width <= 360) {
-               return 40 * width * 0.01;
+               return 45 * width * 0.01;
             }
             if (width <= 420) {
                return 45 * width * 0.01;
             }
             if (width <= 480) {
-               return 47 * width * 0.01;
-            }    
+               return 45 * width * 0.01;
+            }
+            if (width <= 600) {
+               return 30 * width * 0.01;
+            }   
         }
         var landingView = function () {
             var render;

@@ -34,6 +34,7 @@ let init = () => {
         String.prototype.capitalize = function() {
             return this.charAt(0).toUpperCase() + this.slice(1);
         };
+        $('.search-drop').css('width', $('#adv-search').css('width'));
         var getSuggestion = function (field) {
             var url = '/api/suggestions?field='+field+'&query=';
                 return function( request, response ) {

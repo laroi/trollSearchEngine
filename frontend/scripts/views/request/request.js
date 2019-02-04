@@ -65,6 +65,7 @@ define([
         var requestView = function () {
             var render;
             render = function (id) {
+                imageData = '';
                 userCollection.getLang((err, langs)=> {
                     var html = template({requests: undefined, langs:langs});
                     $('#requestModel').empty().append(html);
@@ -80,8 +81,8 @@ define([
                             reader.onload = function (e) {
                                 imageData = e.target.result;
                                 $('.req-meme-img').attr('src', imageData);
-                                imageData = {type: input.files[0].type.split('/')[1], image:imageData.replace(/^data:image\/(png|jpg|jpeg);base64,/, "")};
-                                imageData.name = input.files[0].name || ''
+                               // imageData = {type: input.files[0].type.split('/')[1], image:imageData.replace(/^data:image\/(png|jpg|jpeg);base64,/, "")};
+                                //imageData.name = input.files[0].name || ''
                             }
                             reader.readAsDataURL(input.files[0]);
                         } else {

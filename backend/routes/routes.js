@@ -19,7 +19,7 @@ var getIp = function (req) {
 }
 let validateEmail = (emailField) => {
         var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
-        if (reg.test(emailField) == false) 
+        if (reg.test(emailField) == false)
         {
             return false;
         }
@@ -65,16 +65,16 @@ var verifytoken = function (token, callback) {
 let saveThumb = function (fileName) {
     return new Promise((resolve, reject)=> {
         gm(profImageUploadPath+fileName)
-       .setFormat('jpg')      
+       .setFormat('jpg')
        .resize('20')
        .gravity('Center')
        .write(profImageUploadPath+'thumb/'+fileName, function (err) {
             if (!err) {
                 console.log('Created thumbile for filename')
-                resolve(profImageUploadPath+'thumb/'+fileName);  
+                resolve(profImageUploadPath+'thumb/'+fileName);
             } else {
                 console.error('could not resize '+ profImageUploadPath+fileName, err);
-                reject();  
+                reject();
             }
         });
     })
@@ -89,7 +89,7 @@ let uploadProfPic = (data) => {
             data = new Buffer(data,'base64')
             gm(data)
             .setFormat('jpg')
-            .resize('150')         
+            .resize('150')
             .write(fileLoc + '.jpg', function(err){
                 if (!err) {
                     saveThumb(filename+'.jpg')
@@ -102,7 +102,7 @@ let uploadProfPic = (data) => {
                     })
                 } else {
                     reject(err)
-                }            
+                }
             })
          } else {
             resolve(false);
@@ -125,7 +125,7 @@ var routes = function () {
                         let userDetails = {'email': req.body.email, password: hash, type: 'user', 'verification': verification, 'phone': phone, name : name};
                         if (picturePath) {
                             userDetails.picture = {full :'/prof/'+picturePath, thumb: '/prof/thumb/'+picturePath};
-                        }                        
+                        }
                         let user = new User(userDetails);
                         console.log(JSON.stringify(user));
                         user.save(function(err, userData) {
@@ -142,15 +142,14 @@ var routes = function () {
                                     delete userData.password;
                                     res.status(200).send(JSON.stringify({token: token, user: userData}));
                                 });*/
-                                
                             } else {
                                 console.error('Saving Failed' + JSON.stringify(err));
                                 res.status(500).send({err: 'Could not save user'});
                             }
                         });
-                    });                    
+                    });
                 });
-            });           
+            });
         } else {
             res.status(400).send({err:"Parameters required"});
         }
@@ -175,7 +174,7 @@ var routes = function () {
                                 }
                             });
                         } else {
-                            res.status(401).send({err: "Invalid Credentials"})    
+                            res.status(401).send({err: "Invalid Credentials"})
                         }
                     } else {
                         res.status(401).send({err: "User not active"})
@@ -295,10 +294,9 @@ var routes = function () {
         } else {
             res.status(400).send({err: 'invalid_params'});
         }
-        
     };
     listGroups = function (req, res) {
-        console.log('[list groups]')     
+        console.log('[list groups]')
         Group.find({}, function(grpErr, grpData) {
             if (!grpErr) {
                 console.log('[list groups] listed ', grpData.length, ' groups');
@@ -322,7 +320,7 @@ var routes = function () {
                 } else {
                     console.error('[list contexts] not found');
                     res.status(404).send({err: 'not found'});
-                }                
+                }
             }
         });
     };
@@ -339,14 +337,14 @@ var routes = function () {
                 } else {
                     console.error('[list langs] not found');
                     res.status(404).send({err: 'not found'});
-                }                
+                }
             }
         });
     };
 
     addContext = function (req, res) {
         var contexts = req.body.contexts;
-        console.log('[add contexts]')     
+        console.log('[add contexts]')
         Contexts.updateById('contexts', {contexts: contexts}, function (updErr, updData) {
             if (!updErr) {
                 console.log('[add groups] total ', contexts.length, ' contexts');
@@ -373,7 +371,7 @@ var routes = function () {
     let getUserCount = (req, res) => {
         User.count({}).exec()
         .then((count) => {
-            res.status(200).send({"count": count})        
+            res.status(200).send({"count": count})
         })
         .catch((err)=> {
             console.error(err);
@@ -396,12 +394,12 @@ var routes = function () {
             .catch((err) => {
                 console.error('[feedback] error in saving ', err);
                 res.status(500).send({err: 'Internal Server Error'})
-            })            
+            })
         } else {
             console.error("required params missing ", req.body);
             res.status(400).send({err: 'bad request'})
         }
-    }; 
+    };
    return {
         register: register,
         login: login,

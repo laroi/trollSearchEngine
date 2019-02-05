@@ -23,7 +23,7 @@ var sendMail = function(email, code, callback) {
     transporter.sendMail({
             from: 'akbar.ali@mobinius.com',
             to: email,
-            subject: 'Verification code for Troll Search Engine',
+            subject: 'Verification code for Memefinder',
             text: 'Here is your verification code for trollsearch engine app : ' + code
         }, function(error, response) {
             console.log(JSON.stringify(error), JSON.stringify(response))

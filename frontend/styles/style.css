@@ -400,12 +400,14 @@ font-size:20px;
     padding-top: 3px;
     padding-left: 3px;
     border-radius:15px;
+    margin-left:8px;
+    margin-top:5px;
     -webkit-background-size: contain;
     -moz-background-size: contain;
     -o-background-size: contain;
     background-size: contain;
-    width:20px;
-    height:20px;
+    width:20px!important;
+    height:20px!important;
     float:left;
   }
   .register-model-body>.row>.dropdown>span {

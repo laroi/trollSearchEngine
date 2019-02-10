@@ -6,8 +6,9 @@ define([
 '../../collections/postCollection',
  '../create/create',
  'text!./detail.html',
-  'text!../components/head_context.html'
-], function (request, store, url, user, postCollection, create, html, contextHtml) {
+  'text!../components/head_context.html',
+  'handlebars'
+], function (request, store, url, user, postCollection, create, html, contextHtml, Handlebars) {
      var source   = $(html).html(),
         template = Handlebars.compile(source),
         render;

@@ -1,4 +1,4 @@
-define(['scripts/controllers/requestController', 'scripts/controllers/storeController', 'scripts/models/requestModel'], function (requestController, store, RequestModel) {
+define(['app/controllers/requestController', 'app/controllers/storeController', 'app/models/requestModel'], function (requestController, store, RequestModel) {
     //Do setup work here
     var request = function() {
         var requests = [],

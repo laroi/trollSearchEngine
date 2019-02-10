@@ -1,10 +1,16 @@
 var MongoClient = require('mongodb').MongoClient;
 var WritableBulk = require('elasticsearch-streams').WritableBulk;
 var TransformToBulk = require('elasticsearch-streams').TransformToBulk;
-var url = 'mongodb://localhost:27017/trolls';
+const mongoHost = process.env.MONGO_HOST || '127.0.0.1';
+const mongoPort = process.env.MONGO_PORT || '27017';
+const esHost = process.env.ES_HOST || '127.0.0.1';
+const esPort = process.env.ES_PORT || '9200';
+const mongodbUrl = `mongodb://${mongoHost}:${mongoPort}/trolls` ;
+const esUrl = `${esHost}:${esPort}`;
+
 var elasticsearch = require('elasticsearch');
 var client = new elasticsearch.Client({
-  host: 'localhost:9200',
+  host: esUrl,
   log: 'info',
   apiVersion: '5.5'
 });
@@ -212,7 +218,8 @@ var putMapping = function () {
         });
     });
 }
-MongoClient.connect(url, function(err, db) {
+console.log(mongodbUrl)
+MongoClient.connect(mongodbUrl, function(err, db) {
     console.log("Connected successfully to server");
     deleteIndex("trolls")
     .then(()=> {

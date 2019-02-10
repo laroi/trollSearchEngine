@@ -1,4 +1,4 @@
-define(['scripts/controllers/requestController', 'scripts/controllers/storeController'], function (request, store) {
+define(['app/controllers/requestController', 'app/controllers/storeController'], function (request, store) {
     //Do setup work here
     var date = new Date();
     var post = function(inPost) {

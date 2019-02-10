@@ -3,8 +3,9 @@ define([
 '../../controllers/storeController',
 '../../controllers/urlController',
 '../../controllers/userController',
+'handlebars',
  'text!./register.html'
-], function (request, store, url, user, html) {
+], function (request, store, url, user, Handlebars, html) {
      var source   = $(html).html(),
         template = Handlebars.compile(source),
         imageData;

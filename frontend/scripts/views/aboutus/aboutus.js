@@ -1,8 +1,9 @@
 define([
 '../../controllers/requestController',
 '../../controllers/storeController',
- 'text!./aboutus.html' 
-], function (request, store, html) {
+ 'text!./aboutus.html',
+ 'handlebars'
+], function (request, store, html, Handlebars) {
      var source   = $(html).html(),
         template = Handlebars.compile(source),
         render;

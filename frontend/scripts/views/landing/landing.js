@@ -7,13 +7,9 @@ define([
 '../../collections/postCollection',
 '../../collections/userCollection',
 'text!./landing.html',
-'text!../components/head_context.html',
-'text!../components/head_lang.html',
-'text!../components/indElement.html',
-'text!../components/pagination.html',
-'../create/create',
-'../editpost/editpost'
-], function (request, store, url, user, highlight, postCollection, userCollection, html, contextHtml, langHtml, indElement,indPage, create, editPostView) {
+'handlebars',
+'masonry'
+], function (request, store, url, user, highlight, postCollection, userCollection, html, Handlebars, Masonry) {
      var source   = $(html).html(),
         template = Handlebars.compile(source),
         render;
@@ -83,97 +79,6 @@ define([
                 })
             })
         }
-        
-        var editPost = function(e) {
-            var id = $(e.target).parent().parent().attr('id');
-            postCollection.getPostById(id, function (err, post) {
-                editPostView.render(post, function () {
-                    postCollection.removePostById(id)
-                    .then((post)=> {
-                        $('#'+id).parent().parent().remove();
-                        console.log('[UPDATE AFTER EDIT]', post);
-                        if (post) {
-                            let html = getDOMelem(post)
-                            console.log(html);
-                            $('.page-cont').append(html.post);
-                            $('.pagination').empty().html(html.pagination)
-                            $('.page-cont').masonry('reloadItems');
-                            $('.page-cont').masonry('layout');
-                            $('.total_count').empty().html(post.total + ' memes found');
-                            postCollection.getPostUserDetails([post.post.user])
-                            .then((data)=> {
-                                if (data && Array.isArray(data)) {
-                                    postCollection.getPostById(post._id, (err, post)=> {
-                                        if (_post) {
-                                        $('#'+ _post._id).children('.bottom-panel').children('.button-panel').children('.row1').children('.user').children('.user-img').attr('src', _post.userimg.thumb)
-                                        }
-                                    })
-                                } else if (data) {
-                                    $('#'+ post.post._id).children('.bottom-panel').children('.button-panel').children('.row1').children('.user').children('.user-img').attr('src', data.picture.thumb)
-                                }
-                            })
-                            //msnry.addItems( postHtml)
-                        }
-                    })
-                    .catch((err)=> {
-                        console.error('[UPDATE AFTER EDIT] ', err);
-                    });
-                });
-            });
-        }
-		let deletePost = (id) => {
-            return function () {
-				var url = '/api/post/'+id;
-				request.del(url, function (err, data) {
-					if (!err) {
-					   toastr.success('Post removed!', 'FTM Says')
-					   postCollection.removePostById(id)
-                        .then((post)=> {
-                            $('#'+id).parent().parent().remove();
-                        console.log('[UPDATE AFTER EDIT]', post);
-                        if (post) {
-                            let html = getDOMelem(post)
-                            console.log(html);
-                            $('.page-cont').append(html.post);
-                            $('.pagination').empty().html(html.pagination)
-                            $('.page-cont').masonry('reloadItems');
-                            $('.page-cont').masonry('layout');
-                            $('.total_count').empty().html(post.total + ' memes found');
-
-                            //msnry.addItems( postHtml)
-                        }
-                         /*$('.page-cont').masonry({
-                          itemSelector: '.elem-cont',
-                          isAnimated: true
-                        });*/
-                        })
-                        .catch((err)=> {
-                            console.error('[UPDATE AFTER EDIT] ', err);
-                        });
-					} else {
-						console.error('error in deleting request '+ id,  err);
-						toastr.error('Deleteing request failed.', 'FTM Says');
-					}
-				})
-            }
-        }
-        let confirmDelete = (e) => {
-            var id = $(e.target).parent().parent().attr('id');
-            $.confirm({
-                title: 'Confirm Delete!',
-                content: 'Simple confirm!',
-                buttons: {
-                    cancel: function () {
-                    },
-                    delete: {
-                        text: 'Delete',
-                        btnClass: 'btn-red',
-                        keys: ['enter'],
-                        action: deletePost(id)
-                    }
-                }
-            });
-        };
 
         var search = function() {
             var search_term = $('#basic-search').val().trim();
@@ -472,9 +377,11 @@ define([
         var loadContext = function () {
             userCollection.getContext((contErr, contData) => {
                 if (!contErr) {
-                    var contTemp = Handlebars.compile($(contextHtml).html()),
-                    html = contTemp({contexts: contData});
-                    $('.context-list').empty().append(html);
+                    require(['text!app/views/components/head_context.html'], (contextHtml) => {
+                        var contTemp = Handlebars.compile($(contextHtml).html()),
+                        html = contTemp({contexts: contData});
+                        $('.context-list').empty().append(html);
+                    })
                 } else {
                     console.log("could not load context");
                 }
@@ -483,9 +390,11 @@ define([
         var loadLangs= () => {
             userCollection.getLang((langErr, langData)=> {
                 if (!langErr) {
-                    var contTemp = Handlebars.compile($(langHtml).html()),
-                    html = contTemp({langs: langData});
-                    $('.language-list').empty().append(html);
+                    require(['text!app/views/components/head_lang.html'], (langHtml) => {
+                        var contTemp = Handlebars.compile($(langHtml).html()),
+                        html = contTemp({langs: langData});
+                        $('.language-list').empty().append(html);
+                    })
                 } else {
                     console.log("could not load context");
                 }
@@ -562,10 +471,12 @@ define([
                             $('#post-contents').empty().append(html);
                             $('#post-contents').show()
                             //$('.page-cont').imagesLoaded(function () {
-                                $('.page-cont').masonry({
+                            new Masonry( '.page-cont', { itemSelector: '.elem-cont',
+                                  isAnimated: true});
+                                /*$('.page-cont').masonry({
                                   itemSelector: '.elem-cont',
                                   isAnimated: true
-                                })
+                                })*/
                             //})
                             postCollection.getPostUserDetails()
                             .then((data)=> {
@@ -593,9 +504,103 @@ define([
                             updateUi();
                         }
                         highlight.highlight();
-                        $('.edit').off('click').on('click', editPost);
+                        require(['app/views/editpost/editpost'], (editPostView)=> {
+                            var editPost = function(e) {
+                                var id = $(e.target).parent().parent().attr('id');
+                                postCollection.getPostById(id, function (err, post) {
+                                    editPostView.render(post, function () {
+                                        postCollection.removePostById(id)
+                                        .then((post)=> {
+                                            $('#'+id).parent().parent().remove();
+                                            console.log('[UPDATE AFTER EDIT]', post);
+                                            if (post) {
+                                                let html = getDOMelem(post)
+                                                console.log(html);
+                                                $('.page-cont').append(html.post);
+                                                $('.pagination').empty().html(html.pagination)
+                                                $('.page-cont').masonry('reloadItems');
+                                                $('.page-cont').masonry('layout');
+                                                $('.total_count').empty().html(post.total + ' memes found');
+                                                postCollection.getPostUserDetails([post.post.user])
+                                                .then((data)=> {
+                                                    if (data && Array.isArray(data)) {
+                                                        postCollection.getPostById(post._id, (err, post)=> {
+                                                            if (_post) {
+                                                            $('#'+ _post._id).children('.bottom-panel').children('.button-panel').children('.row1').children('.user').children('.user-img').attr('src', _post.userimg.thumb)
+                                                            }
+                                                        })
+                                                    } else if (data) {
+                                                        $('#'+ post.post._id).children('.bottom-panel').children('.button-panel').children('.row1').children('.user').children('.user-img').attr('src', data.picture.thumb)
+                                                    }
+                                                })
+                                                //msnry.addItems( postHtml)
+                                            }
+                                        })
+                                        .catch((err)=> {
+                                            console.error('[UPDATE AFTER EDIT] ', err);
+                                        });
+                                    });
+                                });
+                            }
+                            $('.edit').off('click').on('click', editPost);
+                        })
+                        require(['text!app/views/components/indElement.html', 'text!app/views/components/pagination.html'], (indElement, indPage)=> {
+                            let deletePost = (id) => {
+                                return function () {
+				                    var url = '/api/post/'+id;
+				                    request.del(url, function (err, data) {
+					                    if (!err) {
+					                       toastr.success('Post removed!', 'FTM Says')
+					                       postCollection.removePostById(id)
+                                            .then((post)=> {
+                                                $('#'+id).parent().parent().remove();
+                                            console.log('[UPDATE AFTER EDIT]', post);
+                                            if (post) {
+                                                let html = getDOMelem(post)
+                                                console.log(html);
+                                                $('.page-cont').append(html.post);
+                                                $('.pagination').empty().html(html.pagination)
+                                                $('.page-cont').masonry('reloadItems');
+                                                $('.page-cont').masonry('layout');
+                                                $('.total_count').empty().html(post.total + ' memes found');
+
+                                                //msnry.addItems( postHtml)
+                                            }
+                                             /*$('.page-cont').masonry({
+                                              itemSelector: '.elem-cont',
+                                              isAnimated: true
+                                            });*/
+                                            })
+                                            .catch((err)=> {
+                                                console.error('[UPDATE AFTER EDIT] ', err);
+                                            });
+					                    } else {
+						                    console.error('error in deleting request '+ id,  err);
+						                    toastr.error('Deleteing request failed.', 'FTM Says');
+					                    }
+				                    })
+                                }
+                            };
+                            let confirmDelete = (e) => {
+                                var id = $(e.target).parent().parent().attr('id');
+                                $.confirm({
+                                    title: 'Confirm Delete!',
+                                    content: 'Simple confirm!',
+                                    buttons: {
+                                        cancel: function () {
+                                        },
+                                        delete: {
+                                            text: 'Delete',
+                                            btnClass: 'btn-red',
+                                            keys: ['enter'],
+                                            action: deletePost(id)
+                                        }
+                                    }
+                                });
+                            };
+                            $('.delete').off('click').on('click', confirmDelete);
+                        })
                         $('.pan-btn.download').on('click', downloadImage);
-                        $('.delete').off('click').on('click', confirmDelete);
                         $('.btn-basic-search').off().on('click', search)
                         $('.page-nav').off('click').on('click', paginate)
                         $('.btn-apply-filter').off('click').on('click', applyFilter);

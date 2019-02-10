@@ -4,8 +4,9 @@ define([
 '../../controllers/urlController',
 '../../controllers/userController',
 '../../collections/userCollection',
- 'text!./request.html'
-], function (request, store, url, user, userCollection, html) {
+ 'text!./request.html',
+ 'handlebars'
+], function (request, store, url, user, userCollection, html, Handlebars) {
      var source   = $(html).html(),
         template = Handlebars.compile(source),
         render,

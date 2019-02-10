@@ -5,8 +5,9 @@ define([
 '../../controllers/userController',
 '../../collections/requestCollection',
 '../../collections/userCollection',
- 'text!./editrequest.html'
-], function (request, store, url, user, requestCollection, userCollection, html) {
+ 'text!./editrequest.html',
+ 'handlebars'
+], function (request, store, url, user, requestCollection, userCollection, html, Handlebars) {
      var source   = $(html).html(),
         template = Handlebars.compile(source),
         render,

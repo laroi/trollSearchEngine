@@ -1,9 +1,10 @@
 define([
  'text!./respond.html',
- 'scripts/controllers/requestController',
- 'scripts/controllers/storeController',
- 'scripts/collections/userCollection'
-], function (html, request, store, userCollection) {
+ 'app/controllers/requestController',
+ 'app/controllers/storeController',
+ 'app/collections/userCollection',
+ 'handlebars'
+], function (html, request, store, userCollection, Handlebars) {
      var source   = $(html).html(),
         template = Handlebars.compile(source),
         render;

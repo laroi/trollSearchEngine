@@ -1,4 +1,4 @@
-define(['scripts/controllers/requestController', 'scripts/controllers/storeController', 'scripts/models/postModel'], function (request, store, PostModel) {
+define(['app/controllers/requestController', 'app/controllers/storeController', 'app/models/postModel'], function (request, store, PostModel) {
     //Do setup work here
     var post = function() {
         var posts = [],
@@ -86,6 +86,10 @@ define(['scripts/controllers/requestController', 'scripts/controllers/storeContr
                 if (Array.isArray(users) && users.length > 0) {
                     request._post('/api/users', {users: users})
                     .then((data)=> {
+                        if (!data) {
+                            resolve([]);
+                            return;
+                        }
                         data.map((datum)=> {
                             for (let i = 0; i < posts.length; i+= 1) {
                                 if (posts[i].user === datum._id) {

@@ -6,8 +6,9 @@ define([
 '../../collections/requestCollection',
 '../editrequest/editrequest',
 '../respond/respond',
- 'text!./requestdetail.html'
-], function (request, store, url, user, requestCollection, editRequestView, respondView, html) {
+ 'text!./requestdetail.html',
+ 'handlebars'
+], function (request, store, url, user, requestCollection, editRequestView, respondView, html, Handlebars) {
      var source   = $(html).html(),
         template = Handlebars.compile(source),
         replyId = undefined,

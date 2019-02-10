@@ -7,8 +7,9 @@ define([
 '../editrequest/editrequest',
 '../requestdetail/requestdetail',
 '../respond/respond',
- 'text!./requestlist.html'
-], function (request, store, url, user, requestCollection, editRequestView, requestDetailView, respondView, html) {
+ 'text!./requestlist.html',
+ 'handlebars'
+], function (request, store, url, user, requestCollection, editRequestView, requestDetailView, respondView, html, Handlebars) {
      var source   = $(html).html(),
         template = Handlebars.compile(source),
         render,

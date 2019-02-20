@@ -4,6 +4,7 @@
   "description": "",
   "main": "export.js",
   "dependencies": {
+    "fs-extra": "^7.0.1",
     "mongodb": "^3.1.13",
     "ncp": "^2.0.0",
     "tar": "^4.4.8"

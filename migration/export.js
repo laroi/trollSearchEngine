@@ -4,18 +4,19 @@ const path = require('path');
 const DB_HOST = process.env.DB_HOST || 'localhost';
 const DB_PORT = process.env.DB_PORT || 27017;
 const DB = process.env.DB || 'trolls'
-const RES_LOC = '';
+const RES_LOC = '../backend/assets';
 const FILE_LOC = path.join(__dirname, 'upload');
 const FILE_NAME = 'db.json'
 const mongodbUrl = `mongodb://${DB_HOST}:${DB_PORT}/${DB}`;
-const file = fs.createWriteStream(path.join(FILE_LOC, FILE_NAME));
 const Transform = require('stream').Transform;
 const tar = require('tar');
+const xtra = require('fs-extra')
 const ncp = require('ncp').ncp;
 ncp.limit = 16;
 const formatter = new Transform({
     writableObjectMode: true,
     transform(row, encoding, callback) {
+        console.log(JSON.stringify(row).toString())
         return callback(null, JSON.stringify(row).toString());
     }
 });
@@ -23,7 +24,7 @@ const createFolder = (loc) => {
     if (!fs.existsSync(loc)){
             fs.mkdirSync(loc);
     } else {
-        fs.rmdirSync(loc);
+        xtra.removeSync(loc);
         fs.mkdirSync(loc);
     }
 }
@@ -36,7 +37,8 @@ const tarFolder = (loc) => {
 	  [loc]
 	)
 }
-createFolder()
+createFolder(FILE_LOC)
+const file = fs.createWriteStream(path.join(FILE_LOC, FILE_NAME));
 MongoClient.connect(mongodbUrl)
     .then((client)=> {
         var db = client.db(DB);
@@ -44,7 +46,7 @@ MongoClient.connect(mongodbUrl)
         let stream = postCollection.find().stream();
         stream.on('end', function() {
             console.log('finished writing db file');
-            db.close();
+            client.close();
             ncp(RES_LOC, FILE_LOC, function (err) {
                  if (err) {
                     return console.error(err);

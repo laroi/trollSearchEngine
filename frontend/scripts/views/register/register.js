@@ -4,7 +4,8 @@ define([
 '../../controllers/urlController',
 '../../controllers/userController',
 'handlebars',
- 'text!./register.html'
+ 'text!./register.html',
+ 'croppie.min'
 ], function (request, store, url, user, Handlebars, html) {
      var source   = $(html).html(),
         template = Handlebars.compile(source),
@@ -47,6 +48,29 @@ define([
                     $('#register-modal').modal({show: true}); 
                     //$('#login-modal').on('hidden.bs.modal', gotoHome);
                     $('#btn-register').on('click', register);
+                    var basic = $('.crop').croppie({
+                        viewport: {
+                            width: 150,
+                            height: 200
+                        }
+                    });
+                    $('#crop-cancel').on('click', () => {
+                        $('.crop-cont').hide();
+                        imageData = null;
+                        $("#prof-img").val("");
+                        $("#prof-img").prev().val("");
+                    })
+                    $('#login-name').on('input', (e) => {
+                        $('#register-modal-title').html('<b>' + $(e.target).val() + "</b>");
+                    })
+                    $('#crop-okay').on('click', () => {
+                        basic.croppie('result', 'base64').then(function(data) {
+                           imageData = data;
+                           $('#reg-modal-thumb').children('img').attr('src', imageData);
+                           $('.crop-cont').hide();
+                           $('#reg-modal-thumb').show();
+                        });
+                    })
                     $("#prof-img").change(function(){
                         var input = $(this)[0];
                         if (input.files && input.files[0]) {
@@ -54,7 +78,13 @@ define([
                             reader.onload = function (e) {
                                 imageData = e.target.result;
                                 //$('.img-preview').attr('src', imageData);
-                                imageData = {type: input.files[0].type.split('/')[1], image:imageData.replace(/^data:image\/(png|jpg|jpeg);base64,/, "")};
+                                
+                                basic.croppie('bind', {
+                                    url: imageData,
+                                });
+                                //on button click
+                                $('.crop-cont').show();
+                                //imageData = {type: input.files[0].type.split('/')[1], image:imageData.replace(/^data:image\/(png|jpg|jpeg);base64,/, "")};
                             }
                             reader.readAsDataURL(input.files[0]);
                         }

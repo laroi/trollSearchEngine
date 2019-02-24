@@ -1,9 +1,17 @@
 <script id="entry-template" type="text/x-handlebars-template">
+<div class="crop-cont">
+    <div class="crop"></div>
+    <div class="crop-btn">
+        <button type="button" id="crop-cancel" class="btn btn-secondary">Cancel</button>
+        <button type="button" id="crop-okay" class="btn btn-primary">Okay</button>
+    </div>
+</div>
 <div class="modal" id="register-modal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <span class="modal-title"><b>Register</b></span>
+                <span id="reg-modal-thumb"><img height="30" width="30" style="border-radius:50px"></span>
+                <span id="register-modal-title" class="modal-title"><b>Register</b></span>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -29,14 +37,14 @@
                 </div>
                 
                 <div class="row">
-                    <div class="form-group is-empty col-md-6 is-fileinput" style="overflow:hidden">
+                    <div class="form-group is-empty col-md-12 is-fileinput" style="overflow:hidden">
                         <label for="prof-img" class="col-md-4 control-label" style="padding-left:0">Profile Image</label>
                         <div class="col-md-8" style="padding-left:0">
                             <input type="text" readonly="" class="form-control" placeholder="Browse...">
                             <input type="file" id="prof-img" multiple="">
                         </div>
                     </div>
-                    <div class=" form-group dropdown is-empty col-md-2">
+                    <div class=" form-group dropdown is-empty col-md-6">
                        <span data-target="#" class="user-name dropdown-toggle" data-toggle="dropdown">My Gender Is</span>
                        <span data-toggle="dropdown"><b class="caret"></b></span>
                        <div class="dropdown-menu">

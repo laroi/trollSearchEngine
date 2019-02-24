@@ -16,8 +16,9 @@ ncp.limit = 16;
 const formatter = new Transform({
     writableObjectMode: true,
     transform(row, encoding, callback) {
-        console.log(JSON.stringify(row).toString())
-        return callback(null, JSON.stringify(row).toString());
+        let _row = JSON.stringify(row).toString()
+        console.log(_row)
+        return callback(null, _row);
     }
 });
 const createFolder = (loc) => {
@@ -29,12 +30,14 @@ const createFolder = (loc) => {
     }
 }
 const tarFolder = (loc) => {
+console.log(__dirname);
 	return tar.c(
 	  {
 		gzip: true,
-		file: 'my-tarball.tgz'
+		file: 'my-tarball.tgz',
+		cwd:  __dirname
 	  },
-	  [loc]
+	  ['upload']
 	)
 }
 createFolder(FILE_LOC)

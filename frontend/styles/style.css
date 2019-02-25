@@ -507,3 +507,6 @@ font-size:20px;
 .crop {
     height: 200px!important;   
 }
+.reg-drop-label {
+    margin-top:10px!important;
+}

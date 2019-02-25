@@ -1,4 +1,5 @@
 <script id="entry-template" type="text/x-handlebars-template">
+<div class="modal" id="register-modal" tabindex="-1" role="dialog">
 <div class="crop-cont">
     <div class="crop"></div>
     <div class="crop-btn">
@@ -6,7 +7,6 @@
         <button type="button" id="crop-okay" class="btn btn-primary">Okay</button>
     </div>
 </div>
-<div class="modal" id="register-modal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -45,20 +45,22 @@
                         </div>
                     </div>
                     <div class=" form-group dropdown is-empty col-md-6">
-                       <span data-target="#" class="user-name dropdown-toggle" data-toggle="dropdown">My Gender Is</span>
+                        <label class="col-md-4 control-label reg-drop-label" style="padding-left:0">My Gender is</label>
+                       <span data-target="#" class="user-name dropdown-toggle" data-toggle="dropdown">Select</span>
                        <span data-toggle="dropdown"><b class="caret"></b></span>
                        <div class="dropdown-menu">
                             <ul class="">
-                                <li>None of yo business</li>
+                                <li class="reg-drop-val">None of yo business</li>
                             </ul>
                        </div>
                    </div>
                    <div class=" form-group dropdown is-empty col-md-6">
-                       <span data-target="#" class="user-name dropdown-toggle" data-toggle="dropdown">My Age Is</span>
+                        <label class="col-md-4 control-label reg-drop-label" style="padding-left:0">My Age is</label>
+                       <span data-target="#" class="user-name dropdown-toggle" data-toggle="dropdown">Select</span>
                        <span data-toggle="dropdown"><b class="caret"></b></span>
                        <div class="dropdown-menu">
                             <ul class="">
-                                <li>Above 18 </li>
+                                <li class="reg-drop-val">Above 18 </li>
                             </ul>
                        </div>
                    </div>   

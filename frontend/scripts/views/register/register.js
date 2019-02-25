@@ -54,6 +54,10 @@ define([
                             height: 200
                         }
                     });
+                    $('.reg-drop-val').on('click', (e) => {
+                        let el = $(e.target);
+                        el.parent().parent().prev().prev().prev().html(el.html());
+                    })
                     $('#crop-cancel').on('click', () => {
                         $('.crop-cont').hide();
                         imageData = null;

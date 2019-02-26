@@ -5,8 +5,9 @@ define([
 '../../controllers/userController',
 'handlebars',
  'text!./register.html',
+  'toastr',
  'croppie.min'
-], function (request, store, url, user, Handlebars, html) {
+], function (request, store, url, user, Handlebars, html, toastr) {
      var source   = $(html).html(),
         template = Handlebars.compile(source),
         imageData;
@@ -18,17 +19,24 @@ define([
             let phone = $('#login-phone').val().trim();
             let validate = () => {
                 if (!email) {
-                    return false;
+                    return {status: false, field: 'email'};
                 }
                 if (!password) {
-                    return false;
+                    return {status: false, field: 'password'};
                 }
                 if (!name) {
-                    return false;
+                    return { status: false, field: 'name'};
                 }
-                return true;
+                if ($('.reg-age').html().trim() !== 'Above 18') {
+                    return {status : false, field: 'age'};
+                }
+                if ($('.reg-gender').html().trim() !== 'None of yo business') {
+                    return {status: false, field: 'gender'};
+                }
+                return {status: true};
             }
-            if (validate()) {
+            let val = validate()
+            if (val.status) {
                 let postData = {email: email, password: password, name: name, phone: phone, picture: imageData}
                 request.post('/api/user', postData, function (err, data) {
                     if (!err) {
@@ -38,6 +46,8 @@ define([
                         toastr.error('Could not accept registration request', 'FTM Says')   
                     }
                 })
+            } else {
+                toastr.error('It looks like there is some problem with ' + (val.field || 'one of the input'), 'FTM Says')   
             }
         }
         var registerView = function () {
@@ -56,7 +66,7 @@ define([
                     });
                     $('.reg-drop-val').on('click', (e) => {
                         let el = $(e.target);
-                        el.parent().parent().prev().prev().prev().html(el.html());
+                        el.parent().parent().prev().prev().html(el.html());
                     })
                     $('#crop-cancel').on('click', () => {
                         $('.crop-cont').hide();

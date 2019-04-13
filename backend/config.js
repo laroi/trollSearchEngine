@@ -4,5 +4,9 @@ module.exports = {
     mailPort: process.env.MAIL_PORT,
     mailUser: process.env.MAIL_USER,
     mailPass: process.env.MAIL_PASS,
-    appPort: process.env.APP_PORT
+    appPort: process.env.APP_PORT,
+    mongoHost:process.env.MONGO_HOST,
+    mongoPort:process.env.MONGO_PORT,
+    esHost:process.env.ES_HOST,
+    esPort:process.env.ES_PORT
 }

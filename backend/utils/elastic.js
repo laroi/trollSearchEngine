@@ -1,6 +1,7 @@
 var elasticsearch = require('elasticsearch');
+const config = require('../config.js');
 var client = new elasticsearch.Client({
-  host: 'localhost:9200',
+  host: `${config.esHost}:${config.esPort}`,
   log: 'info',
   apiVersion: '5.5'
 });

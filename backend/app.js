@@ -38,7 +38,7 @@ var fileFilter = function (req, file, cb) {
 }
 //var upload = multer({ storage: storage, fileFilter: fileFilter })
 // connect to Mongo when the app initializes
-mongoose.connect('mongodb://localhost:27017/trolls');
+mongoose.connect(`mongodb://${config.mongoHost}:${config.mongoPort}/trolls`);
 
   app.use(bodyParser({limit: '10mb'}));
   app.use(bodyParser.json())

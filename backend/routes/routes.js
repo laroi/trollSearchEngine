@@ -133,11 +133,13 @@ var routes = function () {
                                 mailer(req.body.email, verification, function(mailerr) {
                                     if (!mailerr) {
                                         console.log("Mail send successfully");
+                                        res.status(200).send(JSON.stringify({user: userData}));
                                     } else {
-                                        console.error("Mail sending error");
-                                    }
+                                        console.error("Mail sending error", mailerr);
+                                        res.status(500).send({err: 'Mail Err'});
+                                   }
                                 });
-                                res.status(200).send(JSON.stringify({user: userData}));
+                                
                                 /*createAccesstoken(undefined, userData.id, userData.email, userData.type, undefined, function (token) {
                                     delete userData.password;
                                     res.status(200).send(JSON.stringify({token: token, user: userData}));

@@ -12,6 +12,7 @@ var contexts = require('./models/contexts');
 var langs = require('./models/langs.js');
 var server = http.createServer(app);
 var multer  = require('multer');
+const config = require('./config.js');
 var logger = require('./utils/logger');
 const path = require('path');
 
@@ -206,5 +207,5 @@ app.post('/post', isAuthenticated(false), postRoute.post)
 app.get('/image/:id', postRoute.downloadImage);
 app.get('/suggestions', postRoute.autoSuggestion);
 
-app.listen(3000);
-console.log("Express server listening on port 3000");
+app.listen(config.appPort);
+console.log(`Express server listening on port ${config.appPort}`);

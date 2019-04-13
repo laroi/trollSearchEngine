@@ -1,11 +1,12 @@
+const config = require('../config.js');
 var nodemailer = require('nodemailer'),
     smtpTransport = require('nodemailer-smtp-transport'),
     transporter = nodemailer.createTransport(smtpTransport({
-            host: 'mobinius.icewarpcloud.in',
-            port: 587,
+            host: config.mailHost,
+            port: config.mailPort,
             auth: {
-                user: 'akbar.ali@mobinius.com',
-                pass: ''
+                user: config.mailUser,
+                pass: config.mailPass
             },
             secure:false,
             tls: {rejectUnauthorized: false},
@@ -21,7 +22,7 @@ var nodemailer = require('nodemailer'),
     });*/
 var sendMail = function(email, code, callback) {
     transporter.sendMail({
-            from: 'akbar.ali@mobinius.com',
+            from: 'admin@mail.thememefinder.com',
             to: email,
             subject: 'Verification code for Memefinder',
             text: 'Here is your verification code for trollsearch engine app : ' + code

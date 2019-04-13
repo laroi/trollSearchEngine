@@ -14,7 +14,7 @@ COPY *.json ./
 COPY models ./models
 COPY routes ./routes
 COPY utils ./utils
-
+COPY *.env.dev ./
 RUN npm install
 
 EXPOSE 3000

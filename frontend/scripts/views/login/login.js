@@ -4,16 +4,17 @@ define([
 '../../controllers/urlController',
 '../../controllers/userController',
  'text!./login.html',
- 'handlebars'
-], function (request, store, url, user, html, Handlebars) {
+ 'handlebars',
+ 'toastr'
+], function (request, store, url, user, html, Handlebars, toastr) {
      var source   = $(html).html(),
         template = Handlebars.compile(source);
         let moveFocus = (e) => {
             if (e.keyCode == 13) {
-                $('#login-password').focus()
+                $('#login-password').focus();
                 return false; // prevent the button click from happening
             }
-        }
+        };
         var loginView = function () {
             var render;
             render = function () {
@@ -21,7 +22,6 @@ define([
                     $('#authModel').empty().append(html);
                     $('#login-modal').modal({show: true}); 
                     //$('#login-modal').on('hidden.bs.modal', gotoHome);
-                    $('#btn-login').on('click', login)
                     require([ 'app/views/register/register'], (register) => {
                         let showReg = () => {
                             $('#login-modal').modal( 'hide' ).data( 'bs.modal', null );
@@ -36,7 +36,7 @@ define([
                                 login();
                                 return false; // prevent the button click from happening
                             }
-                        }
+                        };
                         var showRequest = (e) => {
                             requestView.render();
                         };
@@ -55,15 +55,16 @@ define([
                                     }
                                 })
                             } else {
-                                toastr.error('Please fill username and password', 'FTM Says')   
+                                toastr.error('Please fill username and password', 'FTM Says');
                             }
                         };
+                        $('#btn-login').on('click', login);
                         $('#login-password').on("keypress", keyPressLogin);
                     });
             }
             return {
                 render: render
             }
-        }
+        };
         return loginView();
 })

@@ -207,15 +207,14 @@ var routes = function () {
         }
     };
     verifyUser = function (req, res) {
-        var code = req.query.vcode,
+        var code = req.query.code,
             email = req.query.email;
-        User.findOne({where: {email: email, verification: code}}, function (err, data) {
+        User.findOneAndUpdate({email: email, verification: code}, {'$set': {status:'active'}}, {new: true, fields: 'name'}, function (err, data) {
             if (!err) {
-                createAccesstoken(undefined, data._id, data.email, data.type, undefined, function (token) {
-                    delete userData.password;
-                    res.status(200).send(JSON.stringify({token: token.token, user: data}));
-                });
+                console.log('data', data);
+                 res.render("verify", {data: data.name});
             } else {
+                console.error(err);
                 res.status(404).send({err: 'User not found'});
             }
         });

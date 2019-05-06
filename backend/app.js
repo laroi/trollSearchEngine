@@ -15,7 +15,8 @@ var multer  = require('multer');
 const config = require('./config.js');
 var logger = require('./utils/logger');
 const path = require('path');
-
+app.set("view engine", "pug");
+app.set("views", path.join(__dirname, "views"));
 /*var storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, uploadPath)
@@ -172,6 +173,7 @@ app.use('/images/profile', express.static(__dirname + '/assets/profile'));
 app.post('/token', route.login);
 app.delete('/token/:token', route.deleteToken);
 app.post('/user', route.register);
+app.get('/user/verification', route.verifyUser);
 app.get('/user/count', route.getUserCount);
 app.put('/user', isAuthenticated(false), route.updatePassword);
 app.put('/user/:id', isAuthenticated(false), route.updateUser);

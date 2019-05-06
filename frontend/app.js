@@ -325,7 +325,7 @@ let init = () => {
 
                 window.onhashchange = function(){
                     let isForce = false;                
-                    if (window.location.hash.split("?")[0] !== prevHash && (!prevHash.startsWith('#post/'))) {
+                    if (prevHash && window.location.hash.split("?")[0] !== prevHash && (!prevHash.startsWith('#post/'))) {
                        console.log('Hash changed, will be forced reload');
                        isForce = true;
                     }

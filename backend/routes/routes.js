@@ -12,7 +12,7 @@ var facebook_app_access = "";
 var fs = require('fs');
 var uuid = require('uuid');
 var path = require('path');
-var gm = require('gm');
+var gm = require('gm').subClass({imageMagick: true});
 const profImageUploadPath = __dirname + '/../assets/profile/';
 var getIp = function (req) {
     return req.headers['x-forwarded-for'] || req.connection.remoteAddress || req.socket.remoteAddress || req.connection.socket.remoteAddress;
@@ -115,7 +115,7 @@ var routes = function () {
             password = req.body.password,
             phone = req.body.phone,
             name = req.body.name,
-            picture = req.body.picture ? req.body.picture.image : undefined;
+            picture = req.body.picture || undefined;
         if (req.body.email && req.body.password) {
             var verification = generateToken();
              bcrypt.genSalt(10, function(err, salt) {
@@ -130,7 +130,7 @@ var routes = function () {
                         console.log(JSON.stringify(user));
                         user.save(function(err, userData) {
                             if(!err) {
-                                mailer(req.body.email, verification, function(mailerr) {
+                                mailer(req.body.email, verification, name, function(mailerr) {
                                     if (!mailerr) {
                                         console.log("Mail send successfully");
                                         res.status(200).send(JSON.stringify({user: userData}));

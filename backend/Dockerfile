@@ -14,6 +14,7 @@ COPY *.json ./
 COPY models ./models
 COPY routes ./routes
 COPY utils ./utils
+COPY views ./views
 COPY *.env.dev ./
 RUN npm install
 

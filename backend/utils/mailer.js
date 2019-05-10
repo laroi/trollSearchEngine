@@ -20,12 +20,12 @@ var nodemailer = require('nodemailer'),
             console.log('Server is ready to take our messages');
        }
     });*/
-var sendMail = function(email, code, callback) {
+var sendMail = function(email, code, name, callback) {
     transporter.sendMail({
             from: 'admin@mail.thememefinder.com',
             to: email,
             subject: 'Verification code for Memefinder',
-            text: 'Hey <br> Click <a href = "https://thememefinder.com/api/user/verification?email=' + email + '&code=' + code + '"> here </a> to verify you account in Thememefinder: '
+            html: 'Hey <b>' + name + '</b>,<br> Click <a href = "https://thememefinder.com/api/user/verification?email=' + email + '&code=' + code + '"> here </a> to verify you account in Thememefinder '
         }, function(error, response) {
             console.log(JSON.stringify(error), JSON.stringify(response))
            if (error) {

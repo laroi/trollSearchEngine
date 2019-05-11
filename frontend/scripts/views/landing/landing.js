@@ -88,6 +88,12 @@ define([
                 url.navigate('landing');
             }
         }
+        const keyPressSearch = (e)  => {
+            if (e.keyCode == 13) {
+                search();
+                return false; // prevent the button click from happening
+            }
+        }
         const isUserLoggedIn = () => {
             const acessKey = store.get('accessKey');
             let isLoggedIn = false;
@@ -613,6 +619,7 @@ define([
                         })
                         $('.pan-btn.download').on('click', downloadImage);
                         $('.btn-basic-search').off().on('click', search)
+                        $('#basic-search').on("keypress", keyPressSearch);
                         $('.page-nav').off('click').on('click', paginate)
                         $('.btn-apply-filter').off('click').on('click', applyFilter);
                         $('#advanced-search').off('click').on('click', advancedSearch);

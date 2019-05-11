@@ -43,8 +43,10 @@ define([
                         let login = () => {
                                 let email = $('#login-email').val().trim(),
                                 password = $('#login-password').val().trim();
+                                $('#btn-login').attr('disabled', true);
                             if (email && password) {            
                                 user.setToken(email, password, function(err, data) {
+                                    $('#btn-login').attr('disabled', false);
                                     if (err) {
                                         console.error('Some error happened ', err);
                                         toastr.error('Could not authenticate you', 'Troller Says')    
@@ -55,7 +57,7 @@ define([
                                     }
                                 })
                             } else {
-                                toastr.error('Please fill username and password', 'FTM Says');
+                                toastr.error('Please fill username and password', 'Memefinder Says');
                             }
                         };
                         $('#btn-login').on('click', login);

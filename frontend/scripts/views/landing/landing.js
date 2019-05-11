@@ -331,7 +331,7 @@ define([
                     }
                     store.set('stars', updatedStar);
                 } else {
-                    toastr.error('Could not perform the action, verify you are logged in.', 'FTM Says')
+                    toastr.error('Could not perform the action, verify you are logged in.', 'Memefinder Says')
                 }
             });
         }
@@ -349,7 +349,7 @@ define([
                     $(e.target).next().empty().html(data.likes);
                 } else {
                     console.error(err);
-                    toastr.error('Could not perform the action, verify you are logged in.', 'FTM Says')
+                    toastr.error('Could not perform the action, verify you are logged in.', 'Memefinder Says')
                 }
             };
             if ($(e.target).hasClass('faved')) {
@@ -550,7 +550,7 @@ define([
 				                    var url = '/api/post/'+id;
 				                    request.del(url, function (err, data) {
 					                    if (!err) {
-					                       toastr.success('Post removed!', 'FTM Says')
+					                       toastr.success('Post removed!', 'Memefinder Says')
 					                       postCollection.removePostById(id)
                                             .then((post)=> {
                                                 $('#'+id).parent().parent().remove();
@@ -576,7 +576,7 @@ define([
                                             });
 					                    } else {
 						                    console.error('error in deleting request '+ id,  err);
-						                    toastr.error('Deleteing request failed.', 'FTM Says');
+						                    toastr.error('Deleteing request failed.', 'Memefinder Says');
 					                    }
 				                    })
                                 }

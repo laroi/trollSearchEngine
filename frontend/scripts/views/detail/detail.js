@@ -23,7 +23,7 @@ define([
             var url = '/api/post/'+id;
             request.del(url, function (err, data) {
                 if (!err) {
-                   toastr.success('Post removed!', 'FTM Says')
+                   toastr.success('Post removed!', 'Memefinder Says')
                    $('#'+id).remove();
                 }
             })
@@ -100,7 +100,7 @@ var animOutClass = "bounceInRight";
                     processUpdate(element)
                 } else {
                     store.set('stars', prevStars);
-                    toastr.error('Could not perform the action, verify you are logged in.', 'FTM Says')
+                    toastr.error('Could not perform the action, verify you are logged in.', 'Memefinder Says')
                 }
             });
         }
@@ -123,7 +123,7 @@ var animOutClass = "bounceInRight";
                     processUpdate(element);
                 } else {
                     console.error(err);
-                    toastr.error('Could not perform the action, verify you are logged in.', 'FTM Says')
+                    toastr.error('Could not perform the action, verify you are logged in.', 'Memefinder Says')
                 }
             };
             if ($(e.target).hasClass('faved')) {
@@ -181,7 +181,7 @@ var animOutClass = "bounceInRight";
                         //$('#detail-cont').on('hidden.bs.modal', gotoHome);
                         $('.more').off('click').on('click', showBuffs)
                     } else {
-                        toastr.error('We seems to have a problem. Please check your internet connection.', 'FTM Says')
+                        toastr.error('We seems to have a problem. Please check your internet connection.', 'Memefinder Says')
                     }
                 });
             }

@@ -101,20 +101,23 @@ define([
 
                                 }
                                 if (validate()) {
+                                    $('#create-meme').attr('disabled', true);
+                                    $('#approve-meme').attr('disabled', true);
                                     save(function(err, data) {
                                         
                                         if (!err) {
                                             $('#create-new-form').modal( 'hide' ).data( 'bs.modal', null );
-                                            toastr.success('Your post is submitted for verification!', 'FTM Says');
+                                            toastr.success('Your post is submitted for verification!', 'Memefinder Says');
                                             callback();
                                         } else {
                                             console.error(err);
-                                            toastr.error('Uploading failed.', 'FTM Says')
+                                            toastr.error('Uploading failed.', 'Memefinder Says')
                                         }
-                                        
+                                        $('#create-meme').attr('disabled', false);
+                                        $('#approve-meme').attr('disabled', false);
                                     });
                                 } else {
-                                    console.error('Validation error');
+                                    console.error('Validation error');  
                                 }
                             }
                             // DOM manipulations

@@ -33,11 +33,11 @@ define([
                 .then(()=>{
                     $('#detail-cont').modal('hide');
                     $('#'+id).parent().parent().remove();
-                    toastr.success('Your request is deleted!', 'FTM Says')
+                    toastr.success('Your request is deleted!', 'Memefinder Says')
                 })
                 .catch((err)=> {
                     console.error('error in deleting request '+ id,  err);
-                    toastr.error('Deleteing request failed.', 'FTM Says')
+                    toastr.error('Deleteing request failed.', 'Memefinder Says')
                 })
             }
         }

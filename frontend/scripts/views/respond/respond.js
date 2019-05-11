@@ -100,10 +100,10 @@ define([
                                         
                                         if (!err) {
                                             $('#create-new-form').modal( 'hide' ).data( 'bs.modal', null );
-                                            toastr.success('Your post is submitted for verification!', 'FTM Says')
+                                            toastr.success('Your post is submitted for verification!', 'Memefinder Says')
                                         } else {
                                             console.error(err);
-                                            toastr.error('Uploading failed.', 'FTM Says')
+                                            toastr.error('Uploading failed.', 'Memefinder Says')
                                         }
                                         
                                     });

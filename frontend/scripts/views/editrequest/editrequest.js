@@ -98,18 +98,18 @@ define([
                     data._id = requestId;
                 requestCollection.updateRequestById(data)
                 .then(()=> {
-                    toastr.success('Request Edited!', 'FTM Says')
+                    toastr.success('Request Edited!', 'Memefinder Says')
                     gotoHome();
                 })
                 .catch((err)=> {
                     console.error('[UPDATE REQUEST] ', err);
-                    toastr.error('Could not edit request!', 'FTM Says');
+                    toastr.error('Could not edit request!', 'Memefinder Says');
                 })
                 } else {
-                    toastr.warning('There are no changes to save !', 'FTM says')
+                    toastr.warning('There are no changes to save !', 'Memefinder says')
                 }
             } else {
-                toastr.error('Please fill the required fields!', 'FTM Says')
+                toastr.error('Please fill the required fields!', 'Memefinder Says')
             }
         }
         var editRequestView = function () {

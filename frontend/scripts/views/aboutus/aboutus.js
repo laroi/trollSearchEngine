@@ -38,14 +38,14 @@ define([
             if (validateForm()) {
                 request.post('/api/feedback', {email:email, name: name, message: message}, function (err, data) {
                     if (!err) {
-                         toastr.success('Your feedback has been submitted!', 'FTM Says');
+                         toastr.success('Your feedback has been submitted!', 'Memefinder Says');
                          $('#about-us').modal('hide').data('bs.modal', null);
                     } else {
-                        toastr.success('Error in submitting feedback!', 'FTM Says');
+                        toastr.success('Error in submitting feedback!', 'Memefinder Says');
                     }
                 }) 
             } else {
-                toastr.error('Please recheck your submission!', 'FTM Says');
+                toastr.error('Please recheck your submission!', 'Memefinder Says');
             }
         }
         var requestView = function () {

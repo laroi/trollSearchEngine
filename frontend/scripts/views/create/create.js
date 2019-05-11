@@ -92,14 +92,20 @@ define([
                                                 postData.isApproved = true;
                                             }
                                         }
+                                        $('#create-meme').attr('disabled', true);
+                                        $('#approve-meme').attr('disabled', true);
                                         if (post && post._id) {
                                             url += '/'+ post._id;
                                             postData._id = post._id;
                                             request.putImage(url, postData, function(err, data) {
+                                                $('#create-meme').attr('disabled', false);
+                                                $('#approve-meme').attr('disabled', false);
                                                 callback(err, data)
                                             });                                
                                         } else {
                                             request.postImage(url, postData, function(err, data) {
+                                                $('#create-meme').attr('disabled', false);
+                                                $('#approve-meme').attr('disabled', false);
                                                 callback(err, data)
                                             });
                                         }
@@ -109,10 +115,10 @@ define([
                                         
                                         if (!err) {
                                             $('#create-new-form').modal( 'hide' ).data( 'bs.modal', null );
-                                            toastr.success('Your post is submitted for verification!', 'FTM Says')
+                                            toastr.success('Your post is submitted for verification!', 'Memefinder Says')
                                         } else {
                                             console.error(err);
-                                            toastr.error('Uploading failed.', 'FTM Says')
+                                            toastr.error('Uploading failed.', 'Memefinder Says')
                                         }
                                         
                                     });

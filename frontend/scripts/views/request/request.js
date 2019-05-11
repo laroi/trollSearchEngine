@@ -48,19 +48,20 @@ define([
                     });
             }
             if (validate()) {
+                $('#btn-request-meme').attr('disabled', true);
                 save(function(err, data) {
                     
                     if (!err) {
                         $('#request-meme').modal( 'hide' ).data( 'bs.modal', null );
-                        toastr.success('Your request has been submitted!', 'FTM Says')
+                        toastr.success('Your request has been submitted!', 'Memefinder Says')
                     } else {
                         console.error(err);
-                        toastr.error('Failed to submit the request.', 'FTM Says')
+                        toastr.error('Failed to submit the request.', 'Memefinder Says')
                     }
-                    
+                    $('#btn-request-meme').attr('disabled', false);
                 });
             } else {
-                toastr.error('Please fill the required fields!', 'FTM Says')
+                toastr.error('Please fill the required fields!', 'Memefinder Says')
             }
         }
         var requestView = function () {

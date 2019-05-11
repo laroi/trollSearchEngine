@@ -38,16 +38,18 @@ define([
             let val = validate()
             if (val.status) {
                 let postData = {email: email, password: password, name: name, phone: phone, picture: imageData}
+                $('#btn-register').attr('disabled', true)
                 request.post('/api/user', postData, function (err, data) {
                     if (!err) {
-                        toastr.success('Your registration is accepted. Please verify the email address to complete the process!', 'FTM Says')
+                        toastr.success('Your registration is accepted. Please verify the email address to complete the process!', 'Memefinder Says')
                         $('#register-modal').modal( 'hide' ).data( 'bs.modal', null );
                     } else {
-                        toastr.error('Could not accept registration request', 'FTM Says')   
+                        toastr.error('Could not accept registration request', 'Memefinder Says')   
                     }
+                    $('#btn-register').attr('disabled', false)
                 })
             } else {
-                toastr.error('It looks like there is some problem with ' + (val.field || 'one of the input'), 'FTM Says')   
+                toastr.error('It looks like there is some problem with ' + (val.field || 'one of the input'), 'Memefinder Says')   
             }
         }
         var registerView = function () {

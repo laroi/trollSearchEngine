@@ -24,11 +24,11 @@ define([
                 .then(()=>{
                     $('#detail-cont').modal('hide');
                     $('#'+id).parent().parent().remove();
-                    toastr.success('Your request is deleted!', 'FTM Says')
+                    toastr.success('Your request is deleted!', 'Memefinder Says')
                 })
                 .catch((err)=> {
                     console.error('error in deleting request '+ id,  err);
-                    toastr.error('Deleteing request failed.', 'FTM Says')
+                    toastr.error('Deleteing request failed.', 'Memefinder Says')
                 })
             }
         }
@@ -92,7 +92,7 @@ define([
                   
                         $('#detail-cont').on('hidden.bs.modal', gotoHome)
                     } else {
-                        toastr.error('We seems to have a problem. Please check your internet connection.', 'FTM Says')
+                        toastr.error('We seems to have a problem. Please check your internet connection.', 'Memefinder Says')
                     }
                 });                
             }

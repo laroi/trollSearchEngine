@@ -171,7 +171,8 @@ define([
             $('.isMine').prop('disabled', true);
             $('.isApproved').prop('disabled', true);
             $('#basic-search').prop('disabled', true);
-            $('.isRequest').prop('checked', true )
+            $('.isRequest').prop('checked', true );
+            $('.search-btn').addClass('disabled');
             
         };
         let invertColor = (hex, bw) => {

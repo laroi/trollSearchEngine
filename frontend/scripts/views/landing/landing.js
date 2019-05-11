@@ -88,16 +88,27 @@ define([
                 url.navigate('landing');
             }
         }
-
+        const isUserLoggedIn = () => {
+            const acessKey = store.get('accessKey');
+            let isLoggedIn = false;
+            if (acessKey) {
+                isLoggedIn = true;
+            }
+            return isLoggedIn;
+        };
+        //Disable Filters are in requestlist.js
         let enableFilters = () => {
             $('.language-list').prop('disabled', false);
             $('.context-list').prop('disabled', false);
-            $('.isFavorite').prop('disabled', false);
-            $('.isMine').prop('disabled', false);
+            if(isUserLoggedIn()) {
+                $('.isFavorite').prop('disabled', false);
+                $('.isMine').prop('disabled', false);
+            }
             if (store.get('userType') === 'admin') {
                 $('.isApproved').prop('disabled', false);
             }
             $('#basic-search').prop('disabled', false);
+            $('.search-btn').removeClass('disabled');
             //$('.isRequest').prop('checked', false)
         }
         var advancedSearch = function(e) {

@@ -5,7 +5,8 @@ define([
  'app/collections/userCollection',
  'handlebars',
  'tagit',
- 'toastr'
+ 'toastr',
+ 'typeahead'
 ], function (html, request, store, userCollection, Handlebars) {
      var source   = $(html).html(),
         template = Handlebars.compile(source),

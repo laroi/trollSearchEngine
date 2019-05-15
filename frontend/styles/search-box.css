@@ -5,6 +5,10 @@
 .btn-group {
     margin:0;
 }
+.ui-autocomplete
+{
+z-index: 1051;
+}
 #basic-search {
     width:100%;
 }

@@ -2,7 +2,8 @@ define([
 '../../controllers/requestController',
 '../../controllers/storeController',
  'text!./aboutus.html',
- 'handlebars'
+ 'handlebars',
+ 'toastr'
 ], function (request, store, html, Handlebars) {
      var source   = $(html).html(),
         template = Handlebars.compile(source),

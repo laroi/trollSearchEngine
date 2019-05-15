@@ -5,7 +5,8 @@ define([
 '../../controllers/userController',
 '../../collections/userCollection',
  'text!./request.html',
- 'handlebars'
+ 'handlebars',
+ 'toastr'
 ], function (request, store, url, user, userCollection, html, Handlebars) {
      var source   = $(html).html(),
         template = Handlebars.compile(source),

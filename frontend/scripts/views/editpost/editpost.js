@@ -4,7 +4,8 @@ define([
  'app/controllers/storeController',
  'app/collections/userCollection',
  'handlebars',
- 'tagit'
+ 'tagit',
+ 'toastr'
 ], function (html, request, store, userCollection, Handlebars) {
      var source   = $(html).html(),
         template = Handlebars.compile(source),

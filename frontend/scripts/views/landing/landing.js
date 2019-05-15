@@ -8,7 +8,8 @@ define([
 '../../collections/userCollection',
 'text!./landing.html',
 'handlebars',
-'masonry'
+'masonry',
+'toastr'
 ], function (request, store, url, user, highlight, postCollection, userCollection, html, Handlebars, Masonry) {
      var source   = $(html).html(),
         template = Handlebars.compile(source),

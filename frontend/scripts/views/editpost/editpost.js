@@ -3,7 +3,8 @@ define([
  'app/controllers/requestController',
  'app/controllers/storeController',
  'app/collections/userCollection',
- 'handlebars'
+ 'handlebars',
+ 'tagit'
 ], function (html, request, store, userCollection, Handlebars) {
      var source   = $(html).html(),
         template = Handlebars.compile(source),

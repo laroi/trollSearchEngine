@@ -10,7 +10,7 @@ define([
 'handlebars',
 'masonry',
 'toastr'
-], function (request, store, url, user, highlight, postCollection, userCollection, html, Handlebars, Masonry) {
+], function (request, store, url, user, highlight, postCollection, userCollection, html, Handlebars, Masonry, toastr) {
      var source   = $(html).html(),
         template = Handlebars.compile(source),
         render;
@@ -70,15 +70,23 @@ define([
                 console.log('total ', post.total, ' limit ', limit, ' current ', current)
             return {post: template({post: post.post}), pagination: pageTemplate({total: post.total, limit: limit, current: current})};
         }
+        let isDownloadBusy = false;
+        let isLikeBusy = false;
         let downloadImage = (e) => {
-            let id = $(e.target).attr('data-post');
-            request.getImage('/api/image/'+id, id)
-            .then(()=> {
-                postCollection.getPostById(id, function(err, post){
-                    post.downloads += 1;
-                    $(e.target).next().empty().html(post.downloads)
+            if (!isDownloadBusy) {
+                isDownloadBusy = true;
+                $(e.target).css('cursor', 'disabled');
+                let id = $(e.target).attr('data-post');
+                request.getImage('/api/image/'+id, id)
+                .then(()=> {
+                    postCollection.getPostById(id, function(err, post){
+                        post.downloads += 1;
+                        $(e.target).next().empty().html(post.downloads);
+                        $(e.target).css('cursor', 'pointer');
+                        isDownloadBusy = false;
+                    })
                 })
-            })
+            }
         }
 
         var search = function() {
@@ -354,30 +362,36 @@ define([
             });
         }
         var processLike = function (e) {
-            var postId = $(e.target).parent().parent().parent().parent().parent().attr('id');
-            var processCallback = function (err, data) {
-                if (!err) {
-                    if ($(e.target).hasClass('faved')) {
-                        $(e.target).removeClass('faved');
-                        $(e.target).addClass('favorite');
-                    } else if ($(e.target).hasClass('favorite')) {
-                        $(e.target).removeClass('favorite');
-                        $(e.target).addClass('faved');
+            if (!isLikeBusy) {
+                isLikeBusy = true;
+                $(e.target).css('cursor',  'disabled');
+                var postId = $(e.target).parent().parent().parent().parent().parent().attr('id');
+                var processCallback = function (err, data) {
+                    if (!err) {
+                        if ($(e.target).hasClass('faved')) {
+                            $(e.target).removeClass('faved');
+                            $(e.target).addClass('favorite');
+                        } else if ($(e.target).hasClass('favorite')) {
+                            $(e.target).removeClass('favorite');
+                            $(e.target).addClass('faved');
+                        }
+                        $(e.target).next().empty().html(data.likes);
+                    } else {
+                        console.error(err);
+                        toastr.error('Could not perform the action, verify you are logged in.', 'Memefinder Says')
                     }
-                    $(e.target).next().empty().html(data.likes);
-                } else {
-                    console.error(err);
-                    toastr.error('Could not perform the action, verify you are logged in.', 'Memefinder Says')
+                    $(e.target).css('cursor',  'pointer');
+                    isLikeBusy = false;
+                };
+                if ($(e.target).hasClass('faved')) {
+                    postCollection.getPostById(postId, (err, post) => {
+                        post.unlike(store.get('userId'), processCallback)
+                    })
+                } else if ($(e.target).hasClass('favorite')) {
+                    postCollection.getPostById(postId, (err, post) =>{
+                        post.like(store.get('userId'), (store.get('username') || store.get('email')), processCallback);
+                    })
                 }
-            };
-            if ($(e.target).hasClass('faved')) {
-                postCollection.getPostById(postId, (err, post) => {
-                    post.unlike(store.get('userId'), processCallback)
-                })
-            } else if ($(e.target).hasClass('favorite')) {
-                postCollection.getPostById(postId, (err, post) =>{
-                    post.like(store.get('userId'), (store.get('username') || store.get('email')), processCallback);
-                })
             }
         };
 

@@ -5,7 +5,7 @@ define([
  'app/collections/userCollection',
  'handlebars',
  'toastr'
-], function (html, request, store, userCollection, Handlebars) {
+], function (html, request, store, userCollection, Handlebars, toastr) {
      var source   = $(html).html(),
         template = Handlebars.compile(source),
         render;

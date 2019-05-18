@@ -9,7 +9,7 @@ define([
  'text!./requestdetail.html',
  'handlebars',
  'toastr'
-], function (request, store, url, user, requestCollection, editRequestView, respondView, html, Handlebars) {
+], function (request, store, url, user, requestCollection, editRequestView, respondView, html, Handlebars, toastr) {
      var source   = $(html).html(),
         template = Handlebars.compile(source),
         replyId = undefined,

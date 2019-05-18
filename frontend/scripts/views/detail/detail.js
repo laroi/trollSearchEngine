@@ -9,7 +9,7 @@ define([
   'text!../components/head_context.html',
   'handlebars',
   'toastr'
-], function (request, store, url, user, postCollection, create, html, contextHtml, Handlebars) {
+], function (request, store, url, user, postCollection, create, html, contextHtml, Handlebars, toastr) {
      var source   = $(html).html(),
         template = Handlebars.compile(source),
         render;

@@ -7,7 +7,7 @@ define([
  'tagit',
  'toastr',
  'typeahead'
-], function (html, request, store, userCollection, Handlebars) {
+], function (html, request, store, userCollection, Handlebars, tagit, toastr) {
      var source   = $(html).html(),
         template = Handlebars.compile(source),
         render;

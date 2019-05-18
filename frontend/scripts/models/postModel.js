@@ -5,16 +5,20 @@ define(['app/controllers/requestController', 'app/controllers/storeController'],
     var like = function(user, email, callback) {
         let that = this;
         request.put('/api/post/'+this._id+'/like',{user: user, email:email}, function(err, data) {
-            that.isLiked = true;
-            that.likes.push({userId: store.get('userId')});
+            if (!err) {
+                that.isLiked = true;
+                that.likes.push({userId: store.get('userId')});
+            }
             callback(err, data)
         });
      };
      var unlike = function (user, callback) {
         let that = this;
         request.put('/api/post/'+this._id+'/unlike',{user: user}, function(err, data) {
-            that.isLiked = false;
-            that.likes.splice(that.likes.findIndex(_=> _.userId === store.get('userId')), 1);
+            if (!err) {
+                that.isLiked = false;
+                that.likes.splice(that.likes.findIndex(_=> _.userId === store.get('userId')), 1);
+            }
             callback(err, data)
         })
      };

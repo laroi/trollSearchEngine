@@ -10,7 +10,7 @@ define([
  'text!./requestlist.html',
  'handlebars',
  'toastr'
-], function (request, store, url, user, requestCollection, editRequestView, requestDetailView, respondView, html, Handlebars) {
+], function (request, store, url, user, requestCollection, editRequestView, requestDetailView, respondView, html, Handlebars, toastr) {
      var source   = $(html).html(),
         template = Handlebars.compile(source),
         render,

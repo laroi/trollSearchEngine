@@ -8,7 +8,7 @@ define([
  'text!./editrequest.html',
  'handlebars',
  'toastr'
-], function (request, store, url, user, requestCollection, userCollection, html, Handlebars) {
+], function (request, store, url, user, requestCollection, userCollection, html, Handlebars, toastr) {
      var source   = $(html).html(),
         template = Handlebars.compile(source),
         render,

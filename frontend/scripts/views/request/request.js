@@ -7,7 +7,7 @@ define([
  'text!./request.html',
  'handlebars',
  'toastr'
-], function (request, store, url, user, userCollection, html, Handlebars) {
+], function (request, store, url, user, userCollection, html, Handlebars, toastr) {
      var source   = $(html).html(),
         template = Handlebars.compile(source),
         render,

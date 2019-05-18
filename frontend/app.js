@@ -78,7 +78,13 @@ let init = () => {
             String.prototype.capitalize = function() {
                 return this.charAt(0).toUpperCase() + this.slice(1);
             };
-            $('.search-drop').css('width', $('#adv-search').css('width'));
+            if (screen.width <768) {
+                $('.search-drop').css('width', (screen.width - 20));
+            } else {
+                $('.search-drop').css('width', $('#adv-search').css('width'));
+            }
+            const left = parseInt($('#basic-search').css('width'), 10) + 55
+            $('.search-drop').css('left', (left*-1));
             var getSuggestion = function (field) {
                 var url = '/api/suggestions?field='+field+'&query=';
                     return function( request, response ) {

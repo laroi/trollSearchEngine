@@ -4,10 +4,10 @@ define([
  'app/controllers/storeController',
  'app/collections/userCollection',
  'handlebars',
+  'toastr',
  'tagit',
- 'toastr',
  'typeahead'
-], function (html, request, store, userCollection, Handlebars) {
+], function (html, request, store, userCollection, Handlebars, toastr) {
      var source   = $(html).html(),
         template = Handlebars.compile(source),
         render;

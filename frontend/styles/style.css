@@ -399,13 +399,13 @@ font-size:20px;
   .user-icon {
     padding-left: 3px;
     border-radius:15px;
-    margin-top:5px;
+    margin-top:3px;
     -webkit-background-size: contain;
     -moz-background-size: contain;
     -o-background-size: contain;
     background-size: contain;
-    width:20px!important;
-    height:20px!important;
+    width:25px!important;
+    height:25px!important;
     float:left;
   }
   .register-model-body>.row>.dropdown>span {

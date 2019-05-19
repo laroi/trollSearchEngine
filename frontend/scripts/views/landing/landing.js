@@ -9,7 +9,8 @@ define([
 'text!./landing.html',
 'handlebars',
 'masonry',
-'toastr'
+'toastr',
+'confirm'
 ], function (request, store, url, user, highlight, postCollection, userCollection, html, Handlebars, Masonry, toastr) {
      var source   = $(html).html(),
         template = Handlebars.compile(source),

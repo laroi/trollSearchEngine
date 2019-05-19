@@ -466,6 +466,7 @@ var routes = function () {
                                         console.log('Updated post ' + id + ' in elasticsearch');
                                         res.status(200).send();
                                     } else {
+                                        console.error(err);
                                         res.status(500).send({err: 'Could not save post'});
                                     }
                                 });
@@ -920,11 +921,12 @@ var routes = function () {
                         if (!err) {
                             console.log('Updated post ' + id + ' in database');
                             elastic.updateRequestDoc(id, updateObj, function(err, data) {
-                                console.log('updated elastic')
+                                console.log('updating elastic')
                                 if(!err) {
                                     console.log('Updated post ' + id + ' in elasticsearch');
                                     res.status(200).send({status: "ok"});
                                 } else {
+                                    console.error(err);
                                     res.status(500).send({err: 'Could not save post'});
                                 }
                             });

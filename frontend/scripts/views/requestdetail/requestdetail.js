@@ -8,7 +8,8 @@ define([
 '../respond/respond',
  'text!./requestdetail.html',
  'handlebars',
- 'toastr'
+ 'toastr',
+ 'confirm'
 ], function (request, store, url, user, requestCollection, editRequestView, respondView, html, Handlebars, toastr) {
      var source   = $(html).html(),
         template = Handlebars.compile(source),

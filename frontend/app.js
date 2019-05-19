@@ -16,6 +16,7 @@ let init = () => {
             jQuery:'jquery.min',
             'jquery-ui': 'jquery-ui.min',
             'jquerydropdown':'jquery.dropdown',
+            'confirm': 'jquery-confirm.min',
             'bootstrap': 'bootstrap3_6.min',
             'signals':'signals',
             'crossroads':'crossroads.min',
@@ -84,6 +85,7 @@ let init = () => {
                 $('.search-drop').css('width', $('#adv-search').css('width'));
             }
             const left = parseInt($('#basic-search').css('width'), 10) + 55
+            
             $('.search-drop').css('left', (left*-1));
             var getSuggestion = function (field) {
                 var url = '/api/suggestions?field='+field+'&query=';
@@ -134,7 +136,7 @@ let init = () => {
                         });
                       }
             };
-            var afterSelect  = function (element) {
+            var basicAfterSelect  = function (element) {
                 return function(item) {
                     var item = item.text || item;
                     element.val(item.replace(/<b>/g, '').replace(/<\/b>/g, '')).change();
@@ -145,6 +147,12 @@ let init = () => {
                         landingView.search();
                         //$('.btn-basic-search').click();
                     }
+                }
+            }
+            const afterSelect  = function (element) {
+                return function(item) {
+                    var item = item.text || item;
+                    element.val(item.replace(/<b>/g, '').replace(/<\/b>/g, '')).change();
                 }
             }
             let prevHash;
@@ -181,7 +189,7 @@ let init = () => {
                         return text.text + ' ' + getBadge(text.field);
                     },
                     highlighter: Object,
-                    afterSelect: afterSelect($('#basic-search'))
+                    afterSelect: basicAfterSelect($('#basic-search'))
                 });
                 $('#se_title').typeahead({
                     source: getSuggestion('title'),

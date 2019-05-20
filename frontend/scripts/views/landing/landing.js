@@ -19,7 +19,7 @@ define([
         Handlebars.registerHelper('tolower', function(options) {
             return options.fn(this).toLowerCase();
         });
-        Handlebars.registerHelper('pageLink', function(total, limit, current) {
+        Handlebars.registerHelper('langinpageLink', function(total, limit, current) {
             var accum = '',
             n = Math.ceil(total/limit),
             limit = n < 5 ? n : 5,
@@ -36,8 +36,15 @@ define([
                 }
                 accum += ' page-link">' + i + '</span></li>';
             }
-            if (limit>5){
-                accum += '<li class="page-item"><span class="page-nav page-link">' + n + '</span></li>';
+            if (n>5){
+                accum += '<li class="page-item disabled"><span class="page-nav page-link">.....</span></li>';                
+                for (let j = n - 3; j <= n; j += 1 ) {
+                    accum += '<li class="page-item"><span class="page-nav ';
+                    if (j === current) {
+                        accum += "current";
+                    }
+                    accum += ' page-link">' + j + '</span></li>';
+                }
             }
             if (current !== n-1) {
                 classNameNext += ' disabled';

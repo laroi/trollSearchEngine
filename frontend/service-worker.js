@@ -173,8 +173,11 @@ if ( event.request.url.match( '^.*(\/api\/image\/).*$' ) ) {
             .then((data)=> {
                 return new Response(JSON.stringify(data));
             })
+            .then(()=> {
+                return respo.data
+            })
         }
-        console.log('first log in fail')
+       console.log('first log in fail')
        return db.get('trolls')
        .then((data)=> {
         console.log(data.data)

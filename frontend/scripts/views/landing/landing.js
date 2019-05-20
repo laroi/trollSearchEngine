@@ -19,7 +19,7 @@ define([
         Handlebars.registerHelper('tolower', function(options) {
             return options.fn(this).toLowerCase();
         });
-        Handlebars.registerHelper('langinpageLink', function(total, limit, current) {
+        Handlebars.registerHelper('landingpageLink', function(total, limit, current) {
             var accum = '',
             n = Math.ceil(total/limit),
             limit = n < 5 ? n : 5,

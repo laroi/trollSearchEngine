@@ -169,13 +169,13 @@ if ( event.request.url.match( '^.*(\/api\/image\/).*$' ) ) {
     .catch((err)=> {
         console.log(err);
         if (err.status === 404) {
-            return db.put({_id:'trolls', data:respo.data})
+            return db.put({_id:'trolls', data:respo})
             .then((data)=> {
-                return new Response(JSON.stringify(data));
+                return new Response(JSON.stringify(respo));
             })
-            .then(()=> {
-                return respo.data
-            })
+            /*.then(()=> {
+                return new Response(JSON.stringify(respo.data));
+            })*/
         }
        console.log('first log in fail')
        return db.get('trolls')

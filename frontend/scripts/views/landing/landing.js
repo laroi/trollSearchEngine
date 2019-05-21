@@ -22,7 +22,7 @@ define([
         Handlebars.registerHelper('landingpageLink', function(total, limit, current) {
             var accum = '',
             n = Math.ceil(total/limit),
-            limit = n < 5 ? n : 5,
+            limit = n < 3 ? n : 3,
             classNamePrev ='page-item';
             classNameNext ='page-item';
             if (current < 2) {
@@ -36,9 +36,19 @@ define([
                 }
                 accum += ' page-link">' + i + '</span></li>';
             }
-            if (n>5){
+            if (current > limit && current < n-2) {
+                accum += '<li class="page-item disabled"><span class="page-nav page-link">.....</span></li>';                   
+                for (let y = current - 2; y <= current+2; y += 1 ) {
+                    accum += '<li class="page-item"><span class="page-nav ';
+                    if (y === current) {
+                        accum += "current";
+                    }
+                    accum += ' page-link">' + y + '</span></li>';
+                }
+            }
+            if (n>limit){
                 accum += '<li class="page-item disabled"><span class="page-nav page-link">.....</span></li>';                
-                for (let j = n - 3; j <= n; j += 1 ) {
+                for (let j = n - 2; j <= n; j += 1 ) {
                     accum += '<li class="page-item"><span class="page-nav ';
                     if (j === current) {
                         accum += "current";
@@ -46,7 +56,7 @@ define([
                     accum += ' page-link">' + j + '</span></li>';
                 }
             }
-            if (current !== n-1) {
+            if (current => n) {
                 classNameNext += ' disabled';
             }
             accum += '<li class="' + classNameNext + '"><span class="page-next page-link" aria-label="Next"><span aria-hidden="true">&raquo;</span><span class="sr-only">Next</span></span></li>'

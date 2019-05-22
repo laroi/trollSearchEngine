@@ -137,9 +137,7 @@ self.addEventListener('activate', function(event) {
 });
 
 self.addEventListener('fetch', function(event) {
-if ( event.request.url.match( '^.*(\/api\/image\/).*$' ) ) {
-        return false;
-    }
+
  //if (event.request.method === "POST" && event.request.uri==="")
  if (event.request.method === "POST" && event.request.url === self.registration.scope+'api/posts') {
     let respo;
@@ -150,27 +148,29 @@ if ( event.request.url.match( '^.*(\/api\/image\/).*$' ) ) {
          return resp.json();
     }).then((data)=> {
         respo= data;
-        return db.get('trolls')
-        .then((res)=> {
-            console.log('updating cache', data)
-            caches.open('toller')
-            .then(function(cache) {
-                for (datum in data.hits) {
-                    cache.add(data.hits[datum]._source.image.url);
-                }
-            })            
-            return db.put({_id:'trolls', _rev:res._rev, data:data})
+        console.log('updating cache', data)
+        caches.open('toller')
+        .then(function(cache) {
+            for (datum in data.hits) {
+                console.log('caching ', data.hits[datum]._source.image.url)
+                cache.add(data.hits[datum]._source.image.url);
+            }
         })
-        .then(() => {
-            console.log('cached response in db', data)
-            return new Response(JSON.stringify(data));
-        })     
+        return db.get('trolls')                     
+    })
+    .then((res)=> {                        
+        return db.put({_id:'trolls', _rev:res._rev, data:respo})
+    })
+    .then(() => {
+        console.log('cached response in db', respo)
+        return new Response(JSON.stringify(respo));
     })
     .catch((err)=> {
         console.log(err);
-        if (err.status === 404) {
+        if (err.status === 404) { 
             return db.put({_id:'trolls', data:respo})
             .then((data)=> {
+                //return data;
                 return new Response(JSON.stringify(respo));
             })
             /*.then(()=> {

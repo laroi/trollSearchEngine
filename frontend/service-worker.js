@@ -137,7 +137,10 @@ self.addEventListener('install', function(event) {
 });
 */
 self.addEventListener('fetch', function(event) {
-
+// Do not allow the download images to be cached
+if ( event.request.url.match( '^.*(\/api\/image\/).*$' ) ) {
+        return false;
+}
  //if (event.request.method === "POST" && event.request.uri==="")
  if (event.request.method === "POST" && event.request.url === self.registration.scope+'api/posts') {
     let respo;

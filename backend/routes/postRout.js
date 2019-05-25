@@ -530,20 +530,22 @@ var routes = function () {
                         let getLogoOffset = (size) => {
                             if (size && size.width && size.height) {
                                 console.log('size -> ', size.width , size.height)
-                                let x = getRandomArbitrary(0, size.width - 150)
-                                let y = getRandomArbitrary(0, size.height - 60)
+                                let x = getRandomArbitrary(0, size.width - 128)
+                                let y = getRandomArbitrary(0, size.height -128)
                                 console.log('Offest -> ', x , y)
                                 return x + "," + y
                             }
                             console.log('Offest -> ', '0' ,'0')
                             return "0,0"
                         };
+                        const cmd = 'image Over ' + getLogoOffset(imgSize)+ ' 0,0 "'+__dirname + '/../assets/logos/logo.png"';
+                        console.log(cmd);
                         gm(readStream)
                         //.gravity(getGravity())
                         //.fill('#bdbdbd')
                         //.font( __dirname + '/../assets/fonts/amptmann.ttf')
                         //.fontSize(getFontSize(1000))
-                        .draw('image Over ' + getLogoOffset(imgSize)+ ' 0,0 '+__dirname + '/../assets/logos/logo.png')
+                        .draw(cmd)
                         .stream(function (err, stdout, stderr) {
                           stdout.pipe(res);
                         });

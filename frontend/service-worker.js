@@ -111,7 +111,7 @@ self.addEventListener('install', function(event) {
     console.log('Service worker installing...');
     // TODO 3.4: Skip waiting
     event.waitUntil(
-    caches.open('toller')
+    caches.open('troller')
     .then(function(cache) {
         return cache.addAll(filesToCache);
     })
@@ -122,7 +122,7 @@ self.addEventListener('install', function(event) {
 
 });
 
-self.addEventListener('activate', function(event) {
+/*self.addEventListener('activate', function(event) {
   event.waitUntil(
     caches.keys().then(function(cacheNames) {
       return Promise.all(
@@ -135,7 +135,7 @@ self.addEventListener('activate', function(event) {
     })
   );
 });
-
+*/
 self.addEventListener('fetch', function(event) {
 
  //if (event.request.method === "POST" && event.request.uri==="")
@@ -149,7 +149,7 @@ self.addEventListener('fetch', function(event) {
     }).then((data)=> {
         respo= data;
         console.log('updating cache', data)
-        caches.open('toller')
+        caches.open('troller')
         .then(function(cache) {
             for (datum in data.hits) {
                 console.log('caching ', data.hits[datum]._source.image.url)
@@ -195,22 +195,37 @@ self.addEventListener('fetch', function(event) {
         });*/   
     }))
  } else {
+     let resp;
      event.respondWith(
-        caches.open('toller').then(function(cache) {
-          return cache.match(event.request)
-          .then(function (response) {
-            return response || fetch(event.request).then(function(response) {
-                if (event.request.url.split(':')[0]!=="data" && event.request.method !== "POST") {
-                  cache.put(event.request, response.clone());
-                }
-              return response;
-            });
+        //caches.open('toller').then(function(cache) {
+           caches.match(event.request)
+          .then(function (c_response) {
+            console.log('cached response for ' , event.request.url, c_response );
+            if (c_response) {
+                console.log('Serving from sw cache ', event.request.url);
+                return c_response;
+            }
+            return fetch(event.request)
+                .then(function(response) {
+                    resp = response;
+                    if (event.request.url.split(':')[0]!=="data" && event.request.method !== "POST") {
+                      return caches.open('troller')
+                      .then((cache) =>{
+                        console.log('caching ', event.request.url); 
+                        return cache.put(event.request, response.clone())
+                      }).catch(e => console.error('err in ', event.request.url, e));
+                    }
+                    return Promise.resolve();
+                })
+                .then(()=> {
+                    return resp;
+                })
           })
           .catch((err)=> {
             console.log('error in fetching ', err)
           })
-        })
-      );
+        )
+      //);
    }
    
 

@@ -20,9 +20,40 @@ define([
             return options.fn(this).toLowerCase();
         });
         Handlebars.registerHelper('landingpageLink', function(total, limit, current) {
-            var accum = '',
-            n = Math.ceil(total/limit),
-            limit = n < 3 ? n : 3,
+            let pages = Math.ceil(total/limit),
+                accum = '';
+                current = parseInt(current, 10);
+            if (pages > 0) {
+                if (current == 1) {
+                    accum += '<li class="page-item"><span class="page-nav current page-link>1</span></li>';
+                } else {
+                    accum += '<li class="page-item"><span class="page-nav page-link>1</span></li>';
+                }
+                
+                let i = current > 5 ? current -1 : 1;
+                if ( i !== 1) {
+                    accum += '<li class="disabled"><span class="page-nav page-link">...</span></li>';    
+                }
+                for (; i <= current + 4 && i <= pages; i++) {
+                    
+                    if (i === current) {
+                        accum += '<li class="page-item"><span class="page-nav current page-link">' + i + '</span></li>';
+                    } else {
+                        accum += '<li class="page-item"><span class="page-nav page-link">' + i + '</span></li>';
+                    }
+                    if (i === current + 4 && i < pages) {
+                     accum += '<li class="disabled"><span class="page-nav page-link">...</span></li>';
+                    }
+                        
+                }
+                if (current === pages) {
+                    accum += '<li class="page-item"><span class="page-nav disabled current page-link>' + pages + '</span></li>';
+                } else {
+                    accum += '<li class="page-item"><span class="page-nav current page-link>' + pages + '</span></li>';
+                }
+                
+            }
+            /*let limit = n < 3 ? n : 3,
             classNamePrev ='page-item';
             classNameNext ='page-item';
             if (current < 2) {
@@ -61,7 +92,7 @@ define([
             if (current >= n) {
                 classNameNext += ' disabled';
             }
-            accum += '<li class="' + classNameNext + '"><span class="page-next page-link" aria-label="Next"><span aria-hidden="true">&raquo;</span><span class="sr-only">Next</span></span></li>'
+            accum += '<li class="' + classNameNext + '"><span class="page-next page-link" aria-label="Next"><span aria-hidden="true">&raquo;</span><span class="sr-only">Next</span></span></li>'*/
             return accum;
         });
         Handlebars.registerHelper('editable', function(isOwner) {

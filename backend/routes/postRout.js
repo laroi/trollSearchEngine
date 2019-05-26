@@ -408,7 +408,7 @@ var routes = function () {
         }
     },
     incrementViews = (req, res) => {
-        const userId = req.query.user;
+        const userId = req.query.user || 'guest';
         const postId = req.query.id;
         let upd_val = {user: userId, time: Date.now()};
         let postVal

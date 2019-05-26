@@ -407,6 +407,43 @@ var routes = function () {
             res.status(400).send({err: 'bad request'})
         }
     },
+    incrementViews = (req, res) => {
+        const userId = req.query.user;
+        const postId = req.query.id;
+        let upd_val = {user: userId, time: Date.now()};
+        let postVal
+        /*Post.findOne({_id: postId})
+        .then((post) => {
+            postVal = post; 
+            const index = post.views.findIndex(_=>_.user === userId);
+            if (index > -1) {
+                upd_val = {user: userId, time: Date.now()}
+                return Post.update({_id: postId}, {$push:{views:upd_val})
+            } else {
+                return false;
+            }
+        })*/
+        Post.findByIdAndUpdate({_id: postId}, {$push:{views:upd_val}})
+        .then(result => {
+            console.log(result);
+            return new Promise((resolve, reject) => {
+                elastic.updateDoc(postId, {views: [... result.views, upd_val] }, (err, data) => {
+                    if (!err) {
+                        resolve()
+                    } else {
+                        reject(err);
+                    }
+                })
+            })
+        })
+        .then(result => {
+            res.status(200).send();
+        })
+        .catch (e => {
+            console.error(e);
+            res.status(500).send();
+        })
+    },  
     updatePost = function (req, res) {
         var tok = req.query.accessToken || req.headers['authorization'];
         isOwner(Post, req.body._id, tok, function (err, post) {
@@ -492,6 +529,7 @@ var routes = function () {
     },
     downloadImage = function (req, res){
         let postId = req.params.id;
+        let userId = req.params.user;
         let imgSize = undefined;
        req.connection.setTimeout(100000); //100 seconds
         Post.findById(postId, function(err, post){
@@ -549,15 +587,9 @@ var routes = function () {
                         .stream(function (err, stdout, stderr) {
                           stdout.pipe(res);
                         });
-                        Post.update({_id: postId}, { $inc: {downloads:1}}, function(updErr, updData) {
-                            console.log('Increment download mongo \n',updErr, updData)
-                        });
-                        if (!post.downloads) {
-                            post.downloads = 0;
-                        }
-                        post.downloads = post.downloads+1;
-                        console.log(post.downloads);
-                        elastic.updateDoc(postId, post, function(updErr, updData) {
+                        const upd_val = {user:userId, time: Date.now()};
+                        Post.update({_id: postId}, {$push: {downloads: upd_val}});
+                        elastic.updateDoc(postId, {downloads:[...post.downloads, upd_val]} , function(updErr, updData) {
                             console.log('Increment download elastic\n',updErr, updData)
                         });
                     } else {
@@ -962,7 +994,8 @@ var routes = function () {
         getRequest: getRequest,
         getRequests: getRequests,
         deleteRequest : deleteRequest,
-        updateRequest: updateRequest
+        updateRequest: updateRequest,
+        incrementViews: incrementViews
     }
 }
 

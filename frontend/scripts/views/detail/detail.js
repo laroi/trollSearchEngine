@@ -154,9 +154,9 @@ var animOutClass = "bounceInRight";
             request.getImage('/api/image/'+id, id)
             .then(()=> {
                 postCollection.getPostById(id, function(err, post){
-                    post.downloads += 1;
-                    $(e.target).next().empty().html(post.downloads)
-                    $("#"+id+".panel-body").children('.bottom-panel').children('.button-panel').children('.row1').children('.pan-btn-cont').children('.download').next('.down-count').empty().html(post.downloads);
+                    //post.downloads += 1;
+                    $(e.target).next().empty().html(post.downloads.length+1)
+                    $("#"+id+".panel-body").children('.bottom-panel').children('.button-panel').children('.row1').children('.pan-btn-cont').children('.download').next('.down-count').empty().html(post.downloads.length+1);
 
                 })
             })
@@ -171,7 +171,6 @@ var animOutClass = "bounceInRight";
                             let containerWidth = $(window).width() - 68;
                             post.adjustedHeight = (containerWidth < 552 ? containerWidth : 552)*(post.height/post.width)
                         }
-                        var html = template(post);
                         $('#detailModel').empty().append(html);
                         updateUi();
                         $('.edit').on('click', editPost);

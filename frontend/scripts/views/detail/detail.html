@@ -24,7 +24,7 @@
 
             <div class="pan-btn-cont">
                 <div class="far fa-arrow-alt-circle-down pan-btn download" data-post= {{this._id}}></div>
-                <div class="pan-count down-count">{{downloads}}</div>
+                <div class="pan-count down-count">{{downloads.length}}</div>
             </div>
             <div class="pan-btn-cont">
                 {{#if isLiked}}
@@ -34,6 +34,7 @@
                 {{/if}}
                 <div class='pan-count fav-count'>{{likes.length}}</div>
             </div>
+            <img width="0" height="0" src=/api/incrementviews?id={{_id}}&user={{user}}>
         </div>
         <div class="detail-footer-left">
             <div class="more">Details for buffs</div>

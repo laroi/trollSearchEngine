@@ -80,8 +80,18 @@ var elastic = function () {
                                 time:  {"type": "date"}
                             }
                         },
-                        views: {"type": "integer"},
-                        downloads: {"type": "integer"},
+                        views: { 
+                            properties:{
+                                user: {"type": "text"},
+                                time: {"type": "date"}
+                            }
+                        },
+                        downloads: { 
+                            properties:{
+                                user: {"type": "text"},
+                                time: {"type": "date"}
+                            }
+                        },
                         comments:{
                             properties:{
                                 userId: {"type": "text", "index" : false},
@@ -246,8 +256,8 @@ var elastic = function () {
                 language: doc.language,
                 actors: doc.actors,
                 likes: doc.likes || [],
-                downloads: doc.downloads || 0,
-                views : doc.views || 0,
+                downloads: doc.downloads || [],
+                views : doc.views || [],
                 characters: doc.characters,
                 comments: doc.comments,
                 context : doc.context,
@@ -526,8 +536,8 @@ var elastic = function () {
             language: doc.language,
             actors: doc.actors,
             likes: doc.likes || [],
-            downloads: doc.downloads || 0,
-            views : doc.views || 0,
+            downloads: doc.downloads || [],
+            views : doc.views || [],
             characters: doc.characters,
             comments: doc.comments,
             context : doc.context,

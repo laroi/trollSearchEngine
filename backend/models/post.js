@@ -8,8 +8,8 @@ var post = new Schema({
     title: {type: String},
     requestId:{type: String},
     likes: [],
-    views: {type: Number, default:0},
-    downloads: {type: Number, default:0},
+    views: [],
+    downloads: [],
     description: {type: String},
     isApproved: {type: Boolean, default: false},
     image: {

@@ -131,8 +131,8 @@ define([
                 request.getImage('/api/image/'+id, id)
                 .then(()=> {
                     postCollection.getPostById(id, function(err, post){
-                        post.downloads += 1;
-                        $(e.target).next().empty().html(post.downloads);
+                        //post.downloads += 1;
+                        $(e.target).next().empty().html(post.downloads.length + 1);
                         $(e.target).css('cursor', 'pointer');
                         isDownloadBusy = false;
                     })
@@ -683,7 +683,7 @@ define([
                             };
                             $('.delete').off('click').on('click', confirmDelete);
                         })
-                        $('.pan-btn.download').on('click', downloadImage);
+                        $('.pan-btn.download').off('click').on('click', downloadImage);
                         $('.btn-basic-search').off().on('click', search)
                         $('#basic-search').on("keypress", keyPressSearch);
                         $('.page-nav').off('click').on('click', paginate)

@@ -155,8 +155,18 @@ var putMapping = function () {
                             time:  {"type": "date"}
                         }
                     },
-                    views: {"type": "integer"},
-                    downloads: {"type": "integer"},
+                    views: { 
+                        properties:{
+                            user: {"type": "text"},
+                            time: {"type": "date"}
+                        }
+                    },
+                    downloads: { 
+                        properties:{
+                            user: {"type": "text"},
+                            time: {"type": "date"}
+                        }
+                    },
                     comments:{
                         properties:{
                             userId: {"type": "text"},

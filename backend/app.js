@@ -208,6 +208,7 @@ app.put('/post/:id/unlike', isAuthenticated(false), postRoute.unLike);
 app.post('/post', isAuthenticated(false), postRoute.post)
 app.get('/image/:id', postRoute.downloadImage);
 app.get('/suggestions', postRoute.autoSuggestion);
+app.get('/incrementviews', postRoute.incrementViews);
 
 app.listen(config.appPort);
 console.log(`Express server listening on port ${config.appPort}`);

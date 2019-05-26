@@ -171,13 +171,14 @@ var animOutClass = "bounceInRight";
                             let containerWidth = $(window).width() - 68;
                             post.adjustedHeight = (containerWidth < 552 ? containerWidth : 552)*(post.height/post.width)
                         }
+                        var html = template(post);
                         $('#detailModel').empty().append(html);
                         updateUi();
-                        $('.edit').on('click', editPost);
-                        $('.delete').on('click', deletePost);
-                        $('.fav').on('click', processLike);
-                        $('.star-btn').on('click', processStar);
-                        $('.pan-btn.download').on('click', downloadImage);
+                        $('.edit').off('click').on('click', editPost);
+                        $('.delete').off('click').on('click', deletePost);
+                        $('.fav').off('click').on('click', processLike);
+                        $('.star-btn').off('click').on('click', processStar);
+                        $('.pan-btn.download').off('click').on('click', downloadImage);
                         //$('#detail-cont').on('hidden.bs.modal', gotoHome);
                         $('.more').off('click').on('click', showBuffs)
                     } else {

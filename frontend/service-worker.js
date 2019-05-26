@@ -228,6 +228,15 @@ if ( event.request.url.match( '^.*(\/api\/image\/).*$' ) ) {
             console.log('error in fetching ', err)
           })
         )
+        function update(request) {
+          return caches.open('troller').then(function (cache) {
+            return fetch(request).then(function (response) {
+              return cache.put(request, response);
+            });
+          });
+        }
+        event.waitUntil(update(event.request));
+    
       //);
    }
    

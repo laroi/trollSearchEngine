@@ -40,8 +40,12 @@ define([
         var animInClass = "fade-scale";
 var animOutClass = "bounceInRight";
             let modal = $('#detail-cont');
-                    let offset = $('#'+id+'.panel-body').offset();
-                    offset = offset || {left: parseInt($('body').css('width'),10)/2, top:  parseInt($('body').css('height'),10)/2};            
+                const listElem = $('#'+id+'.panel-body')[0] ||  $('body')[0];
+                    let offset = listElem.getBoundingClientRect();
+                    let left = offset.left + offset.width/2;
+                    let top = offset.top + offset.height/2;
+                    console.log(offset);
+                    console.log(left, top);
                     modal.css('transform-origin', offset.left + 'px ' + offset.top + 'px');
                 modal.on('show.bs.modal', function () {
                     var closeModalBtns = modal.find('button[data-custom-dismiss="modal"]');

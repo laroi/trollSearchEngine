@@ -36,10 +36,13 @@ define([
                 $('.detail-more-details').css('display', 'block')
             }
         }
-        var updateUi = function () {
+        var updateUi = function (id) {
         var animInClass = "fade-scale";
 var animOutClass = "bounceInRight";
             let modal = $('#detail-cont');
+                    let offset = $('#'+id+'.panel-body').offset();
+                    offset = offset || {left: parseInt($('body').css('width'),10)/2, top:  parseInt($('body').css('height'),10)/2};            
+                    modal.css('transform-origin', offset.left + 'px ' + offset.top + 'px');
                 modal.on('show.bs.modal', function () {
                     var closeModalBtns = modal.find('button[data-custom-dismiss="modal"]');
                     closeModalBtns.on('click', function() {
@@ -57,6 +60,8 @@ var animOutClass = "bounceInRight";
                 closeModalBtns.off('click');
                 gotoHome();
             })
+            //$('#detail-cont').css('left', offset.left);
+            //$('#detail-cont').css('top', offset.top);
             $('#detail-cont').modal({show: true});
         }
         var processStar = function (e) {
@@ -173,7 +178,7 @@ var animOutClass = "bounceInRight";
                         }
                         var html = template(post);
                         $('#detailModel').empty().append(html);
-                        updateUi();
+                        updateUi(id);
                         $('.edit').off('click').on('click', editPost);
                         $('.delete').off('click').on('click', deletePost);
                         $('.fav').off('click').on('click', processLike);

@@ -536,7 +536,7 @@ var routes = function () {
             if (!err) {
                 var fileName = post.image.url.split('/')[2]
                 imgSize = post.image.size
-                fs.stat(postUploadPath+fileName, function(statErr, statData) {
+                fs.stat(postUploadPath+fileName, async function(statErr, statData) {
                     if (!statErr) {
                         res.writeHead(200, {
                             'Content-Type': 'image/'+post.image.type,
@@ -588,7 +588,12 @@ var routes = function () {
                           stdout.pipe(res);
                         });
                         const upd_val = {user:userId, time: Date.now()};
-                        Post.update({_id: postId}, {$push: {downloads: upd_val}});
+                        try {
+                            await Post.update({_id: postId}, {$push: {downloads: upd_val}});
+                        } catch (e) {
+                            console.error(e);
+                            return res.status(500).send('Could not update database')
+                        }
                         elastic.updateDoc(postId, {downloads:[...post.downloads, upd_val]} , function(updErr, updData) {
                             console.log('Increment download elastic\n',updErr, updData)
                         });

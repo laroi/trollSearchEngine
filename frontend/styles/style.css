@@ -445,10 +445,10 @@ font-size:20px;
         -moz-transform: scale(0.1);
         -ms-transform: scale(0.1);
         transform: scale(0.1);
-        opacity: 0;
-        -webkit-transition: all 0.40s ease-out;
-        -moz-transition: all 0.40s ease-out;
-        transition: all 0.40s ease-out;
+        opacity: 1;
+        -webkit-transition: all 0.30s ease-out;
+        -moz-transition: all 0.30s ease-out;
+        transition: all 0.30s ease-out;
     }
 
     .fade-scale {
@@ -456,10 +456,10 @@ font-size:20px;
         -moz-transform: scale(0.1);
         -ms-transform: scale(0.1);
         transform: scale(0.1);
-        opacity: 0;
-        -webkit-transition: all 0.40s ease-out;
-        -moz-transition: all 0.40s ease-out;
-        transition: all 0.40s ease-out;
+        opacity: 1;
+        -webkit-transition: all 0.30s ease-out;
+        -moz-transition: all 0.30s ease-out;
+        transition: all 0.30s ease-out;
     }
 
     .fade-scale.in {

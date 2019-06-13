@@ -46,7 +46,7 @@ var animOutClass = "bounceInRight";
                     let top = offset.top + offset.height/2;
                     console.log(offset);
                     console.log(left, top);
-                    modal.css('transform-origin', offset.left + 'px ' + offset.top + 'px');
+                    modal.css('transform-origin', left + 'px ' + top + 'px');
                 modal.on('show.bs.modal', function () {
                     var closeModalBtns = modal.find('button[data-custom-dismiss="modal"]');
                     closeModalBtns.on('click', function() {

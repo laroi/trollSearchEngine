@@ -13,7 +13,8 @@ define([
      var source   = $(html).html(),
         template = Handlebars.compile(source),
         render;
-        const share = navigator.share || navigator.canShare;
+        const share = (navigator.share || navigator.canShare) ? true : false;
+        
         var editPost = function(e) {
             var id = $(e.target).parent().parent().parent().parent().attr('id');
             postCollection.getPostById(id, (err, post) => {

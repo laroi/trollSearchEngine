@@ -53,7 +53,7 @@ define(['../config/config', './storeController'], function (config, store) {
             })
             .then(function(blob){
                 if (navigator.share) {
-                    navigator.share({blob: blob, mimeType: 'image/jpg'})
+                    navigator.share({title: "The memefinder", url:url, blob: blob})
                 }
                 return;
             })

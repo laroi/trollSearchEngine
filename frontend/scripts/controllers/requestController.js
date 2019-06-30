@@ -23,28 +23,45 @@ define(['../config/config', './storeController'], function (config, store) {
             }
         }); 
     };
-    let getImage = (url, filename) => {
+    let getImage = (url, filename, action) => {
         if (!url) {
             return Promise.reject('No url');
         }
-        return fetch(url)
-        .then(function(res){
-          return res.blob()
-        })
-        .then(function(blob){
-            var a = document.createElement('a');
-            var url = window.URL.createObjectURL(blob);
-            a.href = url;
-            a.download = '"'+filename+'".jpg';
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-            //window.URL.revokeObjectURL(url);
-            return
-        })
-        .catch((err) =>  {
-            return Promise.reject(err)
-        })
+        if (action === 'download') {
+            return fetch(url + '?action='+action)
+            .then(function(res){
+              return res.blob()
+            })
+            .then(function(blob){
+                var a = document.createElement('a');
+                var url = window.URL.createObjectURL(blob);
+                a.href = url;
+                a.download = '"'+filename+'".jpg';
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                //window.URL.revokeObjectURL(url);
+                return
+            })
+            .catch((err) =>  {
+                return Promise.reject(err)
+            })
+        } else if (action === 'share') {
+             return fetch(url + '?action='+action)
+            .then(function(res){
+              return res.blob()
+            })
+            .then(function(blob){
+                if (navigator.share) {
+                    navigator.share({blob: blob, mimeType: 'image/jpg'})
+                }
+                return;
+            })
+            .catch((err) =>  {
+                return Promise.reject(err)
+            })
+        }
+        
         /*return new Promise ((resolve, reject)=> {
             $.ajax({
                 url: url,

@@ -2,49 +2,63 @@
 
 <div class="modal fade-scale" id="detail-cont" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
-    <div class="modal-content" id={{_id}}>
+    <div class="modal-content" id={{post._id}}>
       <div class="modal-header">
-        <span class="modal-title"><b>{{title}}</b></span>
+        <span class="modal-title"><b>{{post.title}}</b></span>
         <button type="button" class="close" data-custom-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
         <div class="img-cont">
-                <img width="552" {{#if adjustedHeight}}height={{adjustedHeight}} {{/if}} class="postImage" src={{imageUrl}}>
+                <img width="552" {{#if post.adjustedHeight}}height={{post.adjustedHeight}} {{/if}} class="postImage" src={{post.imageUrl}}>
             </div>
       </div>
       <div class="modal-footer">
             <div class="detail-footer-right">
-             {{#if isStarred}}
+             {{#if post.isStarred}}
                <div class="pan-btn far fa-star star-btn starred"></div>
             {{else}}
                 <div class="pan-btn far fa-star star-btn star"></div>
             {{/if}}
 
             <div class="pan-btn-cont">
-                <div class="far fa-arrow-alt-circle-down pan-btn download" data-post= {{this._id}}></div>
-                <div class="pan-count down-count">{{downloads.length}}</div>
+                <div class="far fa-arrow-alt-circle-down pan-btn download" data-post= {{post._id}}></div>
+                <div class="pan-count down-count">{{post.downloads.length}}</div>
             </div>
             <div class="pan-btn-cont">
-                {{#if isLiked}}
+                {{#if post.isLiked}}
                     <div class="far fa-heart pan-btn fav faved"></div>
                 {{else}}
                     <div class="far fa-heart pan-btn fav favorite"></div>
                 {{/if}}
-                <div class='pan-count fav-count'>{{likes.length}}</div>
+                <div class='pan-count fav-count'>{{post.likes.length}}</div>
             </div>
-            <img width="0" height="0" src=/api/incrementviews?id={{_id}}&user={{user}}>
+            {{#if true}}
+                 <div class="pan-btn-cont">
+                        <div class="fas fa-share-alt pan-btn share"></div>
+                        <div class='pan-count share-count'>{{post.shares.length}}</div>
+                </div>
+            {{/if}}
+            <img width="0" height="0" src=/api/incrementviews?id={{post._id}}&user={{post.user}}>
         </div>
         <div class="detail-footer-left">
             <div class="more">Details for buffs</div>
         </div>
             <div class="detail-more-details">
-            <div class="det-elem"><b>Movie : </b>{{movie}} ({{language}})</div>
-            <div class="det-elem"><b>Context: </b>{{context}}</div>
-            <div class="det-elem"><b>Actors : </b>{{actors}}</div>
-            <div class="det-elem"><b>Characters : </b>{{characters}}</div>
-            <div class="det-elem"><b>Tags : </b>{{tags}}</div>
+            <div class="det-elem"><b>Movie : </b>{{post.movie}} ({{post.language}})</div>
+            {{#if post.context}}
+                <div class="det-elem"><b>Context: </b>{{post.context}}</div>
+            {{/if}}
+            {{#if post.actors}}
+                <div class="det-elem"><b>Actors : </b>{{post.actors}}</div>
+            {{/if}}
+            {{#if post.characters}}
+                <div class="det-elem"><b>Characters : </b>{{post.characters}}</div>
+            {{/if}}
+            {{#if post.tags}}
+                <div class="det-elem"><b>Tags : </b>{{post.tags}}</div>
+            {{/if}}
         </div>
       </div>
     </div>

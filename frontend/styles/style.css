@@ -103,6 +103,9 @@
 .star:hover {
     font-size:18px;
 }
+.share {
+    color:black;
+}
 .starred {
     color:#a0a000!important;
 }

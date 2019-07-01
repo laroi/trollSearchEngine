@@ -193,7 +193,7 @@ var animOutClass = "bounceInRight";
                 postCollection.getPostById(id, function(err, post){
                 //post.downloads += 1;
                     $(e.target).next().empty().html(post.shares.length+1)
-                    $("#"+id+".panel-body").children('.bottom-panel').children('.button-panel').children('.row1').children('.pan-btn-cont').children('.share').next('.share-count').empty().html(post.share.length+1);
+                    $("#"+id+".panel-body").children('.bottom-panel').children('.button-panel').children('.row1').children('.pan-btn-cont').children('.share').next('.share-count').empty().html(post.shares.length+1);
             });
         };
         var detailView = function () {

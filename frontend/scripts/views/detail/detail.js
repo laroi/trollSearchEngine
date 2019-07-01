@@ -173,16 +173,24 @@ var animOutClass = "bounceInRight";
             })
         }
         let sharePost = (e) => {
-            let id = $(e.target).attr('data-post');
-            request.getImage('/api/image/'+id, id, 'share')
-            .then(()=> {
-                postCollection.getPostById(id, function(err, post){
-                    //post.downloads += 1;
-                    $(e.target).next().empty().html(post.share.length+1)
-                    $("#"+id+".panel-body").children('.bottom-panel').children('.button-panel').children('.row1').children('.pan-btn-cont').children('.share').next('.share-count').empty().html(post.share.length+1);
-
-                })
-            })
+            if (navigator.canShare && navigator.canShare( { files: [file] } )) {
+                let id = $(e.target).attr('data-post');
+                request.getImage('/api/image/'+id, id, 'share')
+                    .then((file)=> {
+                        return navigator.share({
+                            files: [file],
+                            title: 'Thememefinder',
+                            text: 'shared from thememefinder.com',
+                        })
+                      })
+                      .then(()=> {
+                        postCollection.getPostById(id, function(err, post){
+                        //post.downloads += 1;
+                        $(e.target).next().empty().html(post.share.length+1)
+                        $("#"+id+".panel-body").children('.bottom-panel').children('.button-panel').children('.row1').children('.pan-btn-cont').children('.share').next('.share-count').empty().html(post.share.length+1);
+                    })
+                      })
+            }
         }
         var detailView = function () {
             var render;

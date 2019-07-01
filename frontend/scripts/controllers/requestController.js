@@ -52,17 +52,7 @@ define(['../config/config', './storeController'], function (config, store) {
               return res.blob()
             })
             .then(function(blob){
-                const file = new File([blob], filename, {type: blob.tyle, lastModified: Date.now()});
-                if (navigator.canShare && navigator.canShare( { files: [file] } )) {
-                  return navigator.share({
-                    files: [file],
-                    title: 'Thememefinder',
-                    text: 'shared from thememefinder.com',
-                  })
-                } else {
-                  return Promise.reject('Not supported')
-                }
-                
+                return new File([blob], filename, {type: blob.tyle, lastModified: Date.now()});            
             })
             .catch((err) =>  {
                 return Promise.reject(err)

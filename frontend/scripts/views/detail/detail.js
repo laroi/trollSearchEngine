@@ -176,15 +176,19 @@ var animOutClass = "bounceInRight";
                 let id = $(e.target).attr('data-post');
                 try {
                     const file = await request.getImage('/api/image/'+id, id, 'share')
-                    if (navigator.canShare && navigator.canShare( { files: [file] } )) {
-                        const shr = await navigator.share({
-                            files: [file],
-                            title: 'Thememefinder',
-                            text: 'shared from thememefinder.com',
-                        })
+                    if (confirm('Are you sure you want to save this thing into the database?')) {
+                        if (navigator.canShare && navigator.canShare( { files: [file] } )) {
+                            const shr = await navigator.share({
+                                files: [file],
+                                title: 'Thememefinder',
+                                text: 'shared from thememefinder.com',
+                            })
+                        } else {
+                            console.error('Not supported')
+                            return;
+                        }
                     } else {
-                        console.error('Not supported')
-                        return;
+                        // Do nothing!
                     }
                 } catch (err) {
                     console.error(err);

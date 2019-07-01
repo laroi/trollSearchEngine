@@ -52,10 +52,16 @@ define(['../config/config', './storeController'], function (config, store) {
               return res.blob()
             })
             .then(function(blob){
-                if (navigator.share) {
-                    navigator.share({title: "The memefinder", url:url, blob: blob})
+                if (navigator.canShare && navigator.canShare( { files: [blob] } )) {
+                  return navigator.share({
+                    files: [blob],
+                    title: 'Thememefinder',
+                    text: 'shared from thememefinder.com',
+                  })
+                } else {
+                  return Promise.reject('Not supported')
                 }
-                return;
+                
             })
             .catch((err) =>  {
                 return Promise.reject(err)

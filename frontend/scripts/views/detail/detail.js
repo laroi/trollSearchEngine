@@ -172,24 +172,23 @@ var animOutClass = "bounceInRight";
                 })
             })
         }
+        let fle;
+        $('.share-real').on('click', async ()=> {
+             if (navigator.canShare && navigator.canShare( { files: [fle] } )) {
+                        const shr = await navigator.share({
+                            files: [fle],
+                            title: 'Thememefinder',
+                            text: 'shared from thememefinder.com',
+                        })
+                    } else {
+                        console.error('Not supported')
+                        return;
+                    }
+        })
         let sharePost = async (e) => {
                 let id = $(e.target).attr('data-post');
                 try {
-                    const file = await request.getImage('/api/image/'+id, id, 'share')
-                    if (confirm('Are you sure you want to save this thing into the database?')) {
-                        if (navigator.canShare && navigator.canShare( { files: [file] } )) {
-                            const shr = await navigator.share({
-                                files: [file],
-                                title: 'Thememefinder',
-                                text: 'shared from thememefinder.com',
-                            })
-                        } else {
-                            console.error('Not supported')
-                            return;
-                        }
-                    } else {
-                        // Do nothing!
-                    }
+                     fle = await request.getImage('/api/image/'+id, id, 'share')
                 } catch (err) {
                     console.error(err);
                     return;

@@ -175,10 +175,14 @@ var animOutClass = "bounceInRight";
         let fle;
         let realshare= async () => {
              if (navigator.canShare && navigator.canShare( { files: [fle] } )) {
-                        const shr = await navigator.share({
-                            files: [fle],
-                            title: 'Thememefinder',
-                            text: 'shared from thememefinder.com',
+                        try {
+                            const shr = await navigator.share({
+                                files: [fle],
+                                title: 'Thememefinder',
+                                text: 'shared from thememefinder.com',
+                            })
+                        } catch(err => {
+                            console.log(err);
                         })
                     } else {
                         console.error('Not supported')

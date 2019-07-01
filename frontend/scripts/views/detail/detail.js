@@ -177,7 +177,7 @@ var animOutClass = "bounceInRight";
                 try {
                     const file = await request.getImage('/api/image/'+id, id, 'share')
                     if (navigator.canShare && navigator.canShare( { files: [file] } )) {
-                        const shr = navigator.share({
+                        const shr = await navigator.share({
                             files: [file],
                             title: 'Thememefinder',
                             text: 'shared from thememefinder.com',

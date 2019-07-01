@@ -181,9 +181,9 @@ var animOutClass = "bounceInRight";
                                 title: 'Thememefinder',
                                 text: 'shared from thememefinder.com',
                             })
-                        } catch(err => {
+                        } catch(err) {
                             console.log(err);
-                        })
+                        }
                     } else {
                         console.error('Not supported')
                         return;

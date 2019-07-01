@@ -52,7 +52,8 @@ define(['../config/config', './storeController'], function (config, store) {
               return res.blob()
             })
             .then(function(blob){
-                if (navigator.canShare && navigator.canShare( { files: [blob] } )) {
+                const file = new File([blob], filename, {type: blob.tyle, lastModified: Date.now()});
+                if (navigator.canShare && navigator.canShare( { files: [file] } )) {
                   return navigator.share({
                     files: [blob],
                     title: 'Thememefinder',

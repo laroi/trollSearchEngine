@@ -174,19 +174,25 @@ var animOutClass = "bounceInRight";
         }
         let sharePost = async (e) => {
                 let id = $(e.target).attr('data-post');
-                const file = await request.getImage('/api/image/'+id, id, 'share')
-                if (navigator.canShare && navigator.canShare( { files: [file] } )) {
-                    const shr = navigator.share({
-                        files: [file],
-                        title: 'Thememefinder',
-                        text: 'shared from thememefinder.com',
-                    })
-                } else {
-                    console.error('Not supported')
+                try {
+                    const file = await request.getImage('/api/image/'+id, id, 'share')
+                    if (navigator.canShare && navigator.canShare( { files: [file] } )) {
+                        const shr = navigator.share({
+                            files: [file],
+                            title: 'Thememefinder',
+                            text: 'shared from thememefinder.com',
+                        })
+                    } else {
+                        console.error('Not supported')
+                        return;
+                    }
+                } catch (e) {
+                    console.error(e);
+                    return;
                 }
                 postCollection.getPostById(id, function(err, post){
                 //post.downloads += 1;
-                    $(e.target).next().empty().html(post.share.length+1)
+                    $(e.target).next().empty().html(post.shares.length+1)
                     $("#"+id+".panel-body").children('.bottom-panel').children('.button-panel').children('.row1').children('.pan-btn-cont').children('.share').next('.share-count').empty().html(post.share.length+1);
             });
         };

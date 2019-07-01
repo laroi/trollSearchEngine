@@ -173,7 +173,7 @@ var animOutClass = "bounceInRight";
             })
         }
         let fle;
-        $('.share-real').on('click', async ()=> {
+        let realshare= async () => {
              if (navigator.canShare && navigator.canShare( { files: [fle] } )) {
                         const shr = await navigator.share({
                             files: [fle],
@@ -184,7 +184,7 @@ var animOutClass = "bounceInRight";
                         console.error('Not supported')
                         return;
                     }
-        })
+        }
         let sharePost = async (e) => {
                 let id = $(e.target).attr('data-post');
                 try {
@@ -220,6 +220,7 @@ var animOutClass = "bounceInRight";
                         //$('#detail-cont').on('hidden.bs.modal', gotoHome);
                         $('.share').off('click').on('click', sharePost);
                         $('.more').off('click').on('click', showBuffs);
+                        $('.share-real').on('click', realshare);
                     } else {
                         toastr.error('We seems to have a problem. Please check your internet connection.', 'Memefinder Says')
                     }

@@ -186,8 +186,8 @@ var animOutClass = "bounceInRight";
                         console.error('Not supported')
                         return;
                     }
-                } catch (e) {
-                    console.error(e);
+                } catch (err) {
+                    console.error(err);
                     return;
                 }
                 postCollection.getPostById(id, function(err, post){

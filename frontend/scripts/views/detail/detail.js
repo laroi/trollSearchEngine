@@ -178,7 +178,7 @@ var animOutClass = "bounceInRight";
                         try {
                             const shr = await navigator.share({
                                 files: [fle],
-                                url: 'https://thememefinder.com'
+                                url: 'https://thememefinder.com',
                                 title: 'Thememefinder',
                                 text: 'shared from thememefinder.com',
                             })

@@ -52,7 +52,8 @@ define(['../config/config', './storeController'], function (config, store) {
               return res.blob()
             })
             .then(function(blob){
-                return new File([blob], filename, {type: blob.tyle, lastModified: Date.now()});            
+                console.log(filename, blob.type)
+                return new File([blob], filename, {type: blob.type, lastModified: Date.now()});            
             })
             .catch((err) =>  {
                 return Promise.reject(err)

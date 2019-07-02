@@ -54,7 +54,7 @@ define(['../config/config', './storeController'], function (config, store) {
             .then(function(blob){
                 filename = filename+'.jpg';
                 console.log(filename, blob.type)
-                return new File([blob], filename, {type: blob.type, lastModified: Date.now()});            
+                return new File([blob], filename, {type: blob.type});            
             })
             .catch((err) =>  {
                 return Promise.reject(err)

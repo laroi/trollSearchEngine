@@ -55,7 +55,7 @@ define(['../config/config', './storeController'], function (config, store) {
                 filename = filename+'.jpg';
                 console.log(filename, blob.type)
                 blob.lastModifiedDate = new Date();
-                blob.name = fileName;
+                blob.name = filename;
                 return blob;
             })
             .catch((err) =>  {

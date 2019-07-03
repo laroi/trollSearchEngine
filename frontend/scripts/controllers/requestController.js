@@ -54,10 +54,8 @@ define(['../config/config', './storeController'], function (config, store) {
             .then(function(blob){
                 filename = filename+'.jpg';
                 console.log(filename, blob.type)
-                 const fd = new FormData();
-                  fd.set('a', blob);
-                  return fd.get('a');
-                //return new File([blob], filename, {type: blob.type, });            
+                //return new File([blob], filename, {type: blob.type, lastModified: new Date()});            
+                return new File(["test"], test.txt, {type: 'text/plain'});            
             })
             .catch((err) =>  {
                 return Promise.reject(err)

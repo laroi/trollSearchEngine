@@ -13,7 +13,7 @@ define([
      var source   = $(html).html(),
         template = Handlebars.compile(source),
         render;
-        const share = navigator.canShare ? true : false;
+        const share = (navigator.canShare || navigator.share) ? true : false;
         
         var editPost = function(e) {
             var id = $(e.target).parent().parent().parent().parent().attr('id');
@@ -172,35 +172,24 @@ var animOutClass = "bounceInRight";
                 })
             })
         }
-        let realshare= async () => {
-             if (navigator.canShare && navigator.canShare( { files: [fle] } )) {
-                        try {
-                            const shr = await navigator.share({
-                                files: [fle],
-                                url: 'https://thememefinder.com',
-                                title: 'Thememefinder',
-                                text: 'shared from thememefinder.com',
-                            })
-                        } catch(err) {
-                            console.log(err);
-                        }
-                    } else {
-                        console.error('Not supported')
-                        return;
-                    }
-        }
         let sharePost = async (e) => {
                 let id = $(e.target).attr('data-post');
-               
-
                 try {
+                     if (navigator.canShare && navigator.canShare( { files: [fle] } )) {
                       const file = await request.getImage('/api/image/'+id, id, 'share')
                       const shr = await navigator.share({
                             files: [file],
-                            url: 'https://thememefinder.com',
+                            url: 'https://thememefinder.com/',
                             title: 'Thememefinder',
                             text: 'shared from thememefinder.com',
                         })
+                    } else if (navigator.share) {
+                        const shr = await navigator.share({
+                            url: 'https://thememefinder.com/#post/'+id,
+                            title: 'Thememefinder',
+                            text: 'shared from thememefinder.com',
+                        })
+                    }
                 } catch (err) {
                     console.error(err);
                     return;

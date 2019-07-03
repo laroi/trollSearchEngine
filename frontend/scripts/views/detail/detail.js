@@ -174,12 +174,10 @@ var animOutClass = "bounceInRight";
         }
         let fle;
         let realshare= async () => {
-                const file_input = document.querySelector('#avatar');
-                const files = file_input.disabled ? undefined : file_input.files;
-             if (navigator.canShare && navigator.canShare( { files: files } )) {
+             if (navigator.canShare && navigator.canShare( { files: [fle] } )) {
                         try {
                             const shr = await navigator.share({
-                                files: files,
+                                files: [fle],
                                 url: 'https://thememefinder.com',
                                 title: 'Thememefinder',
                                 text: 'shared from thememefinder.com',

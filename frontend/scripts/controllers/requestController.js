@@ -49,13 +49,13 @@ define(['../config/config', './storeController'], function (config, store) {
         } else if (action === 'share') {
              return fetch(url + '?action='+action)
             .then(function(res){
-              return res.blob()
+              return res.arrayBuffer()
             })
             .then(function(blob){
                 filename = filename+'.jpg';
-                console.log(filename, blob.type)
-                //return new File([blob], filename, {type: blob.type, lastModified: new Date()});            
-                return new File(["test"], 'test.txt', {type: 'text/plain'});            
+                //console.log(filename, blob.type)
+                return new File([blob], filename, {type: 'image/jpeg'});            
+                //return new File(["test"], 'test.txt', {type: 'text/plain'});            
             })
             .catch((err) =>  {
                 return Promise.reject(err)

@@ -221,7 +221,6 @@ var animOutClass = "bounceInRight";
                         //$('#detail-cont').on('hidden.bs.modal', gotoHome);
                         $('.share').off('click').on('click', sharePost);
                         $('.more').off('click').on('click', showBuffs);
-                        $('.share-real').on('click', realshare);
                     } else {
                         toastr.error('We seems to have a problem. Please check your internet connection.', 'Memefinder Says')
                     }

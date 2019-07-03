@@ -175,8 +175,8 @@ var animOutClass = "bounceInRight";
         let sharePost = async (e) => {
                 let id = $(e.target).attr('data-post');
                 try {
-                     if (navigator.canShare && navigator.canShare( { files: [fle] } )) {
-                      const file = await request.getImage('/api/image/'+id, id, 'share')
+                     const file = await request.getImage('/api/image/'+id, id, 'share')
+                     if (navigator.canShare && navigator.canShare( { files: [file] } )) {
                       const shr = await navigator.share({
                             files: [file],
                             url: 'https://thememefinder.com/',

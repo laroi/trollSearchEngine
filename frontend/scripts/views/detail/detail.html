@@ -35,6 +35,7 @@
                 <div class='pan-count fav-count'>{{post.likes.length}}</div>
             </div>
             {{#if share}}
+            <input type="file" id="avatar" name="avatar" accept="image/png, image/jpeg">
                  <div class="pan-btn-cont">
                         <div class="fas fa-share-alt pan-btn share" data-post= {{post._id}}></div>
                         <div class="fa fa-at pan-btn share-real"></div>

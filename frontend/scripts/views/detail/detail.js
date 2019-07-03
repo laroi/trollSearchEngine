@@ -174,10 +174,12 @@ var animOutClass = "bounceInRight";
         }
         let fle;
         let realshare= async () => {
-             if (navigator.canShare && navigator.canShare( { files: [fle] } )) {
+                const file_input = document.querySelector('#avatar');
+                const files = file_input.disabled ? undefined : file_input.files;
+             if (navigator.canShare && navigator.canShare( { files: files } )) {
                         try {
                             const shr = await navigator.share({
-                                files: [fle],
+                                files: files,
                                 url: 'https://thememefinder.com',
                                 title: 'Thememefinder',
                                 text: 'shared from thememefinder.com',
@@ -192,6 +194,8 @@ var animOutClass = "bounceInRight";
         }
         let sharePost = async (e) => {
                 let id = $(e.target).attr('data-post');
+               
+
                 try {
                      fle = await request.getImage('/api/image/'+id, id, 'share')
                 } catch (err) {

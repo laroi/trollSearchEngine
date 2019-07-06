@@ -173,8 +173,8 @@ var animOutClass = "bounceInRight";
         }
         let sharePost = async (e) => {
                 let id = $(e.currentTarget).attr('data-post');
+                const svgElem = document.querySelector('.share-icon-path');   
                 try {
-                     const svgElem = document.querySelector('.share-icon-path');   
                      svgElem.classList.add('share-anim');
                      const file = await request.getImage('/api/image/'+id, id, 'share')
                      if (navigator.canShare && navigator.canShare( { files: [file] } )) {

@@ -14,7 +14,8 @@ define([
 ], function (request, store, url, user, highlight, postCollection, userCollection, html, Handlebars, Masonry, toastr) {
      var source   = $(html).html(),
         template = Handlebars.compile(source),
-        render;
+        render,
+        masonElement;
        
         Handlebars.registerHelper('tolower', function(options) {
             return options.fn(this).toLowerCase();
@@ -110,7 +111,7 @@ define([
           }
           return options.inverse(this)
         });
-        let getDOMelem = (post) => {
+        let getDOMelem = (post, indElement, indPage) => {
             let source   = $(indElement).html(),
                 pageSource = $(indPage).html(),
                 pageTemplate = Handlebars.compile(pageSource),
@@ -554,7 +555,7 @@ define([
                             $('#post-contents').empty().append(html);
                             $('#post-contents').show()
                             //$('.page-cont').imagesLoaded(function () {
-                            new Masonry( '.page-cont', { itemSelector: '.elem-cont',
+                            masonElement = new Masonry( '.page-cont', { itemSelector: '.elem-cont',
                                   isAnimated: true});
                                 /*$('.page-cont').masonry({
                                   itemSelector: '.elem-cont',
@@ -587,7 +588,7 @@ define([
                             updateUi();
                         }
                         highlight.highlight();
-                        require(['app/views/editpost/editpost'], (editPostView)=> {
+                        require(['app/views/editpost/editpost', 'text!app/views/components/indElement.html', 'text!app/views/components/pagination.html'], (editPostView, indElement, indPage)=> {
                             var editPost = function(e) {
                                 var id = $(e.target).parent().parent().attr('id');
                                 postCollection.getPostById(id, function (err, post) {
@@ -597,12 +598,10 @@ define([
                                             $('#'+id).parent().parent().remove();
                                             console.log('[UPDATE AFTER EDIT]', post);
                                             if (post) {
-                                                let html = getDOMelem(post)
+                                                let html = getDOMelem(post, indElement, indPage)
                                                 console.log(html);
                                                 $('.page-cont').append(html.post);
-                                                $('.pagination').empty().html(html.pagination)
-                                                $('.page-cont').masonry('reloadItems');
-                                                $('.page-cont').masonry('layout');
+                                                $('.pagination').empty().html(html.pagination);
                                                 $('.total_count').empty().html(post.total + ' memes found');
                                                 postCollection.getPostUserDetails([post.post.user])
                                                 .then((data)=> {
@@ -616,8 +615,10 @@ define([
                                                         $('#'+ post.post._id).children('.bottom-panel').children('.button-panel').children('.row1').children('.user').children('.user-img').attr('src', data.picture.thumb)
                                                     }
                                                 })
-                                                //msnry.addItems( postHtml)
                                             }
+                                            masonElement.reloadItems();
+                                            masonElement.layout();
+                                            $('.total_count').empty().html(postCollection.getTotal() + ' memes found');
                                         })
                                         .catch((err)=> {
                                             console.error('[UPDATE AFTER EDIT] ', err);
@@ -636,23 +637,29 @@ define([
 					                       toastr.success('Post removed!', 'Memefinder Says')
 					                       postCollection.removePostById(id)
                                             .then((post)=> {
-                                                $('#'+id).parent().parent().remove();
-                                            console.log('[UPDATE AFTER EDIT]', post);
+                                            $('#'+id).parent().parent().remove();
                                             if (post) {
-                                                let html = getDOMelem(post)
+                                                let html = getDOMelem(post, indElement, indPage)
                                                 console.log(html);
                                                 $('.page-cont').append(html.post);
-                                                $('.pagination').empty().html(html.pagination)
-                                                $('.page-cont').masonry('reloadItems');
-                                                $('.page-cont').masonry('layout');
+                                                $('.pagination').empty().html(html.pagination);
                                                 $('.total_count').empty().html(post.total + ' memes found');
-
-                                                //msnry.addItems( postHtml)
+                                                postCollection.getPostUserDetails([post.post.user])
+                                                .then((data)=> {
+                                                    if (data && Array.isArray(data)) {
+                                                        postCollection.getPostById(post._id, (err, post)=> {
+                                                            if (_post) {
+                                                            $('#'+ _post._id).children('.bottom-panel').children('.button-panel').children('.row1').children('.user').children('.user-img').attr('src', _post.userimg.thumb)
+                                                            }
+                                                        })
+                                                    } else if (data) {
+                                                        $('#'+ post.post._id).children('.bottom-panel').children('.button-panel').children('.row1').children('.user').children('.user-img').attr('src', data.picture.thumb)
+                                                    }
+                                                })
                                             }
-                                             /*$('.page-cont').masonry({
-                                              itemSelector: '.elem-cont',
-                                              isAnimated: true
-                                            });*/
+                                            masonElement.reloadItems();
+                                            masonElement.layout();
+                                            $('.total_count').empty().html(postCollection.getTotal() + ' memes found');
                                             })
                                             .catch((err)=> {
                                                 console.error('[UPDATE AFTER EDIT] ', err);

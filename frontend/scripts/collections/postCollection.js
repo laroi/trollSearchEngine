@@ -141,6 +141,7 @@ define(['app/controllers/requestController', 'app/controllers/storeController', 
                             views: post._source.views,
                             likes: post._source.likes,
                             downloads: post._source.downloads,
+                            shares: post._source.shares,
                             imageUrl: post._source.image.url,
                             thumbUrl: post._source.image.thumb,
                             height : post._source.image.size ? post._source.image.size.height : 0,
@@ -176,6 +177,7 @@ define(['app/controllers/requestController', 'app/controllers/storeController', 
                 //callback(undefined, {posts:posts, total: total, current: current, limit: limit});
             }
         };
+        getTotal = () => {return total;};
         getUpdatedPost = () => {
             return new Promise((resolve, reject) => {
                 tempCache =  Object.assign({}, cachedVals);
@@ -185,7 +187,7 @@ define(['app/controllers/requestController', 'app/controllers/storeController', 
                 console.log(tempCache);
                 request.post('/api/updatedposts', tempCache, function (err, status, data) {
                     if (!err) {
-                        let total = data.total;
+                        total = data.total;
                         let post;
                         let next = data.next;
                         let latest = data.latest;
@@ -306,6 +308,7 @@ define(['app/controllers/requestController', 'app/controllers/storeController', 
             }
          }
         return  {
+           getTotal:getTotal,
            getAllPosts: getAllPosts,
            getPostById: getPostById,
            removePostById : removePostById,

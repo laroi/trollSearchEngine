@@ -13,6 +13,7 @@ define([
      var source   = $(html).html(),
         template = Handlebars.compile(source),
         render;
+        const share = (navigator.canShare || navigator.share) ? true : false;
         var editPost = function(e) {
             var id = $(e.target).parent().parent().parent().parent().attr('id');
             postCollection.getPostById(id, (err, post) => {
@@ -160,7 +161,7 @@ var animOutClass = "bounceInRight";
         }
         let downloadImage = (e) => {
             let id = $(e.target).attr('data-post');
-            request.getImage('/api/image/'+id, id)
+            request.getImage('/api/image/'+id, id, 'download')
             .then(()=> {
                 postCollection.getPostById(id, function(err, post){
                     //post.downloads += 1;
@@ -170,6 +171,42 @@ var animOutClass = "bounceInRight";
                 })
             })
         }
+        let sharePost = async (e) => {
+                let id = $(e.currentTarget).attr('data-post');
+                try {
+                     $('.share-icon-path').addClass('share-anim');
+                     const file = await request.getImage('/api/image/'+id, id, 'share')
+                     if (navigator.canShare && navigator.canShare( { files: [file] } )) {
+                      const shr = await navigator.share({
+                            files: [file],
+                            url: 'https://thememefinder.com/',
+                            title: 'Thememefinder',
+                            text: 'shared from thememefinder.com',
+                        });
+                        $('.share-icon-path').removeClass('share-anim');
+                    } else if (navigator.share) {
+                        const shr = await navigator.share({
+                            url: 'https://thememefinder.com/#post/'+id,
+                            title: 'Thememefinder',
+                            text: 'shared from thememefinder.com',
+                        })
+                        $('.share-icon-path').removeClass('share-anim');
+                    } else {
+                        toastr.error('Could not share the image', 'Memefinder Says')
+                        return;
+                    }
+                } catch (err) {
+                    console.error(err);
+                    $('.share-icon-path').removeClass('share-anim');
+                    toastr.error('Could not share the image', 'Memefinder Says')
+                    return;
+                }
+                postCollection.getPostById(id, function(err, post){
+                //post.downloads += 1;
+                    $(e.target).next().empty().html(post.shares.length+1)
+                    $("#"+id+".panel-body").children('.bottom-panel').children('.button-panel').children('.row1').children('.pan-btn-cont').children('.share').next('.share-count').empty().html(post.shares.length+1);
+            });
+        };
         var detailView = function () {
             var render;
             render = function (isForce, id) {
@@ -180,7 +217,7 @@ var animOutClass = "bounceInRight";
                             let containerWidth = $(window).width() - 68;
                             post.adjustedHeight = (containerWidth < 552 ? containerWidth : 552)*(post.height/post.width)
                         }
-                        var html = template(post);
+                        var html = template({post : post, share: share});
                         $('#detailModel').empty().append(html);
                         updateUi(id);
                         $('.edit').off('click').on('click', editPost);
@@ -189,7 +226,8 @@ var animOutClass = "bounceInRight";
                         $('.star-btn').off('click').on('click', processStar);
                         $('.pan-btn.download').off('click').on('click', downloadImage);
                         //$('#detail-cont').on('hidden.bs.modal', gotoHome);
-                        $('.more').off('click').on('click', showBuffs)
+                        $('.share').off('click').on('click', sharePost);
+                        $('.more').off('click').on('click', showBuffs);
                     } else {
                         toastr.error('We seems to have a problem. Please check your internet connection.', 'Memefinder Says')
                     }

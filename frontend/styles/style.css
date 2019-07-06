@@ -103,6 +103,10 @@
 .star:hover {
     font-size:18px;
 }
+.share {
+    color:black;
+}
+
 .starred {
     color:#a0a000!important;
 }
@@ -230,6 +234,20 @@ background-repeat: no-repeat;
     margin-right:4px;
     margin-left:4px;
 
+}
+.share-count {
+    position: absolute;
+    bottom: -4px;
+    left: 0px;
+}
+.share-anim {
+      animation: change 1s infinite alternate;
+    }
+@keyframes change {
+  to {
+    fill: black;
+    opacity: 0.2;
+  }
 }
 .down-count {
     position: absolute;

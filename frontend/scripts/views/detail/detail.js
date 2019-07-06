@@ -174,7 +174,8 @@ var animOutClass = "bounceInRight";
         let sharePost = async (e) => {
                 let id = $(e.currentTarget).attr('data-post');
                 try {
-                     $('.share-icon-path').addClass('share-anim');
+                     const svgElem = document.querySelector('.share-icon-path');   
+                     svgElm.classList.add('share-anim');
                      const file = await request.getImage('/api/image/'+id, id, 'share')
                      if (navigator.canShare && navigator.canShare( { files: [file] } )) {
                       const shr = await navigator.share({
@@ -183,22 +184,21 @@ var animOutClass = "bounceInRight";
                             title: 'Thememefinder',
                             text: 'shared from thememefinder.com',
                         });
-                        $('.share-icon-path').removeClass('share-anim');
+                        svgElm.classList.remove('share-anim');
                     } else if (navigator.share) {
                         const shr = await navigator.share({
                             url: 'https://thememefinder.com/#post/'+id,
                             title: 'Thememefinder',
                             text: 'shared from thememefinder.com',
                         })
-                        $('.share-icon-path').removeClass('share-anim');
+                        svgElm.classList.remove('share-anim');
                     } else {
-                        toastr.error('Could not share the image', 'Memefinder Says')
+                        svgElm.classList.remove('share-anim');
                         return;
                     }
                 } catch (err) {
                     console.error(err);
-                    $('.share-icon-path').removeClass('share-anim');
-                    toastr.error('Could not share the image', 'Memefinder Says')
+                    svgElm.classList.remove('share-anim');
                     return;
                 }
                 postCollection.getPostById(id, function(err, post){

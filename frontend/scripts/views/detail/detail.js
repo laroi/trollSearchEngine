@@ -195,7 +195,7 @@ var animOutClass = "bounceInRight";
                         svgElem.classList.remove('share-anim');
                         return;
                     } catch (err) {
-                        console.err("error in sharing image", err.message);
+                        console.error("error in sharing image", err.message);
                         svgElem.classList.remove('share-anim');
                         return;
                     }
@@ -209,7 +209,7 @@ var animOutClass = "bounceInRight";
                         svgElem.classList.remove('share-anim');
                         return;
                     } catch (err) {
-                        console.err("Could not share", err.message);
+                        console.error("Could not share", err.message);
                         svgElem.classList.remove('share-anim');
                         return;
                     }

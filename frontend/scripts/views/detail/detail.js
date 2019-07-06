@@ -175,7 +175,7 @@ var animOutClass = "bounceInRight";
                 let id = $(e.currentTarget).attr('data-post');
                 try {
                      const svgElem = document.querySelector('.share-icon-path');   
-                     svgElm.classList.add('share-anim');
+                     svgElem.classList.add('share-anim');
                      const file = await request.getImage('/api/image/'+id, id, 'share')
                      if (navigator.canShare && navigator.canShare( { files: [file] } )) {
                       const shr = await navigator.share({
@@ -184,21 +184,21 @@ var animOutClass = "bounceInRight";
                             title: 'Thememefinder',
                             text: 'shared from thememefinder.com',
                         });
-                        svgElm.classList.remove('share-anim');
+                        svgElem.classList.remove('share-anim');
                     } else if (navigator.share) {
                         const shr = await navigator.share({
                             url: 'https://thememefinder.com/#post/'+id,
                             title: 'Thememefinder',
                             text: 'shared from thememefinder.com',
                         })
-                        svgElm.classList.remove('share-anim');
+                        svgElem.classList.remove('share-anim');
                     } else {
-                        svgElm.classList.remove('share-anim');
+                        svgElem.classList.remove('share-anim');
                         return;
                     }
                 } catch (err) {
                     console.error(err);
-                    svgElm.classList.remove('share-anim');
+                    svgElem.classList.remove('share-anim');
                     return;
                 }
                 postCollection.getPostById(id, function(err, post){

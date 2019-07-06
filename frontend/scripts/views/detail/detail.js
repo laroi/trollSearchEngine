@@ -174,33 +174,49 @@ var animOutClass = "bounceInRight";
         let sharePost = async (e) => {
                 let id = $(e.currentTarget).attr('data-post');
                 const svgElem = document.querySelector('.share-icon-path');   
-                try {
-                     svgElem.classList.add('share-anim');
-                     const file = await request.getImage('/api/image/'+id, id, 'share')
-                     if (navigator.canShare && navigator.canShare( { files: [file] } )) {
-                      const shr = await navigator.share({
+                 svgElem.classList.add('share-anim');
+                 try {
+                    const file = await request.getImage('/api/image/'+id, id, 'share')
+                 } catch (err) {
+                    console.error('error in getting file');
+                    svgElem.classList.remove('share-anim');
+                    toastr.error('Could not share this image.', 'Memefinder Says');
+                    return;
+                 }
+                 if (navigator.canShare && navigator.canShare( { files: [file] } )) {
+                    try {
+                        const shr = await navigator.share({
                             files: [file],
                             url: 'https://thememefinder.com/',
                             title: 'Thememefinder',
                             text: 'shared from thememefinder.com',
                         });
                         svgElem.classList.remove('share-anim');
-                    } else if (navigator.share) {
+                        return;
+                    } catch (err) {
+                        console.err("error in sharing image", err.message);
+                        svgElem.classList.remove('share-anim');
+                        return;
+                    }
+                } else if (navigator.share) {
+                    try {
                         const shr = await navigator.share({
                             url: 'https://thememefinder.com/#post/'+id,
                             title: 'Thememefinder',
                             text: 'shared from thememefinder.com',
                         })
                         svgElem.classList.remove('share-anim');
-                    } else {
+                        return;
+                    } catch (err) {
+                        console.err("Could not share", err.message);
                         svgElem.classList.remove('share-anim');
                         return;
                     }
-                } catch (err) {
-                    console.error(err);
+                } else {
                     svgElem.classList.remove('share-anim');
                     return;
                 }
+               
                 postCollection.getPostById(id, function(err, post){
                 //post.downloads += 1;
                     $(e.target).next().empty().html(post.shares.length+1)

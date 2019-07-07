@@ -194,10 +194,10 @@ var animOutClass = "bounceInRight";
                             text: 'shared from thememefinder.com',
                         })
                         svgElem.classList.remove('share-anim');
-                        } catch(err => {
+                        } catch (err)  {
                             console.error(err.message);
                             svgElem.classList.remove('share-anim');
-                        })               
+                        };             
                     } else {
                         console.error('not sharable');
                     }
@@ -206,7 +206,7 @@ var animOutClass = "bounceInRight";
                         const shr = await navigator.share({
                             url: 'https://thememefinder.com/#post/'+id,
                             title: 'Thememefinder',
-                            text: 'shared from thememefinder.com',
+                            text: 'shared from thememefinder.com', 
                         });
                     } catch (err) {
                         console.error("Could not share", err.message);

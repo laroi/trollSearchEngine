@@ -178,7 +178,8 @@ var animOutClass = "bounceInRight";
                  if (navigator.canShare) {
                     svgElem.classList.add('share-anim');    
                     try {
-                        file = await request.getImage('/api/image/'+id, id, 'share')
+                        file = await request.getImage('/api/image/'+id, id, 'share');
+                        svgElem.classList.remove('share-anim');
                      } catch (err) {
                         console.error('error in getting file');
                         svgElem.classList.remove('share-anim');
@@ -187,19 +188,19 @@ var animOutClass = "bounceInRight";
                      }
                      if (navigator.canShare( { files: [file] } )) {
                         try {
-                        const shr = await navigator.share({
-                            files: [file],
-                            url: 'https://thememefinder.com/',
-                            title: 'Thememefinder',
-                            text: 'shared from thememefinder.com',
-                        })
-                        svgElem.classList.remove('share-anim');
+                            const shr = await navigator.share({
+                                files: [file],
+                                url: 'https://thememefinder.com/',
+                                title: 'Thememefinder',
+                                text: 'shared from thememefinder.com',
+                            })
                         } catch (err)  {
                             console.error(err.message);
-                            svgElem.classList.remove('share-anim');
+                            return;
                         };             
                     } else {
                         console.error('not sharable');
+                        return;
                     }
                  } else if (navigator.share) {
                     try {

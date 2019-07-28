@@ -159,7 +159,24 @@ var animOutClass = "bounceInRight";
         var gotoHome = function () {
             url.navigate('landing');
         }
+        let isDownloadBusy;
         let downloadImage = (e) => {
+            if (!isDownloadBusy) {
+                isDownloadBusy = true;
+                $(e.target).css('cursor', 'disabled');
+                let id = $(e.target).attr('data-post');
+                postCollection.getPostById(id, function(err, post){
+                    post.downloadOrShare('download')
+                    .then((downloads)=> {
+                    $(e.target).next().empty().html(downloads.length+1)
+                    $("#"+id+".panel-body").children('.bottom-panel').children('.button-panel').children('.row1').children('.pan-btn-cont').children('.download').next('.down-count').empty().html(downloads.length+1);
+                        $(e.target).css('cursor', 'pointer');
+                        isDownloadBusy = false;
+                    })
+                });
+            }
+        }
+        /*let downloadImage = (e) => {
             let id = $(e.target).attr('data-post');
             request.getImage('/api/image/'+id, id, 'download')
             .then(()=> {
@@ -170,16 +187,19 @@ var animOutClass = "bounceInRight";
 
                 })
             })
-        }
+        }*/
         let sharePost = async (e) => {
                 let id = $(e.currentTarget).attr('data-post');
                 let file;
                 const svgElem = document.querySelector('.share-icon-path');   
                  if (navigator.canShare) {
-                    svgElem.classList.add('share-anim');    
+                    svgElem.classList.add('share-anim');
+                    let post = postCollection.getPostById(id);
                     try {
-                        file = await request.getImage('/api/image/'+id, id, 'share');
+                        const {file, postObj} = await post.downloadOrShare('share');
                         svgElem.classList.remove('share-anim');
+                        $(e.currentTarget).next().empty().html(postObj.shares.length);
+                        
                      } catch (err) {
                         console.error('error in getting file');
                         svgElem.classList.remove('share-anim');
@@ -189,10 +209,7 @@ var animOutClass = "bounceInRight";
                      if (navigator.canShare( { files: [file] } )) {
                         try {
                             const shr = await navigator.share({
-                                files: [file],
-                                url: 'https://thememefinder.com/',
-                                title: 'Thememefinder',
-                                text: 'shared from thememefinder.com',
+                                files: [file]
                             })
                         } catch (err)  {
                             console.error(err.message);

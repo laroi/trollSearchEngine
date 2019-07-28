@@ -257,6 +257,7 @@ var elastic = function () {
                 actors: doc.actors,
                 likes: doc.likes || [],
                 downloads: doc.downloads || [],
+                shares: doc.shares || [],
                 views : doc.views || [],
                 characters: doc.characters,
                 comments: doc.comments,
@@ -396,6 +397,9 @@ var elastic = function () {
                    "size" : options.size || 10,
                    "sort" : sort
             };
+            /*body["_source"]: {
+                excludes: [ "downloads", "likes", "shares" ]
+            }*/
             if (minScore) {
                 body.min_score = minScore;
             }
@@ -537,6 +541,7 @@ var elastic = function () {
             actors: doc.actors,
             likes: doc.likes || [],
             downloads: doc.downloads || [],
+            shares: doc.shares || [],
             views : doc.views || [],
             characters: doc.characters,
             comments: doc.comments,

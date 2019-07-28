@@ -531,6 +531,7 @@ var routes = function () {
         let postId = req.params.id;
         let userId = req.params.user;
         let imgSize = undefined;
+        let isShare = req.query.action === 'share' ? true : false;
        req.connection.setTimeout(100000); //100 seconds
         Post.findById(postId, function(err, post){
             if (!err) {
@@ -587,14 +588,21 @@ var routes = function () {
                         .stream(function (err, stdout, stderr) {
                           stdout.pipe(res);
                         });
-                        const upd_val = {user:userId, time: Date.now()};
-                        try {
-                            await Post.update({_id: postId}, {$push: {downloads: upd_val}});
+                        let upd_val;
+                        let es_upd_val;
+                        let val_to_up= {user:userId, time: Date.now()};
+                        if (isShare) {
+                            es_upd_val = {share:[...post.shares, val_to_up]};
+                        } else {
+                            es_upd_val = {downloads:[...post.downloads, val_to_up]}
+                        }
+                        try {                        
+                            const result = await Post.findOneAndUpdate({_id: postId}, es_upd_val, {new: true});
                         } catch (e) {
                             console.error(e);
                             return res.status(500).send('Could not update database')
                         }
-                        elastic.updateDoc(postId, {downloads:[...post.downloads, upd_val]} , function(updErr, updData) {
+                        elastic.updateDoc(postId, es_upd_val, function(updErr, updData) {
                             console.log('Increment download elastic\n',updErr, updData)
                         });
                     } else {

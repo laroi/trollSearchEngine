@@ -61,6 +61,7 @@ define(['../config/config', './storeController'], function (config, store) {
                 return Promise.reject(err)
             })
         }
+        return Promise.reject('No action specified');
         
         /*return new Promise ((resolve, reject)=> {
             $.ajax({

@@ -129,15 +129,14 @@ define([
                 isDownloadBusy = true;
                 $(e.target).css('cursor', 'disabled');
                 let id = $(e.target).attr('data-post');
-                request.getImage('/api/image/'+id, id)
-                .then(()=> {
-                    postCollection.getPostById(id, function(err, post){
-                        //post.downloads += 1;
-                        $(e.target).next().empty().html(post.downloads.length + 1);
+                postCollection.getPostById(id, function(err, post){
+                    post.downloadOrShare('download')
+                    .then((downloads)=> {
+                        $(e.target).next().empty().html(downloads.length);
                         $(e.target).css('cursor', 'pointer');
                         isDownloadBusy = false;
                     })
-                })
+                });
             }
         }
 

@@ -167,6 +167,12 @@ var putMapping = function () {
                             time: {"type": "date"}
                         }
                     },
+                    shares: { 
+                        properties:{
+                            user: {"type": "text"},
+                            time: {"type": "date"}
+                        }
+                    },
                     comments:{
                         properties:{
                             userId: {"type": "text"},

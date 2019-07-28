@@ -17,10 +17,29 @@ define(['app/controllers/requestController', 'app/controllers/storeController'],
         request.put('/api/post/'+this._id+'/unlike',{user: user}, function(err, data) {
             if (!err) {
                 that.isLiked = false;
+                that.likes -= 1;
                 that.likes.splice(that.likes.findIndex(_=> _.userId === store.get('userId')), 1);
             }
             callback(err, data)
         })
+     };
+     var downloadOrShare = function(action) {
+        let that = this;
+        if (action && ['download', 'share'].indexOf(action) >= 0) {
+            return request.getImage('/api/image/'+that._id, that._id, action)
+                .then((file)=> {
+                    if (action == 'download') {
+                        that.downloads.push({userId: store.get('userId')});
+                        return that.downloads;
+                    }
+                    if (action == 'share') {
+                        that.shares.push({userId: store.get('userId')});
+                        return {file, that};
+                    }
+                })
+        }
+        return Promise.reject('Invalid Action'); 
+            
      };
         var save = function () {
             var postData = {
@@ -53,7 +72,7 @@ define(['app/controllers/requestController', 'app/controllers/storeController'],
 				tags: inPost.tags || [],
 				movie: inPost.movie || '',
 				views: inPost.views || [],
-				likes: inPost.likes || [],
+				likes: inPost.likes || 0,
 				downloads: inPost.downloads || [],
 				shares: inPost.shares || [],
 				language: inPost.language || '',
@@ -67,7 +86,8 @@ define(['app/controllers/requestController', 'app/controllers/storeController'],
 				isOwner: false,
                 save: save,
                 like: like,
-                unlike: unlike
+                unlike: unlike,
+                downloadOrShare: downloadOrShare
             };
         
     };

@@ -24,7 +24,7 @@ define(['app/controllers/requestController', 'app/controllers/storeController'],
         })
      };
      var downloadOrShare = function(action) {
-        let that = this;
+        let postObj = this;
         if (action && ['download', 'share'].indexOf(action) >= 0) {
             return request.getImage('/api/image/'+that._id, that._id, action)
                 .then((file)=> {
@@ -34,7 +34,7 @@ define(['app/controllers/requestController', 'app/controllers/storeController'],
                     }
                     if (action == 'share') {
                         that.shares.push({userId: store.get('userId')});
-                        return {file, that};
+                        return {file, postObj};
                     }
                 })
         }

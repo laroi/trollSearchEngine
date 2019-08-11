@@ -577,6 +577,9 @@ var routes = function () {
                             console.log('Offest -> ', '0' ,'0')
                             return "0,0"
                         };
+                        const getImage = (size) {
+                            
+                        }
                         const cmd = 'image Over ' + getLogoOffset(imgSize)+ ' 0,0 "'+__dirname + '/../assets/logos/logo.png"';
                         console.log(cmd);
                         gm(readStream)

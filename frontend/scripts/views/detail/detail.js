@@ -149,12 +149,14 @@ var animOutClass = "bounceInRight";
         };
         var processUserClick = function (e) {
             var postId = $(e.target).parent().parent().parent().parent().parent().parent().attr('id');
-            var poster = postCollection.getPostById(postId).user;
-            var storage = store.get('filters') || {};
-            storage.userId = poster.id;
-            storage.username = poster.name;
-            store.set('filters', storage);
-            url.navigate();
+            postCollection.getPostById(postId, (err, post) => {
+                var storage = store.get('filters') || {};
+                storage.userId = post.user.id;
+                storage.username = post.user.name;
+                store.set('filters', storage);
+                url.navigate();
+            });
+            
         };
         var gotoHome = function () {
             url.navigate('landing');
@@ -194,31 +196,32 @@ var animOutClass = "bounceInRight";
                 const svgElem = document.querySelector('.share-icon-path');   
                  if (navigator.canShare) {
                     svgElem.classList.add('share-anim');
-                    let post = postCollection.getPostById(id);
-                    try {
-                        const {file, postObj} = await post.downloadOrShare('share');
-                        svgElem.classList.remove('share-anim');
-                        $(e.currentTarget).next().empty().html(postObj.shares.length);
-                        
-                     } catch (err) {
-                        console.error('error in getting file');
-                        svgElem.classList.remove('share-anim');
-                        toastr.error('Could not share this image.', 'Memefinder Says');
-                        return;
-                     }
-                     if (navigator.canShare( { files: [file] } )) {
+                    postCollection.getPostById(id, (err, post)=> {
                         try {
-                            const shr = await navigator.share({
-                                files: [file]
-                            })
-                        } catch (err)  {
-                            console.error(err.message);
+                            const {file, postObj} = await post.downloadOrShare('share');
+                            svgElem.classList.remove('share-anim');
+                            $(e.currentTarget).next().empty().html(postObj.shares.length);
+                            
+                         } catch (err) {
+                            console.error('error in getting file');
+                            svgElem.classList.remove('share-anim');
+                            toastr.error('Could not share this image.', 'Memefinder Says');
                             return;
-                        };             
-                    } else {
-                        console.error('not sharable');
-                        return;
-                    }
+                         }
+                         if (navigator.canShare( { files: [file] } )) {
+                            try {
+                                const shr = await navigator.share({
+                                    files: [file]
+                                })
+                            } catch (err)  {
+                                console.error(err.message);
+                                return;
+                            };             
+                        } else {
+                            console.error('not sharable');
+                            return;
+                        }                    
+                    });
                  } else if (navigator.share) {
                     try {
                         const shr = await navigator.share({

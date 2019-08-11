@@ -26,14 +26,14 @@ define(['app/controllers/requestController', 'app/controllers/storeController'],
      var downloadOrShare = function(action) {
         let postObj = this;
         if (action && ['download', 'share'].indexOf(action) >= 0) {
-            return request.getImage('/api/image/'+that._id, that._id, action)
+            return request.getImage('/api/image/'+postObj._id, postObj._id, action)
                 .then((file)=> {
                     if (action == 'download') {
-                        that.downloads.push({userId: store.get('userId')});
-                        return that.downloads;
+                        postObj.downloads.push({userId: store.get('userId')});
+                        return postObj.downloads;
                     }
                     if (action == 'share') {
-                        that.shares.push({userId: store.get('userId')});
+                        postObj.shares.push({userId: store.get('userId')});
                         return {file, postObj};
                     }
                 })

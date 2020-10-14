@@ -1,0 +1,53 @@
+<div class="panel-cont">
+    <div class='total_count'> {{posts.total}} memes found </div>
+    <div class="row page-cont">
+    {{#each posts.posts}}
+    <div class="elem-cont">
+          {{#unless this.isApproved}}<div class="notify-badge">U</div> {{/unless}}
+          <div class="panel panel-default">
+            <div id={{this._id}} class="panel-body">
+                <div class="thumbImgCont">
+                    <img alt="thumb-image" width="{{../imgWidth}}px"  class="thumbImg" src={{this.thumbUrl}}>
+                </div>
+                <div class="row2">
+                    
+                    <!--<div class="pan-btn use"></div>-->
+                </div>
+                <div class="bottom-panel">
+                    <div class="button-panel">
+                        <div class="row1">
+                             
+                            <div class="pan-btn user"><img height="17" width="17" class="user-img" src={{this.user.image}}></div>
+                            {{#if this.isStarred}}
+                                <div class="pan-btn far fa-star star-btn starred"></div>
+                            {{else}}
+                                <div class="pan-btn far fa-star star-btn star"></div>
+                            {{/if}}
+                            <div class="pan-btn-cont">
+                                <div class="far fa-arrow-alt-circle-down pan-btn download" data-post= {{this._id}}></div>
+                                <div class='pan-count down-count'>{{this.downloads.length}}</div>
+                            </div>
+                            <div class="pan-btn-cont">
+                                {{#if this.isLiked}}
+                                    <div class="far fa-heart pan-btn fav faved"></div>
+                                {{else}}
+                                    <div class="far fa-heart pan-btn fav favorite"></div>
+                                {{/if}}
+                                <div class='pan-count fav-count'>{{this.likes.length}}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+          </div>
+    </div>
+    {{/each}}
+    </div>
+    <div class="paginate">
+    <nav aria-label="Page navigation">
+  <ul class="pagination">
+  </ul>
+</nav>
+    </div>
+</div>
+

@@ -1,0 +1,84 @@
+<script id="entry-template" type="text/x-handlebars-template">
+<div class="modal" id="register-modal" tabindex="-1" role="dialog">
+<div class="crop-cont">
+    <div class="crop"></div>
+    <div class="crop-btn">
+        <button type="button" id="crop-cancel" class="btn btn-secondary">Cancel</button>
+        <button type="button" id="crop-okay" class="btn btn-primary">Okay</button>
+    </div>
+</div>
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span id="reg-modal-thumb"><img height="30" width="30" style="border-radius:50px"></span>
+                <span id="register-modal-title" class="modal-title"><b>Register</b></span>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body register-model-body">
+                <div class="form-group">
+                    <div class="form-group label-floating is-empty">
+                        <label for="login-email" class="control-label">Email*</label>
+                        <input type="email" class="form-control" id="login-email" value="">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="form-group label-floating is-empty">
+                        <label for="login-password" class="control-label">Password*</label>
+                        <input type="password" class="form-control" id="login-password" value="">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="form-group label-floating is-empty">
+                        <label for="login-name" class="control-label">Name*</label>
+                        <input type="text" class="form-control" id="login-name" value="">
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="form-group is-empty col-md-12 is-fileinput" style="overflow:hidden">
+                        <label for="prof-img" class="col-md-4 control-label" style="padding-left:0">Profile Image</label>
+                        <div class="col-md-8" style="padding-left:0">
+                            <input type="text" readonly="" class="form-control" placeholder="Browse...">
+                            <input type="file" id="prof-img" multiple="">
+                        </div>
+                    </div>
+                    <div class=" form-group dropdown is-empty col-md-6">
+                        <label class="col-md-4 control-label reg-drop-label" style="padding-left:0">My Gender is*</label>
+                       <span data-target="#" class="user-name dropdown-toggle reg-gender" data-toggle="dropdown">Select</span>
+                       <span data-toggle="dropdown"><b class="caret"></b></span>
+                       <div class="dropdown-menu">
+                            <ul class="">
+                                <li class="reg-drop-val">None of yo business</li>
+                            </ul>
+                       </div>
+                   </div>
+                   <div class=" form-group dropdown is-empty col-md-6">
+                        <label class="col-md-4 control-label reg-drop-label" style="padding-left:0">My Age is*</label>
+                       <span data-target="#" class="user-name dropdown-toggle reg-age" data-toggle="dropdown">Select</span>
+                       <span data-toggle="dropdown"><b class="caret"></b></span>
+                       <div class="dropdown-menu">
+                            <ul class="">
+                                <li class="reg-drop-val">Above 18 </li>
+                            </ul>
+                       </div>
+                   </div>   
+                </div>
+                
+                
+                <div class="form-group">
+                    <div class="form-group label-floating is-empty">
+                        <label for="login-phone" class="control-label">Phone</label>
+                        <input type="tel" class="form-control" id="login-phone" value="">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-register" class="btn btn-primary">Register</button>
+            </div>
+        </div>
+    </div>
+</div>
+</script>

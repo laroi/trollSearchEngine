@@ -164,12 +164,13 @@ var routes = function () {
             password = req.body.password;
             User.findOne({email:email}, function(userErr, userData) {
                 if (!userErr && userData) {
-                    console.log(userData);
                     if (userData.status && userData.status !== "inactive") {
                         if (bcrypt.compareSync(password, userData.password)) {
                             createAccesstoken(undefined, userData._id, userData.email, userData.type, undefined, function (err, token) {
                                 if (!err) {
                                     delete userData.password;
+                                    delete userData.verification
+                                    console.log(userData);
                                     res.status(200).send(JSON.stringify({token: token.token, user: userData}));
                                 } else {
                                     res.status(401).send({err: 'Could not generate token'});
@@ -184,7 +185,7 @@ var routes = function () {
                 } else {
                     res.status(404).send({err:"User Not Found"})
                 }
-            });
+            }).lean();
         } else {
             res.status(400).send({err:"Parameters required"})
         }

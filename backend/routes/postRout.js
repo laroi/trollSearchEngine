@@ -74,10 +74,12 @@ var routes = function () {
         return new Promise((resolve, reject)=> {
             var filename = uuid.v1();
             var fileLoc = uploadPath + filename;
+            console.log(`saving image in ${fileLoc}`)
             var base64Data = image;
             var size = undefined;
             base64Data = base64Data.replace(/^data:image\/[a-z]+;base64,/, "");
             base64data = new Buffer(base64Data,'base64')
+            
             let saveWebP = (imgPath) => {
                 return new Promise ((resolve, reject) => {
                     gm(imgPath)
@@ -118,6 +120,7 @@ var routes = function () {
                   })*/
                 })
             }
+            
             gm(base64data)
             .setFormat('jpg')
             .write(fileLoc + '.jpg', function(err){
@@ -197,6 +200,7 @@ var routes = function () {
             requestId = req.body.requestId,
             obj = {},
             postObj;
+            console.log(`uploading ${title}`)
         if (req.body.image && req.body.user) {
             saveImage(req.body.image, postUploadPath)
             .then((fileinfo) => {
@@ -271,7 +275,7 @@ var routes = function () {
             actors = req.body.actor,
             search = req.body.search,
             from = req.body.from,
-            unApproved = req.body.isApproved,
+            unApproved = !req.body.isApproved,
             order = req.body.order,
             context = req.body.context,
             isFavorite =  req.body.isFavorite;
@@ -306,6 +310,8 @@ var routes = function () {
             }
             if (req.isAdmin && unApproved) {
                 opts.unApproved = unApproved;
+            } else {
+                console.log(`not an admin, no unapproved posts`)
             }
             opts.from = from;
             opts.order = order;
@@ -451,7 +457,8 @@ var routes = function () {
                 var updateObj = {},
                 doc = req.body,
                 id = doc._id;
-                doc.isApproved = doc.isApproved === 'true' ? true : false;
+                console.log('****', doc.isApproved, typeof(doc.isApproved));
+                //doc.isApproved = doc.isApproved === 'true' ? true : false;
                 if (req.body.user) {
                     updateImage(req.body.image, postUploadPath, post.image.url)
                     .then((fileinfo)=> {
@@ -582,15 +589,15 @@ var routes = function () {
                         };
                         const cmd = 'image Over ' + getLogoOffset(imgSize)+ ' 0,0 "'+__dirname + '/../assets/logos/logo.png"';
                         console.log(cmd);
-                        gm(readStream)
+                        //gm(readStream)
                         //.gravity(getGravity())
                         //.fill('#bdbdbd')
                         //.font( __dirname + '/../assets/fonts/amptmann.ttf')
                         //.fontSize(getFontSize(1000))
-                        .draw(cmd)
-                        .stream(function (err, stdout, stderr) {
-                          stdout.pipe(res);
-                        });
+                        //.draw(cmd)
+                        //.stream(function (err, stdout, stderr) {
+                          readStream.pipe(res);
+                        //});
                         let upd_val;
                         let es_upd_val;
                         let val_to_up= {user:userId, time: Date.now()};

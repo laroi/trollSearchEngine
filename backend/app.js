@@ -128,7 +128,7 @@ var isAuthenticated = function (admin) {
 // This auth for list api to filter out non admins
 var listAuth = function (req, res, next) {
     // checking token and see if request to list unapproved posts, if not, pass directly
-    if ((req.query.accessToken || req.headers['authorization']) && (req.body.isApproved === "false")) {
+    if ((req.query.accessToken || req.headers['authorization']) && (req.body.isApproved === false)) {
     var tok = req.query.accessToken || req.headers['authorization'];
         access.findOne({token: tok}, function (err, data) {
             if (!err && data && blackListedUsers.indexOf(data.user) < 0) {

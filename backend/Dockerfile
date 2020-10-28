@@ -2,7 +2,7 @@
 FROM node:10-alpine
 
 # install imagemagick, graphicsmagick, ffmgeg and
-RUN apk add --no-cache imagemagick 
+RUN apk add --no-cache gettext librsvg ghostscript imagemagick
 RUN apk --no-cache --virtual deps add \
   python \
   make \

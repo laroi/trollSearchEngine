@@ -64,7 +64,7 @@ var elastic = function () {
                         title: {"type" : "text", "fields": {"raw": {"type": "text","index": false}}},
                         context: {"type" : "text"},
                         requestId: {"type" : "text"},
-                        isApproved: {"type" : "boolean", "index" : false},
+                        isApproved: {"type" : "boolean"},
                         image: {"type" : "object",
                             "properties" : {
                                 "url" : {"type" : "text", "index" : false},
@@ -221,18 +221,18 @@ var elastic = function () {
                     putMapping(function(err) {
                         if (!err) {
                             console.log('Putting index');
-                            putRequestMapping((err)=> {
-                                if (!err) {
+                            /*putRequestMapping((err)=> {
+                                if (!err) {*/
                                     if (callback && typeof callback === 'function') {
                                         callback();
                                     }
-                                } else {
+                               /* } else {
                                     console.log('error in putting index', err);
                                     if (callback && typeof callback === 'function') {
                                         callback(err);
                                     }
                                 }
-                            })
+                            })*/
                         } else {
                             console.log('error in putting index', err);
                         }

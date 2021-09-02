@@ -1,18 +1,14 @@
 const config = require('../config.js');
+console.log(config)
 var nodemailer = require('nodemailer'),
     smtpTransport = require('nodemailer-smtp-transport'),
-    transporter = nodemailer.createTransport(smtpTransport({
-            host: config.mailHost,
-            port: config.mailPort,
+    transporter = nodemailer.createTransport({
+            service:'Yandex',
             auth: {
                 user: config.mailUser,
                 pass: config.mailPass
             },
-            secure:false,
-            tls: {rejectUnauthorized: false},
-            debug:true
-        })
-    );
+        });
    /*transporter.verify(function(error, success) {
        if (error) {
             console.log(error);
@@ -22,10 +18,10 @@ var nodemailer = require('nodemailer'),
     });*/
 var sendMail = function(email, code, name, callback) {
     transporter.sendMail({
-            from: 'admin@mail.thememefinder.com',
+            from: 'admin@hypermemia.link',
             to: email,
-            subject: 'Verification code for Memefinder',
-            html: 'Hey <b>' + name + '</b>,<br> Click <a href = "https://thememefinder.com/api/user/verification?email=' + email + '&code=' + code + '"> here </a> to verify your account in Thememefinder '
+            subject: 'Verification code for Hypermemia',
+            html: 'Hey <b>' + name + '</b>,<br> Click <a href = "https://hypermemia.link/api/user/verification?email=' + email + '&code=' + code + '"> here </a> to verify your account in Hypermemia '
         }, function(error, response) {
             console.log(JSON.stringify(error), JSON.stringify(response))
            if (error) {

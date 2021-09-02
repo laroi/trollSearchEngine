@@ -168,6 +168,7 @@ Static Routes
 app.use('/images', express.static(__dirname + '/assets/uploads'));
 app.use('/requests/images', express.static(__dirname + '/assets/requests'));
 app.use('/images/profile', express.static(__dirname + '/assets/profile'));
+app.use('/images/sample_prof', express.static(__dirname + '/assets/sample_prof'));
 
 /* User Routes */
 app.post('/token', route.login);
@@ -185,6 +186,7 @@ app.post('/feedback', route.addFeedback);
 app.get('/groups', route.listGroups);
 app.get('/contexts', route.listContexts);
 app.get('/langs', route.listLanguages);
+app.get('/randomuser', route.getRandomUser);
 
 /*Health Check*/
 app.get('/test', postRoute.test)

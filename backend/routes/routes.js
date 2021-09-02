@@ -4,6 +4,7 @@ var langs = require('../models/langs.js');
 var Group = require('../models/group.js');
 var feedback = require('../models/feedback.js');
 var accessToken = require('../models/accessToken.js');
+var sampleUsers = require('../models/sampleUsers.js');
 var mailer = require('../utils/mailer');
 var bcrypt = require('bcrypt');
 var request = require('request');
@@ -79,31 +80,41 @@ let saveThumb = function (fileName) {
         });
     })
 }
+const isBase64 = (str) => {
+    if (str.includes('base64')) {
+        return true
+    }
+    return false
+}
 let uploadProfPic = (data) => {
     return new Promise((resolve, reject)=> {
         if (data) {
-            var filename = uuid.v1();
-            var fileLoc = profImageUploadPath + filename;
-            var size = undefined;
-            data = data.replace(/^data:image\/png;base64,/,'')
-            data = new Buffer(data,'base64')
-            gm(data)
-            .setFormat('jpg')
-            .resize('150')
-            .write(fileLoc + '.jpg', function(err){
-                if (!err) {
-                    saveThumb(filename+'.jpg')
-                    .then((thumbLoc)=> {
-                        console.log('Upload prfpic completed')
-                        resolve(filename+'.jpg')
-                    })
-                    .catch((err)=> {
-                        reject(err);
-                    })
-                } else {
-                    reject(err)
-                }
-            })
+            if (isBase64(data)) {
+                var filename = uuid.v1();
+                var fileLoc = profImageUploadPath + filename;
+                var size = undefined;
+                data = data.replace(/^data:image\/png;base64,/,'')
+                data = new Buffer(data,'base64')
+                gm(data)
+                .setFormat('jpg')
+                .resize('150')
+                .write(fileLoc + '.jpg', function(err){
+                    if (!err) {
+                        saveThumb(filename+'.jpg')
+                        .then((thumbLoc)=> {
+                            console.log('Upload prfpic completed')
+                            resolve({filename: filename+'.jpg', type: 'base64'})
+                        })
+                        .catch((err)=> {
+                            reject(err);
+                        })
+                    } else {
+                        reject(err)
+                    }
+                })
+            } else {
+                resolve({filename: data.substr(4), type: 'url'})
+            }
          } else {
             resolve(false);
          }
@@ -121,10 +132,12 @@ var routes = function () {
              bcrypt.genSalt(10, function(err, salt) {
                 bcrypt.hash(req.body.password, salt, function(err, hash) {
                     uploadProfPic(picture)
-                    .then((picturePath)=> {
+                    .then(({filename, type})=> {
                         let userDetails = {'email': req.body.email, password: hash, type: 'user', 'verification': verification, 'phone': phone, name : name};
-                        if (picturePath) {
-                            userDetails.picture = {full :'/prof/'+picturePath, thumb: '/prof/thumb/'+picturePath};
+                        if (filename && type==="base64") {
+                            userDetails.picture = {full :'/prof/'+filename, thumb: '/prof/thumb/'+filename};
+                        } else {
+                            userDetails.picture = {full : filename, thumb: filename};
                         }
                         let user = new User(userDetails);
                         console.log(JSON.stringify(user));
@@ -402,6 +415,33 @@ var routes = function () {
             res.status(400).send({err: 'bad request'})
         }
     };
+    const getRandomUser = async(req, res) => {
+        const {gender} = req.query;
+        const sampleImageBaseUrl = 'images/sample_prof'
+        let query =  [{ $sample: { size: 1 } }]
+        if (gender && gender !== "other") {
+            query.unshift({ $match: { gender: gender } },)
+        }
+        console.log(query)
+        try {
+            let user = await sampleUsers.aggregate(query);
+            //picture : {full: {type: String}, thumb: {type: String}},
+            console.log(user)
+            if (user && Array.isArray(user) && user.length > 0) {
+                user = user[0]
+                user.picture = {
+                    full : `${sampleImageBaseUrl}/${user.image}`,
+                    thumb: `${sampleImageBaseUrl}/${user.image}`
+                }
+                res.status(200).send(user);
+            } else {
+                res.status(404).send()
+            }
+        } catch (e) {
+            console.log(e)
+            res.status(500).send(e);
+        }
+    }
    return {
         register: register,
         login: login,
@@ -416,7 +456,8 @@ var routes = function () {
         addContext: addContext,
         listLanguages: listLanguages,
         getUserCount: getUserCount,
-        addFeedback:addFeedback
+        addFeedback:addFeedback,
+        getRandomUser:getRandomUser
 
     }
 }

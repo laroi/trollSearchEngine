@@ -212,5 +212,8 @@ app.get('/image/:id', postRoute.downloadImage);
 app.get('/suggestions', postRoute.autoSuggestion);
 app.get('/incrementviews', postRoute.incrementViews);
 
+/* Insights */
+app.get('/insight', postRoute.getInsight)
+
 app.listen(config.appPort);
 console.log(`Express server listening on port ${config.appPort}`);

@@ -1,4 +1,5 @@
 var Post = require('../models/post.js');
+var User = require('../models/user.js');
 var Req = require('../models/request.js');
 var elastic = require('../utils/elastic');
 const postUploadPath = __dirname + '/../assets/uploads/';
@@ -11,6 +12,7 @@ var gm = require('gm').subClass({imageMagick: true});
 var ObjectID = require('mongodb').ObjectID;
 var access = require('../models/accessToken');
 var logger = require('../utils/logger');
+//const { Promise } = require('mongoose');
 var saveFile = function(fileLoc, image, callback){
     if (image && fileLoc) {
         fs.writeFile(fileLoc, image.image, 'base64', function(fileErr) {
@@ -452,11 +454,11 @@ var routes = function () {
     },  
     updatePost = function (req, res) {
         var tok = req.query.accessToken || req.headers['authorization'];
-        isOwner(Post, req.body._id, tok, function (err, post) {
+        isOwner(Post, req.params.id, tok, function (err, post) {
             if (!err) {
                 var updateObj = {},
                 doc = req.body,
-                id = doc._id;
+                id = req.params.id;
                 console.log('****', doc.isApproved, typeof(doc.isApproved));
                 //doc.isApproved = doc.isApproved === 'true' ? true : false;
                 if (req.body.user) {
@@ -529,6 +531,7 @@ var routes = function () {
                     res.status(400).send({'err':'Something went wrong'})
                 }
             } else {
+                console.log(`not owner`)
                 console.error('Could not update post', err);
                 res.status(401).send({'err':'Something went wrong'})
             }
@@ -999,7 +1002,28 @@ var routes = function () {
         }
     });
     };
-
+    const getInsight = async(req, res) => {
+        console.log('[INSIGHT]')
+        const movieList = await Post.aggregate([{ $group: { _id: "$movie", count:{$sum:1}}},{ $sort: { count: -1 } }])
+        const langList = await Post.aggregate([{ $group: { _id: "$language", count:{$sum:1}}},{ $sort: { count: -1 } }])
+        const actorList = await Post.aggregate([{$unwind: "$actors" },{ $group: { _id: "$actors", count:{$sum:1}}},{ $sort: { count: -1 } }])
+        //const charList = await Post.aggregate([{$unwind: "$characters" },{ $group: { _id: "$characters", count:{$sum:1}}},{ $sort: { count: -1 } }])
+        let userList = await Post.aggregate([{ $group: { _id: "$user", count:{$sum:1}}},{ $sort: { count: -1 } }])
+        userList = userList.map(async x=>{
+                const user =  await User.findOne({_id:x._id});
+                x.name = user.name
+                return x;
+            }
+        );
+        try {
+            userList = await Promise.all(userList);
+            res.status(200).send({movieList: movieList, langList:langList, actorList, userList:userList});
+        } catch (e) {
+            res.status(500).send();
+            //console.log(e);
+        }
+        //console.log(userlist);
+    }
     return {
         test: test,
         post: post,
@@ -1018,7 +1042,8 @@ var routes = function () {
         getRequests: getRequests,
         deleteRequest : deleteRequest,
         updateRequest: updateRequest,
-        incrementViews: incrementViews
+        incrementViews: incrementViews,
+        getInsight:getInsight
     }
 }
 

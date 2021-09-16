@@ -393,6 +393,7 @@ var routes = function () {
             res.status(500).send({err:"Internal Server Error"})
         })
     };
+
     let addFeedback = (req, res) => {
         let email = req.body.email,
             name = req.body.name,
@@ -442,6 +443,7 @@ var routes = function () {
             res.status(500).send(e);
         }
     }
+
    return {
         register: register,
         login: login,

@@ -178,6 +178,9 @@ app.get('/user/verification', route.verifyUser);
 app.get('/user/count', route.getUserCount);
 app.put('/user', isAuthenticated(false), route.updatePassword);
 app.put('/user/:id', isAuthenticated(false), route.updateUser);
+app.put('/user/:userId/favorite/:postId', isAuthenticated(false), route.addToFav);
+app.delete('/user/:userId/favorite/:postId', isAuthenticated(false), route.removeFromFav);
+app.get('/user/:userId/favorite', isAuthenticated(false), route.listFavorite)
 app.get('/user/:id', isAuthenticated(false), route.getUserDetail);
 app.post('/users', route.getUserShortDetails);
 

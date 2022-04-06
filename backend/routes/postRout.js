@@ -507,7 +507,7 @@ var routes = function () {
                             if (!err) {
                                 console.log('Updated post ' + id + ' in database');
                                 elastic.updateDoc(id, updateObj, function(err, data) {
-                                    console.log('updated elastic')
+                                    console.log('updated elastic', updateObj)
                                     if(!err) {
                                         console.log('Updated post ' + id + ' in elasticsearch');
                                         res.status(200).send();
@@ -539,7 +539,7 @@ var routes = function () {
     },
     downloadImage = function (req, res){
         let postId = req.params.id;
-        let userId = req.params.user;
+        let userId = req.userId;
         let imgSize = undefined;
         let isShare = req.query.action === 'share' ? true : false;
        req.connection.setTimeout(100000); //100 seconds
@@ -609,7 +609,8 @@ var routes = function () {
                         } else {
                             es_upd_val = {downloads:[...post.downloads, val_to_up]}
                         }
-                        try {                        
+                        try {
+                            console.log(es_upd_val)                        
                             const result = await Post.findOneAndUpdate({_id: postId}, es_upd_val, {new: true});
                         } catch (e) {
                             console.error(e);
@@ -1004,11 +1005,11 @@ var routes = function () {
     };
     const getInsight = async(req, res) => {
         console.log('[INSIGHT]')
-        const movieList = await Post.aggregate([{ $group: { _id: "$movie", count:{$sum:1}}},{ $sort: { count: -1 } }])
-        const langList = await Post.aggregate([{ $group: { _id: "$language", count:{$sum:1}}},{ $sort: { count: -1 } }])
-        const actorList = await Post.aggregate([{$unwind: "$actors" },{ $group: { _id: "$actors", count:{$sum:1}}},{ $sort: { count: -1 } }])
+        const movieList = await Post.aggregate([{ $match : { isApproved : true } } ,{ $group: { _id: "$movie", count:{$sum:1}}},{ $sort: { count: -1 } }])
+        const langList = await Post.aggregate([{ $match : { isApproved : true } } , { $group: { _id: "$language", count:{$sum:1}}},{ $sort: { count: -1 } }])
+        const actorList = await Post.aggregate([{ $match : { isApproved : true } } , {$unwind: "$actors" },{ $group: { _id: "$actors", count:{$sum:1}}},{ $sort: { count: -1 } }])
         //const charList = await Post.aggregate([{$unwind: "$characters" },{ $group: { _id: "$characters", count:{$sum:1}}},{ $sort: { count: -1 } }])
-        let userList = await Post.aggregate([{ $group: { _id: "$user", count:{$sum:1}}},{ $sort: { count: -1 } }])
+        let userList = await Post.aggregate([{ $match : { isApproved : true } } , {$group: { _id: "$user", count:{$sum:1}}},{ $sort: { count: -1 } }])
         userList = userList.map(async x=>{
                 const user =  await User.findOne({_id:x._id});
                 x.name = user.name

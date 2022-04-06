@@ -2,6 +2,7 @@ var User = require('../models/user.js');
 var Contexts = require('../models/contexts.js');
 var langs = require('../models/langs.js');
 var Group = require('../models/group.js');
+var Favorites = require('../models/favorites.js');
 var feedback = require('../models/feedback.js');
 var accessToken = require('../models/accessToken.js');
 var sampleUsers = require('../models/sampleUsers.js');
@@ -443,7 +444,34 @@ var routes = function () {
             res.status(500).send(e);
         }
     }
-
+    const addToFav = async (req, res) => {
+        const {userId, postId} = req.params
+        const options = { upsert: true, new: true, setDefaultsOnInsert: true }
+        try {
+            let favDoc = await Favorites.updateOne({userId:userId}, {'$push': {posts: postId}}, options)
+            res.status(200).send();        
+        } catch (e) {
+            res.status(500).send(e);
+        }
+    }
+    const removeFromFav = async (req, res) => {
+        const {userId, postId} = req.params
+        try {
+            let favDoc = await Favorites.updateOne({userId:userId}, {'$pull': {posts: postId}})
+            res.status(200).send();
+        } catch (e) {
+            res.status(500).send(e);
+        }
+    }
+    const listFavorite = async (req, res) => {
+        const {userId } = req.params
+        try {
+            let favDoc = await Favorites.findOne({userId:userId})
+            res.status(200).send({data:favDoc??[]});        
+        } catch (e) {
+            res.status(200).send([]);
+        }
+    }
    return {
         register: register,
         login: login,
@@ -459,8 +487,10 @@ var routes = function () {
         listLanguages: listLanguages,
         getUserCount: getUserCount,
         addFeedback:addFeedback,
-        getRandomUser:getRandomUser
-
+        getRandomUser:getRandomUser,
+        addToFav: addToFav,
+        removeFromFav: removeFromFav,
+        listFavorite: listFavorite
     }
 }
 

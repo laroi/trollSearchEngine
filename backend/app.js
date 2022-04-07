@@ -128,17 +128,18 @@ var isAuthenticated = function (admin) {
 // This auth for list api to filter out non admins
 var listAuth = function (req, res, next) {
     // checking token and see if request to list unapproved posts, if not, pass directly
-    if ((req.query.accessToken || req.headers['authorization']) && (req.body.isApproved === false)) {
+    if ((req.query.accessToken || req.headers['authorization']) && ((req.body.isApproved === false) || (req.body.isFavorite === true))) {
     var tok = req.query.accessToken || req.headers['authorization'];
         access.findOne({token: tok}, function (err, data) {
             if (!err && data && blackListedUsers.indexOf(data.user) < 0) {
+                    req.user = data.user;
                     if (data.type === 'admin') {
                         req.isAdmin = true;
                         logger.log(1, 'auth admin', 'Admin authenticated admin ' + data.user + ' with token ' + tok, 'app.js', getIp(req), undefined)                                   
                         next();
                     } else {
                         logger.log(3, 'auth admin', 'could not authenticate user ' + data.user + ' as admin with token' + tok, 'app.js', getIp(req), undefined)
-                        req.body.isFavorite = false;
+                        //req.body.isFavorite = false;
                         next();
                     }
                 }

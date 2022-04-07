@@ -1,6 +1,7 @@
 var Post = require('../models/post.js');
 var User = require('../models/user.js');
 var Req = require('../models/request.js');
+var Favorites = require('../models/favorites.js');
 var elastic = require('../utils/elastic');
 const postUploadPath = __dirname + '/../assets/uploads/';
 const reqUploadPath  = __dirname + '/../assets/requests/';
@@ -267,7 +268,8 @@ var routes = function () {
         }
 
     },
-    getPosts = function (req, res) {
+    getPosts = async function (req, res) {
+    console.log('user =>', req.user);
         var title = req.body.title,
             userId = req.body.userId,
             tags = req.body.tag,
@@ -277,7 +279,7 @@ var routes = function () {
             actors = req.body.actor,
             search = req.body.search,
             from = req.body.from,
-            unApproved = !req.body.isApproved,
+            unApproved = req.body.isApproved === false,
             order = req.body.order,
             context = req.body.context,
             isFavorite =  req.body.isFavorite;
@@ -294,12 +296,16 @@ var routes = function () {
                 opts.advanced.characters = characters;
                 opts.advanced.actors = actors;
             }
-            if (isFavorite === null) {
-                res.status(200).send({"total":0,"max_score":null,"hits":[]})
-                return;
-            }
-            else if (isFavorite) {
-                opts.ids = isFavorite.split(',');
+            if (isFavorite) {
+                try {
+                    let favDoc = await Favorites.findOne({userId:req.user}).lean()
+                    console.log('>> favs', favDoc);       
+                    if (favDoc?.posts?.length ?? 0 > 0) {
+                        opts.ids = favDoc?.posts;
+                    }
+                } catch (e) {
+                    console.log(e)
+                }
             }
             if (userId) {
                 opts.advanced.userId = userId;

@@ -22,7 +22,7 @@
     "gm": "^1.23.0",
     "install": "^0.8.1",
     "method-override": "^2.3.6",
-    "mongoose": "^4.5.1",
+    "mongoose": "^4.13.21",
     "multer": "^1.1.0",
     "nodemailer": "^2.4.2",
     "nodemailer-smtp-transport": "~2.5.0",

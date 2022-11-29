@@ -1,6 +1,6 @@
 const elasticsearch = require('@elastic/elasticsearch')
 const config = require('../config.js');
-var client = new elasticsearch.Client({ node: 'http://192.168.18.6:9200' });
+var client = new elasticsearch.Client({ node: `http://${config.esHost}:${config.esPort}` });
 var elastic = function () {
     var putSettings = function (callback) {
         client.indices.close({index: 'trolls'},function(err) {
@@ -438,7 +438,7 @@ var elastic = function () {
                 body.min_score = minScore;
             }
             console.log('sort ', sort);
-            if (should_array.length > 0) {
+            if (should_array.length > 0 && query) {
                 body.query.bool.should = {
                     "multi_match": {
                         "query": query,

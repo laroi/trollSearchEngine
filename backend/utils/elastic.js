@@ -1,10 +1,6 @@
-var elasticsearch = require('elasticsearch');
+const elasticsearch = require('@elastic/elasticsearch')
 const config = require('../config.js');
-var client = new elasticsearch.Client({
-  host: `${config.esHost}:${config.esPort}`,
-  log: 'info',
-  apiVersion: '5.5'
-});
+var client = new elasticsearch.Client({ node: 'http://192.168.18.6:9200' });
 var elastic = function () {
     var putSettings = function (callback) {
         client.indices.close({index: 'trolls'},function(err) {
@@ -300,8 +296,8 @@ var elastic = function () {
             callback(error, response);
         });
     };
-    var getDocs = function(options, callback) {
-        return new Promise((resolve, reject) => {
+    var getDocs =  function(options) {
+        return new Promise(async(resolve, reject) => {
             var isAdvancedSearch = function (opts) {
                 var opt;
                 for (opt in opts) {
@@ -315,47 +311,65 @@ var elastic = function () {
                 must_array = [],
                 sort =[],
                 minScore = undefined,
-                body = {};
+                query=''
+               
             if (options.advanced && isAdvancedSearch(options.advanced)) {
+                console.log('>> advanced', options.advanced)
                 if (options.advanced.userId) {
                     must_array.push({ "match": { "user": options.advanced.userId }});
+                    //should_array.push("user")
+                    //query=options.advanced.userId
                     sort.push({"_score": {"order": "desc"}});
                 }
                 if (options.advanced.title) {
                     must_array.push({ "match": { "title": options.advanced.title }});
                     sort.push({"_score": {"order": "desc"}});
+                    //should_array.push("title")
+                    //query=options.advanced.title 
                 }
                 if (options.advanced.tags) {
                     must_array.push({ "match": { "tags": options.advanced.tags }});
+                    //should_array.push("tags")
+                    //query=options.advanced.tags 
                     sort.push({"_score": {"order": "desc"}});
                 }
                 if (options.advanced.movie) {
                     must_array.push({ "match": { "movie": options.advanced.movie }});
+                    //should_array.push("movie")
+                    //query=options.advanced.movie 
                     sort.push({"_score": {"order": "desc"}});
                 }
                 if (options.advanced.language) {
                     must_array.push({ "match": { "language": options.advanced.language }});
+                    //should_array.push("language")
+                    //query=options.advanced.language 
                     sort.push({"_score": {"order": "desc"}});
                 }
                 if (options.advanced.actors) {
                     must_array.push({ "match": { "actors": options.advanced.actors }});
+                    //should_array.push("actors")
+                    //query=options.advanced.actors 
                     sort.push({"_score": {"order": "desc"}});
                 }
                 if (options.advanced.characters) {
                     must_array.push({ "match": { "characters": options.advanced.characters }});
+                    //should_array.push("characters")
+                    //query=options.advanced.characters 
                     sort.push({"_score": {"order": "desc"}});
                 }
             } else if (options.search){
-                should_array.push({ "match": { "user": options.search}});
+                query = options.search
+                /*should_array.push({ "match": { "user": options.search}});
                 should_array.push({ "match": { "title": options.search }});
                 should_array.push({ "match": { "tags": options.search }});
                 should_array.push({ "match": { "movie": options.search }});
                 should_array.push({ "match": { "actors": options.search }});
-                should_array.push({ "match": { "characters": options.search }});
+                should_array.push({ "match": { "characters": options.search }});*/
+                should_array=['user', 'title', 'tags', 'movie', 'actors', 'characters']
                 minScore = 0.5;
                 sort.push({
                     "_score": {
-                       "order": "desc"
+                       "order": "asc"
                     }
                  });
             } else {
@@ -379,7 +393,7 @@ var elastic = function () {
             } else {
                 must_array.push({ "match": { "isApproved": true }});
             }
-            body = {
+            /*body = {
                 aggs : {
                     posts:{
                        top_hits:{
@@ -396,6 +410,26 @@ var elastic = function () {
                    "from" : options.from || 0,
                    "size" : options.size || 10,
                    "sort" : sort
+            };*/
+            body = {
+                "query": {
+                    "bool": {
+                        "must": must_array,
+                        "should": {
+                            "multi_match": {
+                                "query": query,
+                                "type":"phrase",
+                                "fields": should_array
+                            }
+                                        
+                        },
+                        "minimum_should_match": 1
+            
+                    },
+                },
+                "from" : options.from || 0,
+                "size" : options.size || 10,
+                "sort" : sort
             };
             /*body["_source"]: {
                 excludes: [ "downloads", "likes", "shares" ]
@@ -405,7 +439,14 @@ var elastic = function () {
             }
             console.log('sort ', sort);
             if (should_array.length > 0) {
-                body.query.bool.should = should_array
+                body.query.bool.should = {
+                    "multi_match": {
+                        "query": query,
+                        "type":"phrase",
+                        "fields": should_array
+                    }
+                                
+                }
             }
             if (should_array.length > 0) {
                 body.query.bool.must = must_array
@@ -414,72 +455,100 @@ var elastic = function () {
             console.log(JSON.stringify(options));
             console.log('options Ends\n');
             console.log('Search Query\n');
-            console.log(JSON.stringify(body));
+            console.log(JSON.stringify(body, null, 4));
             console.log('Search Query Ends\n');
-            client.search({
-                index: 'trolls',
-                type: 'post',
-                body: body
-            }, function (error, response) {
-                if (!error) {
-                    resolve(response.hits)
-                } else {
-                    reject(error)
-                }
-            });
+            try {
+                const result = await client.search({
+                    index: 'trolls',
+                    body: body
+                })
+                console.log(result)
+                resolve(result.hits);
+            } catch (e) {
+                console.log(`Error in getting search ${e}`)
+                reject(e)
+            }
+
         });
     };
-    var getSuggestions = function(options, callback) {
+    var getSuggestions = async function(options, callback) {
         var fieldMap = {
             title: 'titleSuggest',
-            tag: 'tagSuggest',
-            actor: 'actorSuggest',
-            character: 'characterSuggest',
+            tags: 'tagSuggest',
+            actors: 'actorSuggest',
+            characters: 'characterSuggest',
             movie: 'movieSuggest'
-        },
-        suggestObj = {
-            suggest: {}
         };
-        if (Array.isArray(options.fields) && options.fields.length > 0) {
-            options.fields.forEach(function(field) {
-                suggestObj.suggest[field]={
-                    "regex" : ".*"+options.query+".*",
-                    completion : {
-                        field: fieldMap[field]
-                    }
-                  }
-            });
-        } else {
-            Object.keys(fieldMap).forEach(function(field) {
-                /*if (field === 'title' || field === 'movie' ||field === 'event' ) {
-                    suggestObj.suggest[field]={
-                        "prefix" : options.query,
-                        completion : {
-                            field: fieldMap[field]
-                        }
-                      }
-                } else { */
-                    suggestObj.suggest[field]={
-                        "regex" : ".*"+options.query+".*",
-                        completion : {
-                            field: fieldMap[field]
-                        }
-                      }
-                //}
-            });
+        const reverseFieldMap = {
+            tag: 'tags',
+            tags: 'tags',
+            actor: 'actors',
+            actors: 'actors',
+            character: 'characters',
+            characters: 'characters',
+            movie: 'movie',
+            title: 'title',
+        };
+
+        let mappedField  = [];
+        if (!options.fields) {
+            options.fields=['title', 'tags', 'actors', 'characters', 'movie']
         }
-        console.log('\n' + JSON.stringify(suggestObj) + '\n')
-        client.search({
-            index: 'trolls',
-            type: 'post',
-            body: suggestObj
-        }, function (error, response) {
-            if (error) {
-                console.error(error);
+        console.log('>>', options)
+        if (Array.isArray(options.fields) && options.fields.length > 0) {
+            options.fields = options.fields.map(x=>reverseFieldMap[x])
+            mappedField = options.fields.map(x=>fieldMap[x])
+
+        } else {
+            mappedField = option.fields
+            options.fields=[options.field];
+        }
+        /*let query = {
+            "query": {
+                "multi_match": {
+                    "query": options.query,
+                    "type": "bool_prefix", 
+                    "fields": [
+                      "titleSuggest",
+                      "tagSuggest",
+                      "actorSuggest",
+                      "characterSuggest",
+                      "movieSuggest"
+                    ]
+                  }
             }
-            console.log('response \n' + JSON.stringify(response) + '\n')
-            callback(error, response);
-        });
+          }*/
+        const query = {
+            "_source":options.fields,
+            "query": {
+                "multi_match" : {
+                    "query":    options.query,
+                    "type":"cross_fields",
+                    "fields": mappedField 
+                }
+            },
+            "highlight": {
+                "fields" : {
+                    "titleSuggest" : {},
+                    "movieSuggest": {},
+                    "characterSuggest":{},
+                    "actorSuggest":{},
+                    "tagSuggest": {}
+                }
+            }
+        }
+        console.log('\n' + JSON.stringify(query) + '\n')
+        try {
+            const data = await client.search({
+                index: 'trolls',
+                body: query
+            })
+            console.log(data)
+            callback(undefined, data);
+        } catch (e) {
+            console.log(e)
+            callback(e, undefined)
+        }
     }
     var getRequestSuggestions = function(options, callback) {
         var fieldMap = {

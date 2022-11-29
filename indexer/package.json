@@ -9,9 +9,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "elasticsearch": "^13.3.1",
+    "@elastic/elasticsearch": "^8.2.1",
     "elasticsearch-streams": "0.0.10",
     "mongodb": "^2.2.31",
-    "random-document-stream": "0.0.0"
+    "random-document-stream": "0.0.0",
+    "split2": "^4.1.0"
   }
 }

@@ -1,10 +1,10 @@
 # Start from base node alpine image
-FROM node:10-alpine
+FROM node:14-alpine
 
 # install imagemagick, graphicsmagick, ffmgeg and
 RUN apk add --no-cache gettext librsvg ghostscript imagemagick
 RUN apk --no-cache --virtual deps add \
-  python \
+  python2 \
   make \
   g++ 
 WORKDIR /opt/app

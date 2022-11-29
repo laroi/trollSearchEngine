@@ -269,7 +269,6 @@ var routes = function () {
 
     },
     getPosts = async function (req, res) {
-    console.log('user =>', req.user);
         var title = req.body.title,
             userId = req.body.userId,
             tags = req.body.tag,
@@ -326,6 +325,7 @@ var routes = function () {
             console.log('searching ', opts);
         elastic.getDocs(opts)
         .then((hits)=> {
+            console.log(hits)
             res.status(200).send(hits)
         })
         .catch((err) => {
@@ -639,12 +639,12 @@ var routes = function () {
     autoSuggestion = function (req, res) {
         var field = req.query.field,
         searchTerm = req.query.query;
-        field = field ? field.split(',') : [];
+        field = field ? field.split(',') : null;
         if (searchTerm) {
             elastic.getSuggestions({fields: field, query: searchTerm}, function(err, data) {
                 if (!err) {
                     console.log('data', JSON.stringify(data));
-                    res.status(200).send(data.suggest)
+                    res.status(200).send(data)
                 } else {
                     res.status(500).send(err)
                 }

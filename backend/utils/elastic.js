@@ -413,19 +413,7 @@ var elastic = function () {
             };*/
             body = {
                 "query": {
-                    "bool": {
-                        "must": must_array,
-                        "should": {
-                            "multi_match": {
-                                "query": query,
-                                "type":"phrase",
-                                "fields": should_array
-                            }
-                                        
-                        },
-                        "minimum_should_match": 1
-            
-                    },
+                    "bool": {},
                 },
                 "from" : options.from || 0,
                 "size" : options.size || 10,
@@ -437,7 +425,7 @@ var elastic = function () {
             if (minScore) {
                 body.min_score = minScore;
             }
-            console.log('sort ', sort);
+            console.log('sort ', sort, query, should_array);
             if (should_array.length > 0 && query) {
                 body.query.bool.should = {
                     "multi_match": {
@@ -447,10 +435,11 @@ var elastic = function () {
                     }
                                 
                 }
+                body.query.bool.minimum_should_match=1
             }
-            if (should_array.length > 0) {
+            //if (should_array.length > 0) {
                 body.query.bool.must = must_array
-            }
+            //}
             console.log('options\n');
             console.log(JSON.stringify(options));
             console.log('options Ends\n');

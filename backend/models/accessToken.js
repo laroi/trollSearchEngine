@@ -7,6 +7,7 @@ var AccessTokenSchema = new Schema({
     user: {type: String, required: true},
     email: {type: String},
     type: {type: String, required: true},
+    isPermenant: {type: Boolean, default: false},
     createdAt:{type: Date, required: true, default: Date.now}
 });
 module.exports = mongoose.model('AccessToken', AccessTokenSchema);

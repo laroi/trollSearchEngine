@@ -46,7 +46,7 @@ var createAccesstoken = function (timeToLive, user, email, type, token, callback
     }
     var access = {token: token, user: user, ttl: ttl ,email:email, type: type};
     var options = { upsert: true, new: true, setDefaultsOnInsert: true };
-    accessToken.findOneAndUpdate({user: user}, access, options, function(err, data) {
+    accessToken.findOneAndUpdate({user: user, isPermenant: false}, access, options, function(err, data) {
         callback(err, data);
     })
 }

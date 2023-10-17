@@ -241,7 +241,7 @@ var elastic = function () {
             }
         });
     };
-    var putDoc = function (doc, callback) {
+    var putDoc = async function (doc, callback) {
     var body = {
                 user: doc.user,
                 title: doc.title,
@@ -264,29 +264,34 @@ var elastic = function () {
                 lastModified: doc.lastModified
             }
             if (doc.title) {
-                body.titleSuggest = {input: doc.title}
+                body.titleSuggest =  doc.title
             }
             if (doc.event && doc.event.title) {
-                body.eventSuggest = {input: doc.event.title}
+                body.eventSuggest = doc.event.title
             }
             if (doc.movie) {
-                body.movieSuggest = {input: doc.movie}
+                body.movieSuggest = doc.movie
             }
             if (doc.tags && Array.isArray(doc.tags) && doc.tags.length > 0) {
-                body.tagSuggest = {input: doc.tags}
+                body.tagSuggest = doc.tags
             }
             if (doc.actors && Array.isArray(doc.actors) && doc.actors.length > 0) {
-                body.actorSuggest = {input: doc.actors}
+                body.actorSuggest = doc.actors
             }
             if (doc.characters && Array.isArray(doc.characters) && doc.characters.length > 0) {
-                body.characterSuggest = {input: doc.characters}
+                body.characterSuggest = doc.characters
             }
-        client.create({
+            const _doc  = await client.index({
+                index: 'trolls',
+                id: doc.id,
+                document: body
+            })
+        console.log(_doc)
+        callback(undefined, _doc)
+        /*client.index({
             index: 'trolls',
             id: doc.id,
-            type: 'post',
-            refresh:true,
-            body: body
+            document: body
         }, function (error, response) {
             if (!error) {
                 console.log('Put document ' + response._id);
@@ -294,7 +299,7 @@ var elastic = function () {
                 console.error('Problem in putting doc', JSON.stringify(error),"\n body -> \n", JSON.stringify(body))
             }
             callback(error, response);
-        });
+        });*/
     };
     var getDocs =  function(options) {
         return new Promise(async(resolve, reject) => {
@@ -628,7 +633,6 @@ var elastic = function () {
             index: 'trolls',
             id: id,
             refresh:true,
-            type: 'post',
             body: {
                 doc: body
             }
@@ -638,15 +642,17 @@ var elastic = function () {
             }
         });
     }
-    var deletDoc = function (id, callback) {
-        client.delete({
-          index: 'trolls',
-          type: 'post',
-          id: id,
-          refresh:true,
-        }, function (error, response) {
-           callback(error, response)
-        });
+    var deletDoc = async function (id, callback) {
+        try {
+            const resp = await client.delete({
+              index: 'trolls',
+              id: id,
+              refresh:true,
+            })
+            callback(undefined, resp)
+        } catch (e) {
+            callback(e, undefined)
+        }
     }
     var deleteRequestDoc = function (id, callback) {
         client.delete({

@@ -102,6 +102,9 @@ var isAuthenticated = function (admin) {
                         if (data.type === 'admin') {
                             req.isAdmin = true;
                             }
+                        if (data.isPermenant) {
+                            req.isPermenant = true
+                        }
                             req.userId = data.user;
                             logger.log(1, 'auth', ' authenticated user ' + data.user + ' with token ' + tok, 'app.js', getIp(req), undefined)                                   
                             next();

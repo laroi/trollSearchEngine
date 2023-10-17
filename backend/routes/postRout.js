@@ -80,6 +80,7 @@ var routes = function () {
             console.log(`saving image in ${fileLoc}`)
             var base64Data = image;
             var size = undefined;
+            console.log(image)
             base64Data = base64Data.replace(/^data:image\/[a-z]+;base64,/, "");
             base64data = new Buffer(base64Data,'base64')
             
@@ -197,12 +198,12 @@ var routes = function () {
             language = req.body.language,
             characters = req.body.characters,
             actors = req.body.actors,
-            createdAt = req.body.createdAt,
-            lastModified = req.body.lastModified,
+            createdAt = Date.now()//req.body.createdAt,
+            lastModified = Date.now() //req.body.lastModified,
             context = req.body.context,
             requestId = req.body.requestId,
-            obj = {},
-            postObj;
+            obj = {};
+            let postObj;
             console.log(`uploading ${title}`)
         if (req.body.image && req.body.user) {
             saveImage(req.body.image, postUploadPath)
@@ -226,7 +227,7 @@ var routes = function () {
                 obj.lastModified = lastModified;
                 obj.context = context;
                 obj.requestId = requestId;
-                obj.isApproved = false;
+                obj.isApproved = req.isPermenant ? true : false;
                 postObj = new Post(obj);
                 postObj.save(function(saveErr, saveData) {
                     if (!saveErr) {
@@ -607,6 +608,10 @@ var routes = function () {
                         //.stream(function (err, stdout, stderr) {
                           readStream.pipe(res);
                         //});
+                        readStream.on("error", function(err) {
+                            console.log("Got error while processing stream " + err.message);
+                            res.end();
+                        });
                         let upd_val;
                         let es_upd_val;
                         let val_to_up= {user:userId, time: Date.now()};

@@ -428,12 +428,12 @@ MongoClient.connect(mongodbUrl, function(err, db) {
     .then(function () {
         return createIndex("trolls")
     })
-    .then(()=> {
+    /*.then(()=> {
         return createIndex("chars")
     })
     .then(()=> {
         return createIndex("actors")
-    })
+    })*/
     .then(async () => {
 
             console.log('[Bluk insert post]')

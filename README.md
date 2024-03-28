@@ -6,7 +6,7 @@ Welcome to Hypermemia! This application makes finding memes easy.
 
 To use the app, simply click on the link below:
 
-[Live Demo](https://site.hypermemeia.link)
+[Live Demo](https://site.hypermemia.link)
 
 ## About
 

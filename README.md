@@ -1,4 +1,4 @@
-# My Awesome App
+# Hypermemia
 
 Welcome to Hypermemia! This application makes finding memes easy.
 

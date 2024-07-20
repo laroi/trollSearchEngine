@@ -326,7 +326,6 @@ var routes = function () {
             console.log('searching ', opts);
         elastic.getDocs(opts)
         .then((hits)=> {
-            console.log(hits)
             res.status(200).send(hits)
         })
         .catch((err) => {

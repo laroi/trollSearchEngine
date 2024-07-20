@@ -304,22 +304,24 @@ var elastic = function () {
     var getDocs =  function(options) {
         return new Promise(async(resolve, reject) => {
             var isAdvancedSearch = function (opts) {
-                var opt;
-                for (opt in opts) {
-                    if (Array.isArray(opts[opt])) {
-                        return opts[opt].length > 0
-                    }
-                    if (opts[opt]) {
-                        return true
-                    }
-                }
-                return false;
+               if (opts.title || opts.movie) {
+                   return true
+               }
+               if ( (Array.isArray(opts.tags) && opts.tags.length > 0) ||
+               (Array.isArray(opts.actors) && opts.actors.length > 0) ||
+               (Array.isArray(opts.characters) && opts.characters.length > 0) 
+               ) {
+                   return true
+               }
+               return false
             }
             var should_array = [],
                 must_array = [],
                 sort =[],
                 minScore = undefined,
                 query=''
+
+            console.log(isAdvancedSearch(options.advanced))
                
             if (options.advanced && isAdvancedSearch(options.advanced)) {
                 console.log('>> advanced', options.advanced)
@@ -490,7 +492,6 @@ var elastic = function () {
                     index: 'trolls',
                     body: body
                 })
-                console.log(result)
                 resolve(result.hits);
             } catch (e) {
                 console.log(`Error in getting search ${e}`)

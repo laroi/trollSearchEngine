@@ -306,6 +306,9 @@ var elastic = function () {
             var isAdvancedSearch = function (opts) {
                 var opt;
                 for (opt in opts) {
+                    if (Array.isArray(opts[opt])) {
+                        return opts[opt].length > 0
+                    }
                     if (opts[opt]) {
                         return true
                     }
@@ -338,13 +341,16 @@ var elastic = function () {
                         options.advanced.tags.forEach(tag=> {
                             must_array.push({ "match": { "tags": tag }})
                         })
+                        if (options.advanced.tags.length > 0) {
+                            sort.push({"_score": {"order": "desc"}});
+                        }
                     } else {
                         must_array.push({ "match": { "tags": options.advanced.tags }});  
                     }
                     //must_array.push({ "match": { "tags": options.advanced.tags }});
                     //should_array.push("tags")
                     //query=options.advanced.tags 
-                    sort.push({"_score": {"order": "desc"}});
+                    
                 }
                 if (options.advanced.movie) {
                     must_array.push({ "match": { "movie": options.advanced.movie }});
@@ -363,26 +369,32 @@ var elastic = function () {
                         options.advanced.actors.forEach(actor => {
                             must_array.push({ "match": { "actors": actor }})
                         })
+                        if (options.advanced.actors.length > 0) {
+                            sort.push({"_score": {"order": "desc"}});
+                        }
                     } else {
                         must_array.push({ "match": { "actors": options.advanced.actors }});  
                     }
                     //must_array.push({ "match": { "actors": options.advanced.actors }});
                     //should_array.push("actors")
                     //query=options.advanced.actors 
-                    sort.push({"_score": {"order": "desc"}});
+                    
                 }
                 if (options.advanced.characters) {
                     if (Array.isArray(options.advanced.characters)) {
                         options.advanced.characters.forEach(char => {
                             must_array.push({ "match": { "characters": char }})
                         })
+                        if (options.advanced.characters.length > 0) {
+                            sort.push({"_score": {"order": "desc"}});
+                        }
                     } else {
                         must_array.push({ "match": { "characters": options.advanced.characters }});
                     }
                     //must_array.push({ "match": { "characters": options.advanced.characters }});
                     //should_array.push("characters")
                     //query=options.advanced.characters 
-                    sort.push({"_score": {"order": "desc"}});
+                    
                 }
             } else if (options.search){
                 query = options.search

@@ -304,12 +304,12 @@ var elastic = function () {
     var getDocs =  function(options) {
         return new Promise(async(resolve, reject) => {
             var isAdvancedSearch = function (opts) {
-               if (opts.title || opts.movie) {
+               if (opts?.title || opts?.movie) {
                    return true
                }
-               if ( (Array.isArray(opts.tags) && opts.tags.length > 0) ||
-               (Array.isArray(opts.actors) && opts.actors.length > 0) ||
-               (Array.isArray(opts.characters) && opts.characters.length > 0) 
+               if ( (Array.isArray(opts?.tags) && opts.tags.length > 0) ||
+               (Array.isArray(opts?.actors) && opts.actors.length > 0) ||
+               (Array.isArray(opts?.characters) && opts.characters.length > 0) 
                ) {
                    return true
                }

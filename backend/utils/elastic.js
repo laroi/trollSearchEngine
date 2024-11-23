@@ -638,15 +638,21 @@ var elastic = function () {
             language: doc.language,
             actors: doc.actors,
             likes: doc.likes || [],
-            downloads: doc.downloads || [],
-            shares: doc.shares || [],
-            views : doc.views || [],
             characters: doc.characters,
             comments: doc.comments,
             context : doc.context,
             isApproved: doc.isApproved,
             createdAt: doc.createdAt,
             lastModified: doc.lastModified
+        }
+        if (doc.downloads){
+            body.downloads = doc.downloads
+        }
+        if (doc.shares){
+            body.shares = doc.shares
+        }
+        if (doc.views){
+            body.views = doc.views
         }
         if (doc.title) {
             body.titleSuggest = {input: doc.title}

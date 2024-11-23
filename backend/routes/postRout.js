@@ -409,10 +409,7 @@ var routes = function () {
                     if (userId) {
                         upd_val.user = userId
                     }
-                    Post.update({_id: id}, {$push:{views:upd_val}}, (err, data)=>{
-                        console.log(err, data)
-                    })
-                    console.log(upd_val)
+                    Post.update({_id: id}, {$push:{views:upd_val}})
                     elastic.updateDoc(id, {views: [... data.views, upd_val] })
                     res.status(200).send(JSON.stringify(data));
                     //Post.update({_id: id}, { $inc: {views:1}})

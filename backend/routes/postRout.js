@@ -404,6 +404,16 @@ var routes = function () {
         if (id) {
             Post.findOne({_id: id}, function(err, data) {
                 if (!err) {
+                    const userId = req.query.user;
+                    let upd_val = {time: Date.now()};
+                    if (userId) {
+                        upd_val.user = userId
+                    }
+                    Post.update({_id: id}, {$push:{views:upd_val}}, (err, data)=>{
+                        console.log(err, data)
+                    })
+                    console.log(upd_val)
+                    elastic.updateDoc(id, {views: [... data.views, upd_val] })
                     res.status(200).send(JSON.stringify(data));
                     //Post.update({_id: id}, { $inc: {views:1}})
                     /*data = data[0];
@@ -620,7 +630,7 @@ var routes = function () {
                             es_upd_val = {downloads:[...post.downloads, val_to_up]}
                         }
                         try {
-                            console.log(es_upd_val)                        
+                            console.log(es_upd_val)                  
                             const result = await Post.findOneAndUpdate({_id: postId}, es_upd_val, {new: true});
                         } catch (e) {
                             console.error(e);
@@ -834,24 +844,18 @@ var routes = function () {
     },
 
     requestMeme = (req, res) => {
-         let user = req.body.user,
-            description = req.body.description,
+         let description = req.body.description,
             movie = req.body.movie,
-            language = req.body.language,
             title = req.body.title,
             link = req.body.link || undefined,
-            obj = {},
-            postObj;
-         if (req.body.user) {
+            obj = {};
             if (req.body.image) {
                 saveImage(req.body.image, reqUploadPath)
                 .then((fileinfo)=> {
-                    obj.user= user;
                     obj.link = link;
                     obj.description = description;
                     obj.movie = movie;
                     obj.title = title;
-                    obj.language = language;
                     obj.image = {
                         url: '/requests/images/'+fileinfo.filename + '.jpg',
                         //weburl: '/requests/images/'+fileinfo.filename + '.webp',
@@ -862,7 +866,8 @@ var routes = function () {
                     reqObj = new Req(obj);
                     reqObj.save(function(saveErr, saveData) {
                         if (!saveErr) {
-                            console.log('Saved Post ' + saveData.id)
+                            res.status(200).send();
+                            /*console.log('Saved Post ' + saveData.id)
                             elastic.putRequestDoc(saveData, (err)=> {
                                 if (!err) {
                                     console.log('ES updated ' + saveData.id)
@@ -871,7 +876,7 @@ var routes = function () {
                                     console.error('ES update', err)
                                     res.status(500).send();
                                 }
-                            })
+                            })*/
                         } else {
                             console.error(JSON.stringify(saveErr))
                             res.status(500).send({err: 'Could not save post'});
@@ -879,9 +884,7 @@ var routes = function () {
                     });
                 })
             } else {
-                obj.user= user;
                 obj.link = link;
-                obj.language = language;
                 obj.title = title;
                 obj.description = description;
                 obj.movie = movie;
@@ -889,26 +892,14 @@ var routes = function () {
                 reqObj.save(function(saveErr, saveData) {
                     if (!saveErr) {
                         console.log('Saved Post ' + saveData.id)
-                        elastic.putRequestDoc(saveData, (err)=> {
-                                if (!err) {
-                                    console.log('ES updated ' + saveData.id)
-                                    res.status(200).send();
-                                } else {
-                                    console.error('ES update', err)
-                                    res.status(500).send();
-                                }
-                            })
+                        res.status(200).send();
+                       
                     } else {
                         console.error(JSON.stringify(saveErr))
                         res.status(500).send({err: 'Could not save post'});
                     }
                 });
             }
-        } else {
-            console.error('Params not provided');
-            res.status(400).send({err: 'Bad Parameter'});
-            return;
-        }
     }
     let getRequest = function (req, res) {
         var id = req.params.id
@@ -929,29 +920,26 @@ var routes = function () {
             res.status(400).send({err: 'bad request'})
         }
     },
-    getRequests = function (req, res) {
-        var language = req.query.language,
-            movie = req.query.movie,
-            from = req.query.from || 0,
-            order = req.query.order;
-            opts = {};
-            if (language) {
-                opts.language = language;
-            }
-            if (movie) {
-                opts.movie = movie;
-            }
-            opts.from = from;
-            //opts.order = order;
-            console.log('searching ', opts);
-        elastic.getRequestDocs(opts, function(err, data) {
-            if (!err) {
-                res.status(200).send(data)
-            } else {
-                console.error(JSON.stringify(err));
-                res.status(500).send({'errr': 'could not get data'})
-            }
-        })
+    getRequests = async function (req, res) {
+        const page = parseInt(req.query.page) || 1; // Default to page 1 if not specified
+        const limit = parseInt(req.query.limit) || 10; // Default to 10 results per page
+        const totalDocuments = await Req.count();
+        const skip = (page - 1) * limit;
+            const data = await Req.find()
+            .sort({ 'dates.lastUpdated': -1 })  // Sort dynamically based on field and order
+            .skip(skip)
+            .limit(limit)
+            .exec();
+            
+            const totalPages = Math.ceil(totalDocuments / limit);
+
+            res.status(200).json({
+                totalDocuments,
+                totalPages,
+                currentPage: page,
+                data
+            })  
+        
     },
     updateRequest= function (req, res) {
         var tok = req.query.accessToken || req.headers['authorization'];

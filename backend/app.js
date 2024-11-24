@@ -220,6 +220,7 @@ app.get('/suggestions', postRoute.autoSuggestion);
 app.get('/incrementviews', postRoute.incrementViews);
 
 /* Insights */
+app.post('/insight', postRoute.updateInsight)
 app.get('/insight', postRoute.getInsight)
 
 app.listen(config.appPort);

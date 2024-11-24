@@ -1,6 +1,7 @@
 var Post = require('../models/post.js');
 var User = require('../models/user.js');
 var Req = require('../models/request.js');
+var Insight = require('../models/insights.js');
 var Favorites = require('../models/favorites.js');
 var elastic = require('../utils/elastic');
 const postUploadPath = __dirname + '/../assets/uploads/';
@@ -1001,28 +1002,41 @@ var routes = function () {
         }
     });
     };
-    const getInsight = async(req, res) => {
+    const updateInsight = async(req, res) => {
         console.log('[INSIGHT]')
-        const movieList = await Post.aggregate([{ $match : { isApproved : true } } ,{ $group: { _id: "$movie", count:{$sum:1}}},{ $sort: { count: -1 } }])
-        const langList = await Post.aggregate([{ $match : { isApproved : true } } , { $group: { _id: "$language", count:{$sum:1}}},{ $sort: { count: -1 } }])
-        const actorList = await Post.aggregate([{ $match : { isApproved : true } } , {$unwind: "$actors" },{ $group: { _id: "$actors", count:{$sum:1}}},{ $sort: { count: -1 } }])
+        const movieList = await Post.aggregate([{ $match : { isApproved : true } } ,{ $group: { _id: {$toLower: "$movie"}, count:{$sum:1}}},{ $sort: { count: -1 } }])
+        //const langList = await Post.aggregate([{ $match : { isApproved : true } } , { $group: { _id: {$toLower: "$language"}, count:{$sum:1}}},{ $sort: { count: -1 } }])
+        const actorList = await Post.aggregate([{ $match : { isApproved : true } } , { $unwind: "$actors" },{ $group: { _id: {$toLower: "$actors"}, count:{$sum:1}}},{ $sort: { count: -1 } }])
         //const charList = await Post.aggregate([{$unwind: "$characters" },{ $group: { _id: "$characters", count:{$sum:1}}},{ $sort: { count: -1 } }])
-        let userList = await Post.aggregate([{ $match : { isApproved : true } } , {$group: { _id: "$user", count:{$sum:1}}},{ $sort: { count: -1 } }])
-        userList = userList.map(async x=>{
+        //let userList = await Post.aggregate([{ $match : { isApproved : true } } , {$group: { _id: "$user", count:{$sum:1}}},{ $sort: { count: -1 } }])
+        /*userList = userList.map(async x=>{
                 const user =  await User.findOne({_id:x._id});
                 x.name = user.name
                 return x;
             }
-        );
+        );*/
         try {
-            userList = await Promise.all(userList);
-            res.status(200).send({movieList: movieList, langList:langList, actorList, userList:userList});
+            //userList = await Promise.all(userList);
+            const _movieList = movieList.map(movie=>({name:movie._id, count: movie.count}))
+            const _actorList = actorList.map(actor=>({name:actor._id, count: actor.count}))
+
+            Insight.findOneAndUpdate({ "_id": "insight" }, { movieList: _movieList, actorList:  _actorList}, { upsert: true, new: true, setDefaultsOnInsert: true }, (err, data) =>{
+                console.log(err, data)
+            })
+            res.status(204).send();
         } catch (e) {
             res.status(500).send();
             //console.log(e);
         }
         //console.log(userlist);
     }
+
+    const getInsight = (req, res) =>{
+        Insight.findById("insight").lean().exec((err, data) => {            
+            res.status(200).json(data)
+        })
+    }
+
     return {
         test: test,
         post: post,
@@ -1042,7 +1056,8 @@ var routes = function () {
         deleteRequest : deleteRequest,
         updateRequest: updateRequest,
         incrementViews: incrementViews,
-        getInsight:getInsight
+        updateInsight:updateInsight,
+        getInsight: getInsight,
     }
 }
 

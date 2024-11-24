@@ -402,14 +402,17 @@ var routes = function () {
     getPost = function (req, res) {
         var id = req.params.id
         if (id) {
-            Post.findOne({_id: id}, function(err, data) {
+            Post.findOne({_id: id}).lean().exec(function(err, data) {
                 if (!err) {
                     const userId = req.query.user;
                     let upd_val = {time: Date.now()};
                     if (userId) {
                         upd_val.user = userId
                     }
-                    Post.update({_id: id}, {$push:{views:upd_val}})
+                    Post.update({_id: id}, {$push:{views:upd_val}}, (err, data)=> {
+                        console.log(err, data)
+                    })
+                    console.log('view', data, upd_val)
                     elastic.updateDoc(id, {views: [... data.views, upd_val] })
                     res.status(200).send(JSON.stringify(data));
                     //Post.update({_id: id}, { $inc: {views:1}})

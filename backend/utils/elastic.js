@@ -288,18 +288,6 @@ var elastic = function () {
             })
         console.log(_doc)
         callback(undefined, _doc)
-        /*client.index({
-            index: 'trolls',
-            id: doc.id,
-            document: body
-        }, function (error, response) {
-            if (!error) {
-                console.log('Put document ' + response._id);
-            } else {
-                console.error('Problem in putting doc', JSON.stringify(error),"\n body -> \n", JSON.stringify(body))
-            }
-            callback(error, response);
-        });*/
     };
     var getDocs =  function(options) {
         return new Promise(async(resolve, reject) => {
@@ -627,7 +615,7 @@ var elastic = function () {
             callback(error, response);
         });
     }
-    var updateDoc = function (id, doc, callback) {
+    var updateDoc = async function (id, doc, callback) {
         var body = {
             user: doc.user,
             title: doc.title,
@@ -645,6 +633,7 @@ var elastic = function () {
             createdAt: doc.createdAt,
             lastModified: doc.lastModified
         }
+
         if (doc.downloads){
             body.downloads = doc.downloads
         }
@@ -655,33 +644,36 @@ var elastic = function () {
             body.views = doc.views
         }
         if (doc.title) {
-            body.titleSuggest = {input: doc.title}
+            body.titleSuggest = doc.title
         }
         if (doc.movie) {
-            body.movieSuggest = {input: doc.movie}
+            body.movieSuggest = doc.movie
         }
         if (doc.tags && Array.isArray(doc.tags) && doc.tags.length > 0) {
-            body.tagSuggest = {input: doc.tags}
+            body.tagSuggest = doc.tags
         }
         if (doc.actors && Array.isArray(doc.actors) && doc.actors.length > 0) {
-            body.actorSuggest = {input: doc.actors}
+            body.actorSuggest =  doc.actors
         }
         if (doc.characters && Array.isArray(doc.characters) && doc.characters.length > 0) {
-            body.characterSuggest = {input: doc.characters}
+            body.characterSuggest = doc.characters
         }
-        console.log("es body\n", body)
-        client.update({
-            index: 'trolls',
-            id: id,
-            refresh:true,
-            body: {
+        console.log(id, "es body\n", body)
+       try {
+            const data = await client.update({
+                index: 'trolls',
+                id: id,
+                refresh:true,
                 doc: body
-            }
-        }, function(err, data){
+                
+            });
             if (callback && typeof callback === 'function') {
-                callback(err, data);
+                callback(undefined, data);
             }
-        });
+        } catch (e) {
+            console.log(e)
+            callback(e, undefined);
+        }
     }
     var deletDoc = async function (id, callback) {
         try {
@@ -705,7 +697,7 @@ var elastic = function () {
            callback(error, response)
         });
     }
-    var updateRequestDoc = function (id, doc, callback) {
+    var updateRequestDoc = async function (id, doc, callback) {
         let body = {};
         if (doc.movie) {
             body.requestMovie = doc.movie;
@@ -726,19 +718,23 @@ var elastic = function () {
         }
         body.requestLastUpdated = doc.dates.lastUpdated;
         console.log("es body\n", body)
-        client.update({
-            index: 'requests',
-            id: id,
-            refresh:true,
-            type: 'request',
-            body: {
-                doc: body
-            }
-        }, function(err, data){
+        try {
+            await client.update({
+                index: 'requests',
+                id: id,
+                refresh:true,
+                type: 'request',
+                body: {
+                    doc: body
+                }
+            });
             if (callback && typeof callback === 'function') {
-                callback(err, data);
+                callback(undefined, data);
             }
-        });
+        } catch (e) {
+            console.log(e)
+            callback(e, undefined);
+        }
     }
     var putRequestDoc = function (doc, callback) {
         var body = {

@@ -15,19 +15,22 @@ var multer  = require('multer');
 const config = require('./config.js');
 var logger = require('./utils/logger');
 const path = require('path');
+var uuid = require('uuid');
 app.set("view engine", "pug");
 app.set("views", path.join(__dirname, "views"));
-/*var storage = multer.diskStorage({
+const trollsUploadPath = __dirname + '/assets/trolls/';
+var storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, uploadPath)
+        cb(null, trollsUploadPath)
     },
     filename: function (req, file, cb) {
         var fileName = uuid.v1();
         fileName += path.extname(file.originalname)
         file.renamed = fileName
+        console.log(trollsUploadPath, fileName)
         cb(null, fileName);
     }
-});*/
+});
 var fileFilter = function (req, file, cb) {
     var fileTypes = ['.jpg', '.jpeg', '.png', '.html'];
     var ext = path.extname(file.originalname);
@@ -39,6 +42,7 @@ var fileFilter = function (req, file, cb) {
 }
 //var upload = multer({ storage: storage, fileFilter: fileFilter })
 // connect to Mongo when the app initializes
+const upload = multer({ storage:storage })
 mongoose.connect(`mongodb://${config.mongoHost}:${config.mongoPort}/trolls`);
 
   app.use(bodyParser({limit: '10mb'}));
@@ -218,6 +222,7 @@ app.post('/post', isAuthenticated(false), postRoute.post)
 app.get('/image/:id', postRoute.downloadImage);
 app.get('/suggestions', postRoute.autoSuggestion);
 app.get('/incrementviews', postRoute.incrementViews);
+app.post('/troll/:id', upload.single('troll'), postRoute.addTroll)
 
 /* Insights */
 app.post('/insight', postRoute.updateInsight)

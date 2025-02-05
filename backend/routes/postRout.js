@@ -522,7 +522,7 @@ var routes = function () {
                         Post.update({_id: id}, {$set: updateObj}, function(err, numAffected) {
                             console.log('updated db with ', updateObj)
                             if (!err) {
-                                console.log('Updated post ' + id + ' in database');
+                                    console.log('Updated post ' + id + ' in database');
                                 elastic.updateDoc(id, updateObj, function(err, data) {
                                     console.log('updated elastic', updateObj)
                                     if(!err) {
@@ -554,6 +554,7 @@ var routes = function () {
             }
         });
     },
+
     downloadImage = function (req, res){
         let postId = req.params.id;
         let userId = req.userId;
@@ -651,6 +652,7 @@ var routes = function () {
             }
         })
     },
+
     autoSuggestion = function (req, res) {
         var field = req.query.field,
         searchTerm = req.query.query;
@@ -668,6 +670,7 @@ var routes = function () {
             res.status(400).send({err: 'search term required'});
         }
     },
+
     updateLike = function (req, res) {
         var user = req.body.user,
             email = req.body.email,
@@ -689,6 +692,7 @@ var routes = function () {
             }
         });
     },
+
     unLike = function (req, res) {
         var user = req.body.user,
             postId = req.params.id;
@@ -1037,6 +1041,20 @@ var routes = function () {
         })
     }
 
+    const addTroll = async(req, res) => {
+        const { id } = req.params
+        if (!req.file) {
+            return res.status(400).json({ error: "No file uploaded" });
+        }
+        Post.findByIdAndUpdate(id, {'$push':{trolls: req.file.path}}, (err, data) => {
+            if (!err) {
+                res.status(204).send()
+            } else {
+                res.status(500).send()
+            }
+        })
+    }
+
     return {
         test: test,
         post: post,
@@ -1058,6 +1076,7 @@ var routes = function () {
         incrementViews: incrementViews,
         updateInsight:updateInsight,
         getInsight: getInsight,
+        addTroll: addTroll,
     }
 }
 

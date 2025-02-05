@@ -10,6 +10,7 @@ var post = new Schema({
     likes: [],
     views: [],
     downloads: [],
+    trolls:[],
     shares: [],
     description: {type: String},
     isApproved: {type: Boolean, default: false},

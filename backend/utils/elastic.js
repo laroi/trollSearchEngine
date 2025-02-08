@@ -402,11 +402,25 @@ var elastic = function () {
                     }
                  });
             } else {
-                sort.push({
+                if (options.sort && options.sort ==="random") {
+                    sort.push({
+                        "_script": {
+                            "type": "number",
+                            "script": {
+                                "source": "Math.random()",
+                                "lang": "painless"
+                            },
+                            "order": "asc"
+                        }
+                    })
+                } else {
+                    sort.push({
                         "lastModified": {
                            "order": options.order || "desc"
                         }
                      })
+                }
+                     
             }
             if (options.ids && options.ids.length > 0) {
                     must_array.push({ "terms": { "_id": options.ids }});

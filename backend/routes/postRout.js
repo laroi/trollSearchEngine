@@ -285,6 +285,7 @@ var routes = function () {
             context = req.body.context,
             isFavorite =  req.body.isFavorite;
             size = req.body.limit;
+            sort = req.body.sort;
             opts = {};
             opts.size = size;
             if (search) {
@@ -296,6 +297,9 @@ var routes = function () {
                 opts.advanced.movie = movie;
                 opts.advanced.characters = characters;
                 opts.advanced.actors = actors;
+            }
+            if (sort) {
+                opts.sort = sort
             }
             if (isFavorite) {
                 try {

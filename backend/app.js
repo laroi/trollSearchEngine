@@ -206,7 +206,9 @@ app.get('/test', postRoute.test)
 app.get('/requests', postRoute.getRequests);
 app.get('/request/:id', postRoute.getRequest);
 app.delete('/request/:id', isAuthenticated(), postRoute.deleteRequest);
+
 app.post('/request', postRoute.requestMeme);
+app.put('/request/:id/comment', postRoute.addComment);
 app.put('/request/:id', isAuthenticated(false), postRoute.updateRequest);
 
 /*Post Routes*/

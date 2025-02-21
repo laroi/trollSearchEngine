@@ -37,13 +37,13 @@ var routes = function () {
         res.status(200).send();
     },
     isOwner = function (model, doc_id, token, callback) {
-        model.findById(doc_id, function(docErr, docData) {
+        model.findById(doc_id).lean().exec(function(docErr, docData) {
             if (!docErr && docData) {
                 access.findOne({token: token}, function(err, data) {
                     if (!err && data) {
-                        if (data.user = docData.user || data.type === 'admin') {
+                        if (data.user === docData.user || data.type === 'admin') {
                             console.log('ownership verified ', data.type);
-                            callback(undefined, docData);
+                            callback(undefined, docData, data.type);
                         } else {
                             console.log('failed to verify ownership');
                             callback({err: 'failed to verify ownership'});
@@ -52,6 +52,32 @@ var routes = function () {
                     } else {
                         console.log('token not found');
                         callback(err || 'token not found');
+                        //callback();
+                    }
+                });
+            } else {
+                console.log('doc ' + doc_id + ' for model ' + model.collection.collectionName + ' not found', docErr, docData);
+                callback(docErr || 'doc not found');
+            }
+        });
+    };
+    const canComment = function (model, doc_id, token, callback) {
+        model.findById(doc_id).lean().exec(function(docErr, docData) {
+            if (!docErr && docData) {
+                access.findOne({token: token}, function(err, data) {
+                    if (!err && data) {
+                        if (data.user === docData.user || data.type === 'admin') {
+                            console.log('ownership verified ', data.type);
+                            callback(undefined, docData, data.type);
+                        } else {
+                            console.log('failed to verify ownership');
+                            callback({err: 'failed to verify ownership'});
+                            //callback();
+                        }
+                    } else {
+                        console.log('token not found');
+                        callback(undefined, docData, 'user');
+                        //callback(err || 'token not found');
                         //callback();
                     }
                 });
@@ -910,6 +936,33 @@ var routes = function () {
                 });
             }
     }
+    const addComment = async (req, res) => {
+        const {id} = req.params;
+        const {comment} = req.body;
+        const tok = req.query.accessToken || req.headers['authorization'];
+        if (id) {
+            canComment(Req, req.params.id, tok, function (err, request, type) {
+                if (request) {                    
+                    const lastComment =  Array.isArray(request.comments) && request.comments.length > 0 ? request.comments[request.comments.length  -1] : undefined
+                    if (type !== 'admin' && lastComment?.by !== 'admin') {
+                        return res.status(405).send()
+                    } else {
+                        Req.findByIdAndUpdate(id, {$push: {comments: {comment:  comment, date: new Date().toISOString(), by: type ===  'admin' ? 'admin' : undefined }}}, {safe: true, new: true, upsert: true}, function(lkErr, lkData) {
+                            if (lkErr) {
+                                return res.status(500).send()
+                            }
+                            return res.status(200).send({lkData})
+                        })
+                    }
+                } else {
+                    res.status(404).send()
+                }
+            })
+            
+        } else {
+            return res.status(400).send()
+        }
+    }
     let getRequest = function (req, res) {
         var id = req.params.id
         if (id) {
@@ -1081,6 +1134,7 @@ var routes = function () {
         updateInsight:updateInsight,
         getInsight: getInsight,
         addTroll: addTroll,
+        addComment:addComment
     }
 }
 

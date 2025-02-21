@@ -19,6 +19,7 @@ var request = new Schema({
         type: {type: String},
         size: {width: {type:Number}, height:{type:Number}}
     },
+    comments:[{comment: {type: String}, date: {type: Date}, by: {type: String} }],
     dates: {createdAt: {type: Date}, lastUpdated:{type: Date, default: Date.now}}
 });
 

@@ -16,9 +16,11 @@ var uuid = require('uuid');
 var path = require('path');
 var gm = require('gm').subClass({imageMagick: true});
 const profImageUploadPath = __dirname + '/../assets/profile/';
+
 var getIp = function (req) {
     return req.headers['x-forwarded-for'] || req.connection.remoteAddress || req.socket.remoteAddress || req.connection.socket.remoteAddress;
 }
+
 let validateEmail = (emailField) => {
         var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
         if (reg.test(emailField) == false)
@@ -27,6 +29,7 @@ let validateEmail = (emailField) => {
         }
         return true;
 }
+
 var generateToken = function () {
     var text = "";
     var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -36,6 +39,7 @@ var generateToken = function () {
 
     return text;
 }
+
 var createAccesstoken = function (timeToLive, user, email, type, token, callback) {
     var ttl = 60;
     if (timeToLive) {
@@ -50,6 +54,7 @@ var createAccesstoken = function (timeToLive, user, email, type, token, callback
         callback(err, data);
     })
 }
+
 var verifytoken = function (token, callback) {
 
     accessToken.findOne({token: token}, function(err, data) {
@@ -64,6 +69,7 @@ var verifytoken = function (token, callback) {
         }
     });
 }
+
 let saveThumb = function (fileName) {
     return new Promise((resolve, reject)=> {
         gm(profImageUploadPath+fileName)
@@ -81,12 +87,14 @@ let saveThumb = function (fileName) {
         });
     })
 }
+
 const isBase64 = (str) => {
     if (str.includes('base64')) {
         return true
     }
     return false
 }
+
 let uploadProfPic = (data) => {
     return new Promise((resolve, reject)=> {
         if (data) {
@@ -121,6 +129,7 @@ let uploadProfPic = (data) => {
          }
     })
 }
+
 var routes = function () {
     register = function (req, res) {
         let email = req.body.email,
@@ -472,6 +481,8 @@ var routes = function () {
             res.status(200).send([]);
         }
     }
+
+    
    return {
         register: register,
         login: login,

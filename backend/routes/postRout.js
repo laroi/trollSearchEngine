@@ -3,6 +3,7 @@ var User = require('../models/user.js');
 var Req = require('../models/request.js');
 var Insight = require('../models/insights.js');
 var Favorites = require('../models/favorites.js');
+var Identify = require('../models/identify.js');
 var elastic = require('../utils/elastic');
 const postUploadPath = __dirname + '/../assets/uploads/';
 const reqUploadPath  = __dirname + '/../assets/requests/';
@@ -41,7 +42,7 @@ var routes = function () {
             if (!docErr && docData) {
                 access.findOne({token: token}, function(err, data) {
                     if (!err && data) {
-                        if (data.user === docData.user || data.type === 'admin') {
+                        if (data.user === docData?.user || data.type === 'admin') {
                             console.log('ownership verified ', data.type);
                             callback(undefined, docData, data.type);
                         } else {
@@ -940,7 +941,7 @@ var routes = function () {
         const {id} = req.params;
         const {comment} = req.body;
         const tok = req.query.accessToken || req.headers['authorization'];
-        if (id) {
+        if (id && comment.trim()) {
             canComment(Req, req.params.id, tok, function (err, request, type) {
                 if (request) {                    
                     const lastComment =  Array.isArray(request.comments) && request.comments.length > 0 ? request.comments[request.comments.length  -1] : undefined
@@ -1112,6 +1113,106 @@ var routes = function () {
         })
     }
 
+    const listIdentify = async (req, res) => {
+        const page = parseInt(req.query.page) || 1; // Default to page 1 if not specified
+        const limit = parseInt(req.query.limit) || 10; // Default to 10 results per page
+        const totalDocuments = await Identify.count();
+        const skip = (page - 1) * limit;
+            const data = await Identify.find()
+            .sort({ 'isResolved': -1 })  // Sort dynamically based on field and order
+            .skip(skip)
+            .limit(limit)
+            .exec();
+            
+            const totalPages = Math.ceil(totalDocuments / limit);
+
+            res.status(200).json({
+                totalDocuments,
+                totalPages,
+                currentPage: page,
+                data
+            })  
+    }
+
+    const getIdentify = function (req, res) {
+        var id = req.params.id
+        if (id) {
+            Identify.findOne({_id: id}, function(err, data) {
+                if (!err) {
+                    if (data) {
+                        res.status(200).send(JSON.stringify(data));
+                    } else {
+                        res.status(404).send();
+                    }
+                } else {
+                    console.error(JSON.stringify(err));
+                    res.status(500).send(err)
+                }
+            });
+        } else {
+            res.status(400).send({err: 'bad request'})
+        }
+    }
+
+    const addCommentIdentify = async (req, res) => {
+        const {id} = req.params;
+        const {comment} = req.body;
+        if (id && comment.trim()) {
+            const identify = await Identify.findOne({_id: id})
+            if (identify) {                    
+                Identify.findByIdAndUpdate(id, {$push: {comments: {comment:  comment, date: new Date().toISOString() }}}, {safe: true, new: true, upsert: true}, function(lkErr, lkData) {
+                    if (lkErr) {
+                        return res.status(500).send()
+                    }
+                    return res.status(200).send({lkData})
+                })
+            } else {
+                res.status(404).send()
+            }
+        } else {
+            return res.status(400).send()
+        }
+    }
+
+    const resolveIdentify = (req, res) => {
+        const id = req.params.id;
+        var tok = req.query.accessToken || req.headers['authorization'];
+        
+        if (id) {
+            isOwner(Identify, id, tok, function (err, docData) {
+                Identify.findByIdAndUpdate(id, {isResolved: true}, {safe: true, new: true, upsert: true}, function(lkErr, lkData) {
+                    if (lkErr) {
+                        return res.status(500).send()
+                    }
+                    return res.status(200).send({lkData})
+                })
+            })
+        }
+    }
+
+    const addIdentify = (req, res) => {
+        if (!req.file) {
+            return res.status(400).json({ error: "No file uploaded" });
+        }
+        const obj = {
+            description: "",
+            isResolved: false,
+            image: {
+                url : req.file.relativePath
+            },    
+            comments:[],
+            dates: {createdAt: Date.now() }
+        }
+
+        idObj = new Identify(obj);
+        idObj.save(function(saveErr, saveData) {
+            if (!saveErr) {
+                res.status(201).send()
+            } else {
+                res.status(500).send()
+            }
+        })
+    }
     return {
         test: test,
         post: post,
@@ -1134,7 +1235,12 @@ var routes = function () {
         updateInsight:updateInsight,
         getInsight: getInsight,
         addTroll: addTroll,
-        addComment:addComment
+        addComment:addComment,
+        listIdentify:listIdentify,
+        getIdentify:getIdentify,
+        addCommentIdentify:addCommentIdentify,
+        resolveIdentify: resolveIdentify,
+        addIdentify: addIdentify,
     }
 }
 

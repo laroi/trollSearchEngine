@@ -19,6 +19,7 @@ var uuid = require('uuid');
 app.set("view engine", "pug");
 app.set("views", path.join(__dirname, "views"));
 const trollsUploadPath = __dirname + '/assets/trolls/';
+const identifyUploadPath = __dirname + '/assets/identify/';
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, trollsUploadPath)
@@ -31,6 +32,24 @@ var storage = multer.diskStorage({
         cb(null, fileName);
     }
 });
+const modifyPath = (req, res, next) => {
+    console.log(req.file)
+    req.file.relativePath = `/identify/images/${req.file.renamed}`;
+    next()
+}
+var identifyStorage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, identifyUploadPath)
+    },
+    filename: function (req, file, cb) {
+        var fileName = uuid.v1();
+        fileName += path.extname(file.originalname)
+        file.renamed = fileName
+        console.log(identifyUploadPath, fileName)
+        cb(null, fileName);
+    }
+});
+
 var fileFilter = function (req, file, cb) {
     var fileTypes = ['.jpg', '.jpeg', '.png', '.html'];
     var ext = path.extname(file.originalname);
@@ -43,6 +62,8 @@ var fileFilter = function (req, file, cb) {
 //var upload = multer({ storage: storage, fileFilter: fileFilter })
 // connect to Mongo when the app initializes
 const upload = multer({ storage:storage })
+const uploadIdentify = multer({ storage:identifyStorage })
+
 mongoose.connect(`mongodb://${config.mongoHost}:${config.mongoPort}/trolls`);
 
   app.use(bodyParser({limit: '10mb'}));
@@ -175,6 +196,7 @@ Static Routes
 
 app.use('/images', express.static(__dirname + '/assets/uploads'));
 app.use('/requests/images', express.static(__dirname + '/assets/requests'));
+app.use('/identify/images', express.static(__dirname + '/assets/identify'));
 app.use('/images/profile', express.static(__dirname + '/assets/profile'));
 app.use('/images/sample_prof', express.static(__dirname + '/assets/sample_prof'));
 
@@ -229,6 +251,22 @@ app.post('/troll/:id', upload.single('troll'), postRoute.addTroll)
 /* Insights */
 app.post('/insight', postRoute.updateInsight)
 app.get('/insight', postRoute.getInsight)
+
+/* Identify */
+
+/*
+ listIdentify:listIdentify,
+        getIdentify:getIdentify,
+        addCommentIdentify:addCommentIdentify,
+        resolveIdentify: resolveIdentify,
+        addIdentify: addIdentify,
+*/
+app.get('/identify', postRoute.listIdentify)
+app.get('/identify/:id', postRoute.getIdentify)
+app.post('/identify/:id/comment', postRoute.addCommentIdentify)
+app.post('/identify/:id/resolve',isAuthenticated(), postRoute.resolveIdentify)
+app.post('/identify', uploadIdentify.single('identify'), modifyPath, postRoute.addIdentify)
+
 
 app.listen(config.appPort);
 console.log(`Express server listening on port ${config.appPort}`);

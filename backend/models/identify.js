@@ -14,7 +14,7 @@ var identify = new Schema({
     },    
     movie: {type: String},
     comments:[{comment: {type: String}, date: {type: Date} }],
-    dates: {createdAt: {type: Date}, lastUpdated:{type: Date, default: Date.now}}
+    dates: {createdAt: {type: Date}, lastUpdated:{type: Date, default: Date.now()}}
 });
 
 module.exports = mongoose.model('identify', identify);

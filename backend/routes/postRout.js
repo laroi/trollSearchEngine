@@ -1116,10 +1116,22 @@ var routes = function () {
     const listIdentify = async (req, res) => {
         const page = parseInt(req.query.page) || 1; // Default to page 1 if not specified
         const limit = parseInt(req.query.limit) || 10; // Default to 10 results per page
-        const totalDocuments = await Identify.count();
+        const filter = req?.query?.filter ?? 'all'
+        
+        const filtObj = (() => {
+            if (filter === 'resolved') {
+                return {isResolved: true}
+            }
+            if (filter === 'unresolved') {
+                return {isResolved: false}
+            }
+            return {}
+        })()
+        console.log(filtObj)
+        const totalDocuments = await Identify.count(filtObj);
         const skip = (page - 1) * limit;
-            const data = await Identify.find()
-            .sort({ 'isResolved': -1 })  // Sort dynamically based on field and order
+            const data = await Identify.find(filtObj)
+            .sort({ 'dates.lastUpdated': -1 })  // Sort dynamically based on field and order
             .skip(skip)
             .limit(limit)
             .exec();
@@ -1157,10 +1169,11 @@ var routes = function () {
     const addCommentIdentify = async (req, res) => {
         const {id} = req.params;
         const {comment} = req.body;
+        console.log(comment, id)
         if (id && comment.trim()) {
             const identify = await Identify.findOne({_id: id})
             if (identify) {                    
-                Identify.findByIdAndUpdate(id, {$push: {comments: {comment:  comment, date: new Date().toISOString() }}}, {safe: true, new: true, upsert: true}, function(lkErr, lkData) {
+                Identify.findByIdAndUpdate(id, {$set:{'dates.lastUpdated': new Date().toISOString()},$push: {comments: {comment:  comment, date: new Date().toISOString() }}}, {safe: true, new: true, upsert: true}, function(lkErr, lkData) {
                     if (lkErr) {
                         return res.status(500).send()
                     }
@@ -1176,11 +1189,12 @@ var routes = function () {
 
     const resolveIdentify = (req, res) => {
         const id = req.params.id;
+        const movie = req.body.movie
         var tok = req.query.accessToken || req.headers['authorization'];
         
-        if (id) {
+        if (id && movie) {
             isOwner(Identify, id, tok, function (err, docData) {
-                Identify.findByIdAndUpdate(id, {isResolved: true}, {safe: true, new: true, upsert: true}, function(lkErr, lkData) {
+                Identify.findByIdAndUpdate(id, {isResolved: true, movie: movie}, {safe: true, new: true, upsert: true}, function(lkErr, lkData) {
                     if (lkErr) {
                         return res.status(500).send()
                     }

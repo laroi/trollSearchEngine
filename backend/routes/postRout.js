@@ -1127,6 +1127,10 @@ var routes = function () {
             if (filter === 'unresolved') {
                 return {isResolved: false}
             }
+            if (filter === 'last_updated') {
+                sort = -1;
+                return {isResolved: false}
+            }
             return {}
         })()
         console.log(filtObj)

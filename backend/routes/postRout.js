@@ -1118,13 +1118,14 @@ var routes = function () {
         const limit = parseInt(req.query.limit) || 10; // Default to 10 results per page
         const filter = req?.query?.filter ?? 'all'
         let sort = 1;
-        
+        let sortObj = 'dates.lastUpdated'
         const filtObj = (() => {
             if (filter === 'resolved') {
                 sort = -1;
                 return {isResolved: true}
             }
             if (filter === 'unresolved') {
+                sortObj = 'randomKey'
                 return {isResolved: false}
             }
             if (filter === 'last_updated') {
@@ -1133,11 +1134,11 @@ var routes = function () {
             }
             return {}
         })()
-        console.log(filtObj)
+
         const totalDocuments = await Identify.count(filtObj);
         const skip = (page - 1) * limit;
             const data = await Identify.find(filtObj)
-            .sort({ 'dates.lastUpdated': sort })  // Sort dynamically based on field and order
+            .sort({ [sortObj]: sort })  // Sort dynamically based on field and order
             .skip(skip)
             .limit(limit)
             .exec();

@@ -262,6 +262,7 @@ app.get('/insight', postRoute.getInsight)
         addIdentify: addIdentify,
 */
 app.get('/identify', postRoute.listIdentify)
+app.get('/identify/random', postRoute.getRandomIdentify)
 app.get('/identify/:id', postRoute.getIdentify)
 app.post('/identify/:id/comment', postRoute.addCommentIdentify)
 app.post('/identify/:id/resolve',isAuthenticated(), postRoute.resolveIdentify)
@@ -270,3 +271,4 @@ app.post('/identify', uploadIdentify.single('identify'), modifyPath, postRoute.a
 
 app.listen(config.appPort);
 console.log(`Express server listening on port ${config.appPort}`);
+

@@ -1173,6 +1173,23 @@ var routes = function () {
         }
     }
 
+    const getRandomIdentify = async function (req, res) {
+        const rand = Math.random();
+        let randomDoc = await Identify.findOne({
+            isResolved: false,
+            'comments.0': { $exists: false },
+            randomKey: { $gte:  rand}
+          }).sort({ randomKey: 1 });
+          if (!randomDoc) {
+            randomDoc = await Identify.findOne({
+                isResolved: false,
+                'comments.0': { $exists: false },
+                randomKey: { $lte:  rand}
+              }).sort({ randomKey: 1 });
+          }
+        return res.status(200).send(randomDoc)
+    }
+
     const addCommentIdentify = async (req, res) => {
         const {id} = req.params;
         const {comment} = req.body;
@@ -1262,6 +1279,7 @@ var routes = function () {
         addCommentIdentify:addCommentIdentify,
         resolveIdentify: resolveIdentify,
         addIdentify: addIdentify,
+        getRandomIdentify:getRandomIdentify
     }
 }
 
